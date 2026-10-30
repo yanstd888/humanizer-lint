@@ -174,6 +174,48 @@ humanizer-lint --file draft.md --lang en --profile profiles/custom-voice.json --
 
 Without `npm link`, replace `humanizer-lint` with `node scripts/analyze.mjs` and replace `humanizer-fingerprint` with `node scripts/fingerprint.mjs`.
 
+## Contoh / Example
+
+Skor mengukur kecocokan dengan sinyal gaya yang diperiksa oleh linter: skor lebih tinggi berarti lebih sedikit pelanggaran yang ditemukan. Ini bukan skor probabilitas penulis AI atau manusia.
+
+### Before
+
+```text
+Di era digital saat ini, penggunaan teknologi menjadi sangat penting bagi setiap bisnis. Tidak hanya itu, solusi ini juga memberikan manfaat yang sangat besar bagi semua pihak. Dengan demikian, organisasi dapat meningkatkan efisiensi secara signifikan dalam berbagai aspek. Pada akhirnya, pendekatan ini membuka peluang baru yang lebih optimal bagi masa depan.
+```
+
+Output dari `tests/fixtures/ai-before-id.md`:
+
+```text
+Status: FAIL
+Score: 38
+Language: id
+
+Violations:
+  SLOP_PHRASE | Paragraph 1, Sentence 1 | Mulai langsung dari subjek atau fakta konkret.
+  SLOP_PHRASE | Paragraph 1, Sentence 3 | Sebutkan aspek yang relevan.
+  SLOP_PHRASE | Paragraph 1, Sentence 4 | Tutup langsung dengan akibat atau keputusan akhir.
+  MONOTONOUS_RHYTHM | Paragraph 1, Sentences 1-3 | Sentence lengths are uniform (13, 14, 11 words).
+  LOW_BURSTINESS | Whole text | Vary sentence lengths by splitting one uniform sentence and merging another where the meaning supports it.
+  LOW_ADJACENT_DELTA | Whole text | Change neighboring sentence lengths by splitting or merging only where the content allows it.
+```
+
+### After
+
+```text
+Pemilik toko memakai aplikasi stok untuk melihat barang yang habis pada hari yang sama. Semua melihat angka yang sama. Saat satu produk menipis, petugas memesan ulang sebelum rak kosong dan mencatat alasan setiap perubahan. Laporan harian menunjukkan barang mana yang laku, barang mana yang tertahan, dan kapan petugas harus menghubungi pemasok lagi agar toko tidak kehabisan barang yang dicari pelanggan. Pemilik toko kini membeli barang berdasarkan catatan, bukan tebakan.
+```
+
+Output dari `tests/fixtures/human-after-id.md`:
+
+```text
+Status: PASS
+Score: 100
+Language: id
+```
+
+Untuk contoh ini, skor naik dari **38** menjadi **100** setelah frasa template dihilangkan, subjek dibuat konkret, dan panjang kalimat divariasikan.
+
 ## CLI reference
 
 ### Analyzer
