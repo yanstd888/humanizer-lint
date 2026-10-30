@@ -1,192 +1,470 @@
-# Humanizer Lint
+<div align="center">
 
-A zero-dependency Node.js CLI and `skills.sh` skill for deterministic Indonesian and English prose linting. It measures sentence-length variation, adjacent rhythm, lexical diversity, compression ratio, repeated structure, configured slop phrases, Indonesian nominalization/passive density, and deviation from an optional voice profile.
+# humanizer-lint
 
-The tool does not classify authorship. It reports whether text passes the configured style checks.
+### Deterministic prose and Markdown style linting for Indonesian and English
 
-## Requirements
+Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, and voice-profile drift without sending text to an external service.
 
-- Node.js 18.3 or newer
-- No npm dependencies
-- No network access
+[![GitHub Release](https://img.shields.io/github/v/release/yanstd888/humanizer-lint?style=flat-square&logo=github)](https://github.com/yanstd888/humanizer-lint/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/yanstd888/humanizer-lint/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/yanstd888/humanizer-lint/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/yanstd888/humanizer-lint?style=flat-square)](LICENSE)
+[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.3-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)](https://skills.sh/yanstd888/humanizer-lint)
+[![GitHub Stars](https://img.shields.io/github/stars/yanstd888/humanizer-lint?style=flat-square)](https://github.com/yanstd888/humanizer-lint/stargazers)
 
-## Install as a skill
+[What it does](#what-it-does) | [Quick start](#quick-start) | [CLI reference](#cli-reference) | [Detectors](#detectors-and-violation-types) | [Agent skill](#use-as-an-agent-skill) | [FAQ](#frequently-asked-questions)
 
-```sh
-npx skills add yanstd888/humanizer-lint
+</div>
+
+**humanizer-lint is an open-source natural-text and Markdown prose linter that deterministically identifies style patterns often associated with AI-generated writing in Indonesian and English; it is a style validator, not an authorship detector.**
+
+It works locally with zero runtime dependencies. Instead of rewriting text through another language model, it reports paragraph- and sentence-level violations with specific correction instructions. Use it to lint LLM-generated documentation, remove robotic AI phrasing from Markdown, check burstiness and lexical diversity, or add a deterministic prose gate to an agent workflow.
+
+It can serve as a CLI text humanizer guardrail, automated writing style linter, or CI/CD documentation linter. The bundled rules flag overused AI clichés such as `delve` and `tapestry` without rewriting the source.
+
+## What it does
+
+`humanizer-lint` analyzes prose after removing or neutralizing common non-prose Markdown structures. It then combines lexical rules, sentence-length statistics, structural checks, Indonesian morphology checks, and an optional voice profile into a score from 0 to 100.
+
+The project includes:
+
+- 86 reviewable lexical and structural regex rules: 42 Indonesian and 44 English.
+- Sentence-length burstiness, adjacent rhythm delta, short/long sentence ratios, and adaptive MATTR.
+- Repetition checks based on paragraph symmetry, repeated sentence starters, and compression ratio.
+- Indonesian nominalization, passive-voice, loanword, and translation-style opening checks.
+- Optional voice profiles generated from one to five writing samples.
+- Human-readable terminal output and pure JSON output.
+- Standard exit codes for agents, scripts, and CI jobs.
+
+It does not estimate perplexity, classify who wrote the text, rewrite prose automatically, scan directories, or provide SARIF output.
+
+## Terminal demo
+
+Given this input:
+
+```text
+In today's fast-paced world, teams delve into a robust landscape. Moreover, this pivotal approach fosters seamless collaboration across every project. In conclusion, the solution unlocks valuable insights for everyone.
 ```
 
-For local development, use the scripts directly from this directory.
-
-## Analyze text
-
-File input:
+Run the analyzer:
 
 ```sh
-node scripts/analyze.mjs --file draft.md --lang id --json
-node scripts/analyze.mjs --file draft.md --lang en
-node scripts/analyze.mjs --file draft.md --lang auto
+humanizer-lint --file draft.md --lang en
 ```
 
-Stdin input:
+The current CLI reports:
+
+```text
+Status: FAIL
+Score: 39
+Language: en
+
+Metrics:
+  wordCount: 29
+  sentenceCount: 3
+  meanSentenceLength: 9.6667
+  stdDev: 0.4714
+  burstinessCV: 0.0488
+  adjacentDelta: 0.5
+  shortSentenceRatio: 0
+  longSentenceRatio: 0
+  mattr: 1
+  compressionRatio: 0.6972
+  nominalizationRatio: 0
+  passiveRatio: 0
+  voiceProfileDeviation: 0.5319
+
+Violations:
+  SLOP_PHRASE | Paragraph 1, Sentence 1 | Name the exact action or subject instead.
+  SLOP_PHRASE | Paragraph 1, Sentence 2 | Describe the actual consequence without inflated significance.
+  SLOP_PHRASE | Paragraph 1, Sentence 2 | Name the concrete behavior or outcome.
+  SLOP_PHRASE | Paragraph 1, Sentence 1 | Name the field or conditions directly.
+  SLOP_PHRASE | Paragraph 1, Sentence 3 | Name what becomes possible and how.
+  SLOP_PHRASE | Paragraph 1, Sentence 2 | Connect the sentences by their actual relationship.
+  SLOP_PHRASE | Paragraph 1, Sentence 3 | End on the final concrete point.
+  SLOP_PHRASE | Paragraph 1, Sentence 1 | Name the current condition precisely.
+  SLOP_PHRASE | Paragraph 1, Sentence 2 | Describe the missing step, delay, or transition precisely.
+  SLOP_PHRASE | Paragraph 1, Sentence 1 | Name the failure mode or capacity the system handles.
+  SLOP_PHRASE | Paragraph 1, Sentence 3 | State the finding itself.
+  MONOTONOUS_RHYTHM | Paragraph 1, Sentences 1-3 | Sentence lengths are uniform (10, 10, 9 words). Split one sentence into a short statement or merge two into a longer clause.
+  LOW_BURSTINESS | Whole text | Vary sentence lengths by splitting one uniform sentence and merging another where the meaning supports it.
+  LOW_ADJACENT_DELTA | Whole text | Change neighboring sentence lengths by splitting or merging only where the content allows it.
+```
+
+A failed analysis exits with code `1`. A passing fixture returns:
+
+```text
+Status: PASS
+Score: 100
+Language: en
+```
+
+and exits with code `0`.
+
+## Why humanizer-lint
+
+Many AI humanizer services send text to another model and return a rewritten version. That can alter facts, quotations, formatting, or technical meaning. `humanizer-lint` takes the smaller and more predictable approach: it identifies the prose that needs attention and leaves the edit under your control.
+
+| Capability | humanizer-lint | Web rewriting service | General grammar checker |
+|---|---|---|---|
+| Detects configured LLM clichés | Yes, with rule IDs and locations | Usually rewrites them | Usually not |
+| Measures sentence rhythm | Yes | Usually not exposed | Limited |
+| Preserves source text | Yes, analysis only | No, returns a rewrite | Depends on product |
+| Handles common Markdown structures | Yes, through deterministic sanitization | Product-dependent | Product-dependent |
+| Runs offline after installation | Yes | Usually no | Product-dependent |
+| Supports Indonesian and English lexical rules | Yes | Product-dependent | Product-dependent |
+| Produces JSON | Yes | Product-dependent | Product-dependent |
+| Proves human authorship | No | No | No |
+
+If you are looking for an AI writing detector linter, a ChatGPT tone remover CLI, or an open-source alternative to AI humanizers, note the boundary: this tool detects configured style signals and rhythm problems. It does not claim to determine whether a human or model wrote the text.
+
+## Installation
+
+### Install as an agent skill
+
+The recommended installation for coding agents is through the skills CLI:
 
 ```sh
-cat draft.md | node scripts/analyze.mjs --stdin --lang auto --json
+npx skills add yanstd888/humanizer-lint --skill humanizer-lint
 ```
 
-Custom voice profile:
+The public listing, installation command, and install count are available on [skills.sh](https://skills.sh/yanstd888/humanizer-lint).
+
+### Run the CLI from source
+
+The CLI package is not currently published to npm. Clone the repository and either run the scripts directly or use `npm link` to expose the two local binaries:
 
 ```sh
-node scripts/analyze.mjs --file draft.md --lang auto --profile profiles/custom-voice.json --json
+git clone https://github.com/yanstd888/humanizer-lint.git
+cd humanizer-lint
+npm test
+npm link
+humanizer-lint --help
+humanizer-fingerprint --help
 ```
 
-Exit codes:
+No dependency installation or build step is required.
+
+## Quick start
+
+Analyze one file:
+
+```sh
+humanizer-lint --file draft.md --lang auto
+```
+
+Return machine-readable JSON:
+
+```sh
+humanizer-lint --file draft.md --lang id --json
+```
+
+Analyze stdin without creating a temporary file:
+
+```sh
+cat draft.md | humanizer-lint --stdin --lang auto --json
+```
+
+Use a custom voice profile:
+
+```sh
+humanizer-lint --file draft.md --lang en --profile profiles/custom-voice.json --json
+```
+
+Without `npm link`, replace `humanizer-lint` with `node scripts/analyze.mjs` and replace `humanizer-fingerprint` with `node scripts/fingerprint.mjs`.
+
+## CLI reference
+
+### Analyzer
+
+```text
+humanizer-lint (--file <path> | --stdin) [--lang id|en|auto] [--profile <path>] [--json]
+```
+
+| Option | Required | Description |
+|---|---:|---|
+| `--file <path>` | One input required | Read one UTF-8 text or Markdown file. |
+| `--stdin` | One input required | Read the complete document from standard input. |
+| `--lang id|en|auto` | No | Select Indonesian, English, or function-word auto-detection. Default: `auto`. |
+| `--profile <path>` | No | Load a JSON voice profile. |
+| `--json` | No | Print JSON only. Without it, print the terminal report. |
+| `--help` | No | Print command usage. |
+
+Exactly one of `--file` or `--stdin` is required.
+
+### Voice fingerprint
+
+```text
+humanizer-fingerprint --input <file-or-dir> --output <profile.json> [--name <name>] [--lang id|en|auto]
+```
+
+| Option | Required | Description |
+|---|---:|---|
+| `--input <path>` | Yes | Read one file or up to five `.md` and `.txt` files from one directory. |
+| `--output <path>` | Yes | Write the generated profile atomically. |
+| `--name <name>` | No | Set the profile name. Default: `custom-voice`. |
+| `--lang id|en|auto` | No | Record the intended language. Default: `auto`. |
+| `--help` | No | Print command usage. |
+
+### Exit codes
 
 | Code | Meaning |
 |---:|---|
-| 0 | `PASS` or short-text `SKIP` |
-| 1 | Valid analysis with `FAIL` |
-| 2 | CLI, file, or profile error |
+| `0` | `PASS`, or `SKIP` for text too short for statistical scoring. |
+| `1` | Analysis completed and returned `FAIL`. |
+| `2` | Invalid arguments, unreadable input, or malformed profile. |
 
-## Build a voice profile
+## Detectors and violation types
 
-The fingerprint command accepts one text file or a directory containing up to five `.txt` or `.md` files:
+The JSON rule catalogs contain stable IDs. Runtime statistical checks use named violation types.
+
+| Violation type or rule range | Language | What it detects |
+|---|---|---|
+| `ID001`-`ID040`, `EN001`-`EN040` / `SLOP_PHRASE` | Indonesian and English | Configured clichés, generic transitions, inflated wording, and repeated LLM vocabulary such as `delve`, `tapestry`, `testament`, and their Indonesian equivalents. |
+| `ID041`-`ID042` / `DEFINITIONAL_OPENING` | Indonesian | Formulaic paragraph openings and rigid definition templates. |
+| `EN041`-`EN044` / `STRUCTURAL_CLICHE` | English | Participial tails, binary formulas, repeated double-hyphens, and similar structural templates. |
+| `MONOTONOUS_RHYTHM` | Both | Three adjacent sentences whose lengths differ by at most three words. |
+| `LOW_BURSTINESS` | Both | Sentence-length coefficient of variation below the configured threshold. |
+| `MISSING_SENTENCE_RANGE` | Both | Text with at least eight sentences that lacks enough short or long sentences. |
+| `LOW_ADJACENT_DELTA` | Both | Consecutive sentence lengths that change too little. |
+| `LOW_LEXICAL_DIVERSITY` | Both | Adaptive MATTR below the language threshold. |
+| `LOW_ENTROPY_REPETITION` | Both | Low DEFLATE compression ratio in text of at least 150 words. |
+| `SYMMETRIC_PARAGRAPHS` | Both | Three consecutive paragraphs with the same sentence count. |
+| `REPETITIVE_STARTERS` | Both | A paragraph with at least three sentences beginning with the same token. |
+| `EXCESSIVE_NOMINALIZATION` | Indonesian | Nominalization density above the configured threshold after whitelist filtering. |
+| `PASSIVE_BLOATING` | Indonesian | Passive morphology density or consecutive translation-style subordinate openings. |
+| `VOICE_PROFILE_DEVIATION` | Both | Custom-profile mean sentence length that differs from the target by more than 30 percent. |
+
+## Metrics and scoring
+
+| Metric | Definition |
+|---|---|
+| `burstinessCV` | Population standard deviation divided by mean sentence length. |
+| `adjacentDelta` | Mean absolute difference between neighboring sentence lengths. |
+| `mattr` | Moving-average type-token ratio over an adaptive 10- to 50-token window. |
+| `compressionRatio` | Raw DEFLATE byte length divided by original UTF-8 byte length. |
+| `shortSentenceRatio` | Share of sentences containing six words or fewer. |
+| `longSentenceRatio` | Share of sentences containing 26 words or more. |
+| `voiceProfileDeviation` | Mean relative deviation from available profile targets. It is not an authorship probability. |
+
+The score starts at 100 and applies these caps:
+
+| Category | Maximum deduction |
+|---|---:|
+| Burstiness and sentence-range checks | 25 |
+| Monotonous rhythm windows | 20 |
+| Lexical and structural clichés | 30 |
+| Indonesian morphology | 15 |
+| Vocabulary, entropy, and custom-profile deviation combined | 10 |
+
+A normal-length document passes only when the score is at least 80, no `SLOP_PHRASE` or `DEFINITIONAL_OPENING` remains, burstiness and adjacent-delta gates pass, and the sentence-range requirement passes when applicable.
+
+Documents below 20 words or three sentences return `SKIP`. Lexical slop phrases are still reported.
+
+## Markdown sanitization
+
+Before tokenization, the analyzer:
+
+- removes YAML frontmatter, fenced code blocks, headings, and Markdown tables;
+- keeps Markdown link anchor text while removing the URL;
+- replaces inline code and bare URLs with `TOKEN_ENTITY`;
+- removes short or unfinished list fragments while keeping complete list prose;
+- removes blockquote markers while preserving the quoted prose;
+- preserves paragraph boundaries for locations and structural checks.
+
+This is deterministic sanitization, not a full Markdown or MDX abstract syntax tree parser. HTML blocks and arbitrary MDX components do not receive special parsing.
+
+## Voice profiles
+
+Generate a profile from one to five samples:
 
 ```sh
-node scripts/fingerprint.mjs \
-  --input samples \
+humanizer-fingerprint \
+  --input writing-samples \
   --output profiles/custom-voice.json \
-  --name my-voice \
-  --lang auto
+  --name editorial-voice \
+  --lang en
 ```
 
-The output records average sentence length, standard deviation, burstiness CV, adjacent rhythm delta, MATTR, paragraph size, and punctuation rates. The analyzer reports relative `voiceProfileDeviation` when that profile is supplied. A custom profile whose target mean sentence length differs by more than 30% creates a `VOICE_PROFILE_DEVIATION` violation and a 5-point penalty, capped with vocabulary and entropy penalties at 10 points.
-
-## Checks
-
-### Sanitization
-
-Before analysis, the CLI:
-
-- removes YAML frontmatter, fenced code blocks, Markdown tables, and headings;
-- replaces inline code and URLs with `TOKEN_ENTITY`;
-- removes list fragments while retaining complete list-item sentences;
-- preserves paragraph boundaries for diagnostics.
-
-### Statistical metrics
-
-- Burstiness coefficient of variation: `standard deviation / mean sentence length`.
-- Adjacent rhythm delta: mean absolute difference between consecutive sentence lengths.
-- Adaptive MATTR: type-token ratio over an adaptive 10 to 50 word window.
-- Compression ratio: raw DEFLATE byte length divided by original UTF-8 byte length.
-- Short sentence ratio: sentences with 6 words or fewer.
-- Long sentence ratio: sentences with 26 words or more.
-
-Texts below 20 words or 3 sentences return `SKIP`; lexical phrase checks still run.
-
-### Structural diagnostics
-
-- Three-sentence monotony windows.
-- Three consecutive paragraphs with equal sentence counts.
-- Three or more identical sentence starters in one paragraph.
-- Low compression ratio for texts of at least 150 words.
-
-### Language rules
-
-`rules/id-slop.json` contains Indonesian lexical, definitional, nominalization, passive, whitelist, and loanword rules. `rules/en-slop.json` contains English lexical and structural patterns. Both rule files contain more than 40 patterns and are plain JSON for reviewability.
-
-## Scoring
-
-The score starts at 100:
-
-- burstiness: up to 25 points deducted;
-- monotony windows: up to 20;
-- lexical and structural clichés: up to 30;
-- Indonesian nominalization/passive density: up to 15;
-- vocabulary, entropy, and custom-profile deviation: up to 10 combined.
-
-A normal-length text passes only when:
-
-- score is at least 80;
-- no `SLOP_PHRASE` or `DEFINITIONAL_OPENING` remains;
-- burstiness meets the sample-size threshold;
-- adjacent rhythm delta is at least 4;
-- texts with at least 8 sentences contain at least 15% short sentences and 10% long sentences.
+The profile records mean sentence length, standard deviation, burstiness, adjacent delta, MATTR, average paragraph sentence count, and punctuation rates. Supplying it with `--profile` adds `voiceProfileDeviation`; a mean sentence-length drift above 30 percent creates a five-point profile penalty inside the 10-point vocabulary and entropy cap.
 
 ## JSON output
+
+`--json` writes a single JSON object to stdout. The stable top-level fields are:
 
 ```json
 {
   "status": "FAIL",
-  "score": 68,
-  "language": "id",
+  "score": 39,
+  "language": "en",
   "metrics": {
-    "wordCount": 240,
-    "sentenceCount": 12,
-    "burstinessCV": 0.21,
-    "adjacentDelta": 2.4,
-    "mattr": 0.76,
-    "voiceProfileDeviation": 0.31
+    "wordCount": 29,
+    "sentenceCount": 3,
+    "burstinessCV": 0.0488,
+    "adjacentDelta": 0.5,
+    "mattr": 1
   },
   "violations": [
     {
-      "type": "MONOTONOUS_RHYTHM",
-      "location": "Paragraph 2, Sentences 4-6",
-      "fixInstruction": "Sentence lengths are uniform. Split one sentence or merge two where the meaning supports it."
+      "type": "LOW_BURSTINESS",
+      "location": "Whole text",
+      "actual": 0.0488,
+      "target": 0.4,
+      "fixInstruction": "Vary sentence lengths by splitting one uniform sentence and merging another where the meaning supports it."
     }
   ]
 }
 ```
 
-## Test
+The real result may contain additional metric properties and violations.
 
-```sh
-npm test
+## Use as an agent skill
+
+After installation, an agent can use the skill as a closed verification loop:
+
+1. Draft or edit Indonesian or English prose without changing supported facts.
+2. Run the analyzer against the exact complete draft.
+3. Read every violation and edit only the affected prose or named whole-document gate.
+4. Re-run the analyzer, stopping after three iterations.
+5. Return only a `PASS`, or an honestly labeled short-text `SKIP` with no unresolved lexical violations.
+
+The skill is indexed on skills.sh and its current listing passes the platform's Snyk security audit.
+
+## Used by
+
+The skills.sh badge at the top of this README is the public source for anonymous installation activity. GitHub's native `Used by` sidebar is generated automatically from its dependency graph; repository owners cannot set that count manually.
+
+Because the CLI is not published to npm, skill installations are represented by skills.sh rather than GitHub package dependents. The GitHub panel will appear when downstream repositories declare a dependency that GitHub can detect.
+
+## CI and repository automation
+
+This repository keeps `.github` intentionally small. The included `.github/workflows/ci.yml` workflow runs the test suite and package dry-run on supported Node.js versions. A CI badge is useful because it reflects an actual workflow; issue templates, Dependabot, and release automation are omitted until the repository needs them.
+
+To use the analyzer in another GitHub Actions workflow without an npm release, check out this repository into a subdirectory and run the script directly:
+
+```yaml
+name: prose-check
+
+on:
+  pull_request:
+    paths:
+      - "**/*.md"
+      - "**/*.txt"
+
+jobs:
+  lint-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: yanstd888/humanizer-lint
+          path: .humanizer-lint
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node .humanizer-lint/scripts/analyze.mjs --file README.md --lang auto --json
 ```
 
-The suite covers sanitizer behavior, abbreviation protection, formulas, short text, whitelists, AI and human fixtures, CLI exit codes, voice profile output, allowed imports, and forbidden API scans.
+The analyzer accepts one file per invocation. Invoke it once for each document you want to gate.
 
 ## Security properties
 
-Production scripts import only approved Node.js built-ins:
+Production scripts use only Node.js built-ins and have no runtime dependencies. The test suite rejects production use of `child_process`, `eval`, dynamic `Function` construction, and `fetch`. The fingerprint writer writes to a temporary file and renames it into place.
 
-- `node:fs`
-- `node:path`
-- `node:zlib`
-- `node:util`
+Text remains local unless the surrounding agent or workflow sends it elsewhere.
 
-The scripts do not use `fetch`, `eval`, `Function`, or `child_process`. They do not execute shell commands. Fingerprint output is written through a temporary file and renamed into place.
+## Frequently asked questions
 
-## Release policy
+<details>
+<summary><strong>Is humanizer-lint an AI content detector?</strong></summary>
 
-Every repository change must update the package and skill version, then publish a matching Git tag and GitHub release after tests and package verification pass.
+No. It detects configured lexical, structural, rhythm, and morphology signals. A pass or failure does not prove who wrote the text.
+
+</details>
+
+<details>
+<summary><strong>Does humanizer-lint rewrite or auto-fix prose?</strong></summary>
+
+No. It returns correction instructions but does not modify the source file. This prevents silent factual or formatting changes.
+
+</details>
+
+<details>
+<summary><strong>Can it remove robotic AI phrasing from Markdown?</strong></summary>
+
+It can identify the exact paragraph or sentence that matches a configured phrase or style gate. A human or coding agent then makes the smallest supported edit and runs the analyzer again.
+
+</details>
+
+<details>
+<summary><strong>Can I install it from npm?</strong></summary>
+
+Not currently. Install the agent skill with `npx skills add yanstd888/humanizer-lint --skill humanizer-lint`, or clone the repository and use `npm link` for the local CLI binaries.
+
+</details>
+
+<details>
+<summary><strong>Which languages are supported?</strong></summary>
+
+The configured lexical and language-detection paths support Indonesian and English. Do not treat the current statistical thresholds as validated defaults for other languages.
+
+</details>
+
+<details>
+<summary><strong>Does it send text to an API?</strong></summary>
+
+No. Production code has no network call. The skills installer and Git operations need network access only to download the repository.
+
+</details>
+
+<details>
+<summary><strong>Why did a short document return SKIP?</strong></summary>
+
+Documents below 20 words or three sentences do not contain enough material for the configured statistical gates. Lexical slop phrases are still checked.
+
+</details>
+
+## Contributing
+
+Contributions should remain deterministic, zero-dependency, and covered by a focused regression test.
+
+1. Fork the repository.
+2. Create a focused branch.
+3. Add or update one minimal test for non-trivial behavior.
+4. Run `npm test` and `npm pack --dry-run`.
+5. Open a pull request that explains the user-visible effect.
+
+Every repository change updates the package and skill version, then publishes a matching Git tag and GitHub release after verification.
 
 ## Project layout
 
 ```text
+.github/
+  workflows/
+    ci.yml
+LICENSE
+README.md
 SKILL.md
 package.json
-README.md
+profiles/
+  default-human.json
+rules/
+  en-slop.json
+  id-slop.json
 scripts/
   analyze.mjs
   fingerprint.mjs
   utils/
+    metrics.mjs
     sanitizer.mjs
     tokenizer.mjs
-    metrics.mjs
-rules/
-  id-slop.json
-  en-slop.json
-profiles/
-  default-human.json
 tests/
   fixtures/
   test-runner.mjs
 ```
 
-## Limitations
+## License
 
-- Passing does not prove that a human wrote the text.
-- Fixed thresholds can misread intentionally uniform technical or legal prose.
-- Automatic language detection supports Indonesian and English only.
-- The analyzer does not verify factual accuracy or semantic equivalence after rewriting; the calling agent must preserve source meaning.
+Licensed under the [MIT License](LICENSE).

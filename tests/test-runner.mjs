@@ -229,11 +229,13 @@ test('package metadata and rule catalogs match the public contract', async () =>
   const idRules = JSON.parse(await readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8'));
   const enRules = JSON.parse(await readFile(path.join(root, 'rules', 'en-slop.json'), 'utf8'));
   const skill = await readFile(path.join(root, 'SKILL.md'), 'utf8');
+  const readme = await readFile(path.join(root, 'README.md'), 'utf8');
+  const workflow = await readFile(path.join(root, '.github', 'workflows', 'ci.yml'), 'utf8');
   const license = await readFile(path.join(root, 'LICENSE'), 'utf8');
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '0.2.0');
+  assert.equal(packageJson.version, '0.2.1');
   assert.equal(packageJson.bin['humanizer-lint'], './scripts/analyze.mjs');
   assert.equal(packageJson.bin['humanizer-fingerprint'], './scripts/fingerprint.mjs');
   assert.equal((packageSource.match(/"files"\s*:/g) ?? []).length, 1);
@@ -242,8 +244,13 @@ test('package metadata and rule catalogs match the public contract', async () =>
   assert.match(skill, /^---\nname: humanizer-lint\n/);
   assert.match(skill, /compatibility: Node\.js >= 18\.3\.0/);
   assert.match(skill, /allowed-tools: Bash\(node:\*\) Read Write/);
-  assert.match(skill, /metadata:\n  version: "0\.2\.0"\n  author: "yanstd888"/);
+  assert.match(skill, /metadata:\n  version: "0\.2\.1"\n  author: "yanstd888"/);
   assert.match(skill, /Mandatory deterministic verification|Run deterministic verification/i);
+  assert.match(readme, /https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint/);
+  assert.match(readme, /humanizer-lint --file draft\.md --lang auto/);
+  assert.doesNotMatch(readme, /\p{Extended_Pictographic}/u);
+  assert.match(workflow, /npm test/);
+  assert.match(workflow, /npm pack --dry-run/);
   assert.match(license, /MIT License/);
 
   const rootMarkdown = (await readdir(root)).filter((name) => name.toLowerCase().endsWith('.md')).sort();
