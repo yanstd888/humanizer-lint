@@ -1,6 +1,6 @@
 {
   "name": "humanizer-lint",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Closed-loop stylometric linter and anti-AI-slop diagnostic engine for Indonesian and English prose",
   "type": "module",
   "engines": {
