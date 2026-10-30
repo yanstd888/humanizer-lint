@@ -155,7 +155,7 @@ test('human fixtures pass at 85 or above', async () => {
   }
 });
 
-test('browser analyzer matches CLI results', async () => {
+test('browser analyzer matches CLI results', { skip: typeof CompressionStream !== 'function' }, async () => {
   const [idRules, enRules, defaultProfile] = await Promise.all([
     readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8').then(JSON.parse),
     readFile(path.join(root, 'rules', 'en-slop.json'), 'utf8').then(JSON.parse),
