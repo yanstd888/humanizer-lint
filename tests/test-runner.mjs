@@ -246,8 +246,12 @@ test('package metadata and rule catalogs match the public contract', async () =>
   assert.match(skill, /allowed-tools: Bash\(node:\*\) Read Write/);
   assert.match(skill, /metadata:\n  version: "0\.2\.3"\n  author: "yanstd888"/);
   assert.match(skill, /Mandatory deterministic verification|Run deterministic verification/i);
+  assert.match(readme, /\[!\[npm\]\(https:\/\/img\.shields\.io\/npm\/v\/humanizer-lint\)\]\(https:\/\/www\.npmjs\.com\/package\/humanizer-lint\)/);
   assert.match(readme, /\[!\[skills\.sh\]\(https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint\)\]\(https:\/\/skills\.sh\/yanstd888\/humanizer-lint\)/);
   assert.doesNotMatch(readme, /skills\.sh\/yanstd888\/humanizer-lint\/humanizer-lint/);
+  assert.match(readme, /npx humanizer-lint --file tulisan\.md --lang id/);
+  assert.match(readme, /npm install -g humanizer-lint/);
+  assert.doesNotMatch(readme, /not currently published to npm/i);
   assert.match(readme, /humanizer-lint --file draft\.md --lang auto/);
   assert.doesNotMatch(readme, /\p{Extended_Pictographic}/u);
   assert.match(workflow, /npm test/);
