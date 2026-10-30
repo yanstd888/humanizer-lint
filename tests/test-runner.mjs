@@ -16,6 +16,7 @@ import {
 } from '../scripts/utils/metrics.mjs';
 import { analyzeText, runAnalyzeCli } from '../scripts/analyze.mjs';
 import { createBrowserAnalyzer } from '../demo/analyzer-browser.mjs';
+import { I18N } from '../demo/i18n.mjs';
 import { fingerprintSamples, runFingerprintCli } from '../scripts/fingerprint.mjs';
 
 let rootPath = decodeURIComponent(new URL('../', import.meta.url).pathname);
@@ -173,6 +174,24 @@ test('browser analyzer matches CLI results', { skip: !browserParityAvailable }, 
     const text = await fixture(name);
     assert.deepEqual(await browser.analyzeTextAsync(text, { language }), analyzeText(text, { language }));
   }
+});
+
+test('demo chrome has complete EN/ID copy and official domain metadata', async () => {
+  const index = await readFile(path.join(root, 'demo', 'index.html'), 'utf8');
+  const app = await readFile(path.join(root, 'demo', 'app.mjs'), 'utf8');
+  for (const language of ['en', 'id']) {
+    assert.ok(I18N[language].pageTitle);
+    assert.ok(I18N[language].description);
+    assert.ok(I18N[language].analyze);
+    assert.ok(I18N[language].themeToDark);
+  }
+  assert.match(index, /<html lang="en">/);
+  assert.match(index, /https:\/\/humanizer\.aiclub\.ai\.id/);
+  assert.match(index, /data-language="en"[\s\S]*data-i18n="languageEn"/);
+  assert.match(index, /data-language="id"[\s\S]*data-i18n="languageId"/);
+  assert.match(app, /navigator\.language.*startsWith\('id'\)/);
+  assert.match(app, /humanizer-lint\.language/);
+  assert.match(app, /humanizer-lint\.theme/);
 });
 
 test('CLI runners cover PASS, SKIP, FAIL, stdin, and invalid arguments', async () => {
