@@ -7,13 +7,14 @@
 Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, and voice-profile drift without sending text to an external service.
 
 [![GitHub Release](https://img.shields.io/github/v/release/yanstd888/humanizer-lint?style=flat-square&logo=github)](https://github.com/yanstd888/humanizer-lint/releases)
+[![npm](https://img.shields.io/npm/v/humanizer-lint)](https://www.npmjs.com/package/humanizer-lint)
 [![CI](https://img.shields.io/github/actions/workflow/status/yanstd888/humanizer-lint/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/yanstd888/humanizer-lint/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/yanstd888/humanizer-lint?style=flat-square)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.3-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)](https://skills.sh/yanstd888/humanizer-lint)
 [![GitHub Stars](https://img.shields.io/github/stars/yanstd888/humanizer-lint?style=flat-square)](https://github.com/yanstd888/humanizer-lint/stargazers)
 
-[What it does](#what-it-does) | [Quick start](#quick-start) | [CLI reference](#cli-reference) | [Detectors](#detectors-and-violation-types) | [Agent skill](#use-as-an-agent-skill) | [FAQ](#frequently-asked-questions)
+[What it does](#what-it-does) | [Install](#install) | [Quick start](#quick-start) | [CLI reference](#cli-reference) | [Detectors](#detectors-and-violation-types) | [Agent skill](#use-as-an-agent-skill) | [FAQ](#frequently-asked-questions)
 
 </div>
 
@@ -119,7 +120,21 @@ Many AI humanizer services send text to another model and return a rewritten ver
 
 If you are looking for an AI writing detector linter, a ChatGPT tone remover CLI, or an open-source alternative to AI humanizers, note the boundary: this tool detects configured style signals and rhythm problems. It does not claim to determine whether a human or model wrote the text.
 
-## Installation
+## Install
+
+### CLI
+
+Run the published CLI without a global install:
+
+```sh
+npx humanizer-lint --file tulisan.md --lang id
+```
+
+Or install it globally:
+
+```sh
+npm install -g humanizer-lint
+```
 
 ### Install as an agent skill
 
@@ -131,9 +146,9 @@ npx skills add yanstd888/humanizer-lint --skill humanizer-lint
 
 The public listing, installation command, and install count are available on [skills.sh](https://skills.sh/yanstd888/humanizer-lint).
 
-### Run the CLI from source
+### Development (from source)
 
-The CLI package is not currently published to npm. Clone the repository and either run the scripts directly or use `npm link` to expose the two local binaries:
+Clone the repository and use `npm link` only when developing the local source:
 
 ```sh
 git clone https://github.com/yanstd888/humanizer-lint.git
