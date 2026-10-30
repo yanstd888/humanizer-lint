@@ -17,6 +17,7 @@ await mkdir(output, { recursive: true });
 await Promise.all([
   copy('demo/index.html', 'index.html'),
   copy('demo/app.mjs', 'app.mjs'),
+  copy('demo/i18n.mjs', 'i18n.mjs'),
   copy('demo/styles.css', 'styles.css'),
 
   copy('scripts/core', 'scripts/core'),
