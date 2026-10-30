@@ -1,4 +1,6 @@
 node_modules/
+.pages-dist/
+.wrangler/
 .verify-install/
 *.tgz
 .env

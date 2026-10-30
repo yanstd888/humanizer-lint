@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Coba humanizer-lint langsung di browser. Teks tidak dikirim ke server.">
+  <title>humanizer-lint demo</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="masthead">
+      <a class="brand" href="https://github.com/yanstd888/humanizer-lint">humanizer-lint</a>
+      <p>Demo lokal di browser</p>
+    </header>
+
+    <section class="intro" aria-labelledby="title">
+      <p class="eyebrow">Prose style linter</p>
+      <h1 id="title">Periksa pola tulisan, tanpa mengirim teks ke server.</h1>
+      <p>Tempel prose Indonesia atau Inggris. Analisis berjalan seluruhnya di browser menggunakan engine yang sama dengan CLI.</p>
+    </section>
+
+    <section class="workspace" aria-label="Analyzer demo">
+      <div class="input-panel">
+        <label for="text">Teks</label>
+        <textarea id="text" rows="13" placeholder="Tempel teks di sini. Tidak ada data yang dikirim ke server."></textarea>
+        <p id="error" class="error" role="alert" hidden></p>
+        <button id="analyze" type="button" disabled>Memuat engine…</button>
+      </div>
+
+      <section id="result" class="result-panel" aria-live="polite" hidden>
+        <div class="result-head">
+          <div>
+            <p class="eyebrow">Hasil</p>
+            <p class="score"><span id="score">—</span><small>/100</small></p>
+          </div>
+          <dl class="meta">
+            <div><dt>Status</dt><dd id="status">—</dd></div>
+            <div><dt>Bahasa</dt><dd id="language">—</dd></div>
+          </dl>
+        </div>
+        <h2>Temuan</h2>
+        <ul id="findings"></ul>
+      </section>
+    </section>
+
+    <footer>
+      <div>
+        <p class="eyebrow">CLI</p>
+        <code>npx humanizer-lint --file tulisan.md --lang id</code>
+      </div>
+      <nav aria-label="Project links">
+        <a href="https://www.npmjs.com/package/humanizer-lint">npm</a>
+        <a href="https://skills.sh/yanstd888/humanizer-lint">skills.sh</a>
+        <a href="https://github.com/yanstd888/humanizer-lint">GitHub</a>
+      </nav>
+    </footer>
+  </main>
+  <script type="module" src="./app.mjs"></script>
+</body>
+</html>

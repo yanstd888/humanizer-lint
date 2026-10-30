@@ -15,12 +15,20 @@ import {
   standardDeviation,
 } from '../scripts/utils/metrics.mjs';
 import { analyzeText, runAnalyzeCli } from '../scripts/analyze.mjs';
+import { createBrowserAnalyzer } from '../demo/analyzer-browser.mjs';
 import { fingerprintSamples, runFingerprintCli } from '../scripts/fingerprint.mjs';
 
 let rootPath = decodeURIComponent(new URL('../', import.meta.url).pathname);
 if (/^\/[A-Za-z]:/.test(rootPath)) rootPath = rootPath.slice(1);
 const root = path.resolve(rootPath);
 const fixture = async (name) => readFile(path.join(root, 'tests', 'fixtures', name), 'utf8');
+const browserParityAvailable = (() => {
+  try {
+    return typeof CompressionStream === 'function' && Boolean(new CompressionStream('deflate-raw'));
+  } catch {
+    return false;
+  }
+})();
 
 test('sanitizer removes non-prose and preserves prose paragraphs', () => {
   const input = `---\ntitle: Sample\n---\n# Heading\n\nA real sentence has enough words to remain here.\n\n\`inline code\` and https://example.com/a?q=1 remain entities.\n\n\`\`\`js\nconst ignored = 'Tidak dapat dipungkiri';\n\`\`\`\n\n| A | B |\n|---|---|\n| 1 | 2 |\n\n- fragment only\n- This list item contains a complete sentence with enough words.\n`;
@@ -151,6 +159,19 @@ test('human fixtures pass at 85 or above', async () => {
     const result = analyzeText(await fixture(name), { language });
     assert.equal(result.status, 'PASS', `${name}: ${JSON.stringify(result, null, 2)}`);
     assert.ok(result.score >= 85, `${name}: ${result.score}`);
+  }
+});
+
+test('browser analyzer matches CLI results', { skip: !browserParityAvailable }, async () => {
+  const [idRules, enRules, defaultProfile] = await Promise.all([
+    readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8').then(JSON.parse),
+    readFile(path.join(root, 'rules', 'en-slop.json'), 'utf8').then(JSON.parse),
+    readFile(path.join(root, 'profiles', 'default-human.json'), 'utf8').then(JSON.parse),
+  ]);
+  const browser = createBrowserAnalyzer({ rules: { id: idRules, en: enRules }, defaultProfile });
+  for (const [name, language] of [['ai-sample-id.txt', 'id'], ['ai-sample-en.txt', 'en'], ['human-sample-id.txt', 'id'], ['human-sample-en.txt', 'en']]) {
+    const text = await fixture(name);
+    assert.deepEqual(await browser.analyzeTextAsync(text, { language }), analyzeText(text, { language }));
   }
 });
 
