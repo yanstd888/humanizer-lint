@@ -2,6 +2,7 @@ import { createBrowserAnalyzer } from './analyzer-browser.mjs';
 import { I18N } from './i18n.mjs';
 
 const LANGUAGE_KEY = 'humanizer-lint.language';
+const THEME_KEY = 'humanizer-lint.theme';
 const text = document.querySelector('#text');
 const analyze = document.querySelector('#analyze');
 const error = document.querySelector('#error');
@@ -11,8 +12,10 @@ const status = document.querySelector('#status');
 const language = document.querySelector('#language');
 const findings = document.querySelector('#findings');
 const description = document.querySelector('meta[name="description"]');
+const themeToggle = document.querySelector('#theme-toggle');
 const languageButtons = [...document.querySelectorAll('[data-language]')];
 let currentLanguage = 'en';
+let currentTheme = 'light';
 let analyzer;
 let lastResult;
 let ready = false;
@@ -37,6 +40,12 @@ function initialLanguage() {
   const saved = stored(LANGUAGE_KEY);
   if (saved === 'en' || saved === 'id') return saved;
   return navigator.language?.toLowerCase().startsWith('id') ? 'id' : 'en';
+}
+
+function initialTheme() {
+  const saved = stored(THEME_KEY);
+  if (saved === 'light' || saved === 'dark') return saved;
+  return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 function copy() {
@@ -97,6 +106,7 @@ function applyLanguage(nextLanguage, persist = false) {
   analyze.textContent = ready ? strings.analyze : strings.loading;
   if (lastResult) render(lastResult);
   if (persist) save(LANGUAGE_KEY, currentLanguage);
+  updateThemeButton();
 }
 
 function updateThemeButton() {
@@ -107,6 +117,7 @@ function updateThemeButton() {
 function applyTheme(nextTheme, persist = false) {
   currentTheme = nextTheme;
   document.documentElement.classList.toggle('theme-dark', currentTheme === 'dark');
+  updateThemeButton();
   if (persist) save(THEME_KEY, currentTheme);
 }
 
@@ -116,9 +127,11 @@ async function loadJson(path) {
   return response.json();
 }
 
+applyTheme(initialTheme());
 applyLanguage(initialLanguage());
 
 languageButtons.forEach((button) => button.addEventListener('click', () => applyLanguage(button.dataset.language, true)));
+themeToggle.addEventListener('click', () => applyTheme(currentTheme === 'dark' ? 'light' : 'dark', true));
 
 try {
   const [idRules, enRules, defaultProfile] = await Promise.all([
