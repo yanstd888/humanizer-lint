@@ -12,8 +12,8 @@ const RULES = {
   en: JSON.parse(readFileSync(new URL('../rules/en-slop.json', import.meta.url), 'utf8')),
 };
 const DEFAULT_PROFILE = JSON.parse(readFileSync(new URL('../profiles/default-human.json', import.meta.url), 'utf8'));
-const ID_WORDS = new Set(['yang', 'dan', 'dengan', 'untuk', 'dari', 'pada', 'tidak', 'ini', 'itu', 'karena', 'oleh', 'dalam', 'setelah', 'sebelum']);
-const EN_WORDS = new Set(['the', 'and', 'with', 'for', 'from', 'this', 'that', 'because', 'after', 'before', 'into', 'when', 'while', 'through']);
+const ID_WORDS = new Set(['yang', 'dan', 'di', 'ini', 'untuk', 'dengan', 'dari', 'pada', 'dalam', 'tidak', 'akan', 'atau', 'juga', 'oleh', 'adalah', 'sebagai', 'bahwa', 'dapat', 'karena', 'tersebut']);
+const EN_WORDS = new Set(['the', 'and', 'of', 'to', 'in', 'is', 'that', 'for', 'it', 'with', 'as', 'on', 'are', 'this', 'by', 'be', 'at', 'or', 'from', 'an']);
 
 function round(value, places = 4) {
   const factor = 10 ** places;
@@ -182,7 +182,8 @@ function morphologyViolations(tokenized, morphology) {
   const nominalizations = words.filter((word) => nominalizationPattern.test(word) && !nominalizationWhitelist.has(word));
   const passivePattern = new RegExp(morphology.passivePattern, 'iu');
   const loanwordExclusion = new RegExp(morphology.loanwordExclusionPattern, 'iu');
-  const passives = words.filter((word) => passivePattern.test(word) && !loanwordExclusion.test(word));
+  const loanwordSuffixExclusion = new RegExp(morphology.loanwordSuffixExclusionPattern ?? '$^', 'iu');
+  const passives = words.filter((word) => passivePattern.test(word) && !loanwordExclusion.test(word) && !loanwordSuffixExclusion.test(word));
   const nominalizationRatio = words.length ? nominalizations.length / words.length : 0;
   const passiveRatio = words.length ? passives.length / words.length : 0;
   const violations = [];
@@ -207,16 +208,22 @@ function morphologyViolations(tokenized, morphology) {
   }
 
   const openingPattern = new RegExp(morphology.subordinateOpeningPattern, 'iu');
-  for (let index = 1; index < tokenized.sentences.length; index += 1) {
-    const previous = tokenized.sentences[index - 1];
-    const current = tokenized.sentences[index];
-    if (openingPattern.test(previous.text) && openingPattern.test(current.text)) {
+  let foundConsecutiveOpening = false;
+  for (const paragraph of tokenized.paragraphs) {
+    for (let index = 1; index < paragraph.sentences.length; index += 1) {
+      const previous = paragraph.sentences[index - 1];
+      const current = paragraph.sentences[index];
+      if (!openingPattern.test(previous.text) || !openingPattern.test(current.text)) continue;
       violations.push({
         type: 'PASSIVE_BLOATING',
-        location: `Sentences ${previous.sentenceIndex}-${current.sentenceIndex}`,
-        fixInstruction: 'Replace consecutive translation-style openings with direct subjects and verbs.',
+        location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${previous.sentenceIndex}-${current.sentenceIndex}`,
+        match: 'Two or more consecutive sentences start with translationese subordinate clauses',
+        fixInstruction: 'Rewrite to start directly with the active subject (Subjek + Predikat).',
       });
+      foundConsecutiveOpening = true;
+      break;
     }
+    if (foundConsecutiveOpening) break;
   }
   return { violations, nominalizationRatio, passiveRatio };
 }
@@ -261,10 +268,12 @@ function scoreResult(metrics, violations, language, thresholds) {
   }, 0));
   const morphologyPenalty = Math.min(15,
     (violations.some((violation) => violation.type === 'EXCESSIVE_NOMINALIZATION') ? 7.5 : 0)
-    + (violations.some((violation) => violation.type === 'PASSIVE_BLOATING') ? 7.5 : 0));
+    + Math.min(15, violations.filter((violation) => violation.type === 'PASSIVE_BLOATING').length * 7.5));
   const vocabularyPenalty = metrics.mattr < thresholds.mattr[language] ? 5 : 0;
   const entropyPenalty = violations.some((violation) => ['LOW_ENTROPY_REPETITION', 'SYMMETRIC_PARAGRAPHS', 'REPETITIVE_STARTERS'].includes(violation.type)) ? 5 : 0;
-  return Math.max(0, Math.round(100 - burstinessPenalty - rhythmPenalty - lexicalPenalty - morphologyPenalty - vocabularyPenalty - entropyPenalty));
+  const profilePenalty = violations.some((violation) => violation.type === 'VOICE_PROFILE_DEVIATION') ? 5 : 0;
+  const vocabularyAndProfilePenalty = Math.min(10, vocabularyPenalty + entropyPenalty + profilePenalty);
+  return Math.max(0, Math.round(100 - burstinessPenalty - rhythmPenalty - lexicalPenalty - morphologyPenalty - vocabularyAndProfilePenalty));
 }
 
 export function analyzeText(input, options = {}) {
@@ -294,11 +303,21 @@ export function analyzeText(input, options = {}) {
   metrics.nominalizationRatio = morphology.nominalizationRatio;
   metrics.passiveRatio = morphology.passiveRatio;
   metrics.voiceProfileDeviation = voiceDeviation(metrics, tokenized, sanitized, profile);
+  const profileTargets = profile.targets ?? profile.metrics ?? {};
+  const targetMean = Number(profileTargets.meanSentenceLength);
+  const meanDeviation = targetMean > 0 ? Math.abs(metrics.meanSentenceLength - targetMean) / targetMean : 0;
+  const profileViolations = options.profile != null && meanDeviation > 0.3 ? [{
+    type: 'VOICE_PROFILE_DEVIATION',
+    location: 'Global Document',
+    match: 'Mean sentence length deviates >30% from target voice profile',
+    fixInstruction: 'Adjust overall sentence complexity so mean sentence length approaches the target profile.',
+  }] : [];
   const violations = [
     ...patternMatches,
     ...monotonyViolations(tokenized),
     ...structuralViolations(tokenized, metrics),
     ...morphology.violations,
+    ...profileViolations,
     ...statisticalViolations(metrics, thresholds, language),
   ];
   const score = scoreResult(metrics, violations, language, thresholds);
@@ -318,10 +337,12 @@ export function analyzeText(input, options = {}) {
 }
 
 function formatHuman(result) {
-  const lines = [`STATUS: ${result.status}`, `SCORE: ${result.score}`, `LANGUAGE: ${result.language}`];
-  if (result.warning) lines.push(`WARNING: ${result.warning}`);
-  lines.push(`METRICS: ${JSON.stringify(result.metrics)}`);
-  for (const violation of result.violations) lines.push(`${violation.type} | ${violation.location} | ${violation.fixInstruction}`);
+  const lines = [`Status: ${result.status}`, `Score: ${result.score}`, `Language: ${result.language}`];
+  if (result.warning) lines.push(`Warning: ${result.warning}`);
+  lines.push('', 'Metrics:');
+  for (const [name, value] of Object.entries(result.metrics)) lines.push(`  ${name}: ${value}`);
+  if (result.violations.length) lines.push('', 'Violations:');
+  for (const violation of result.violations) lines.push(`  ${violation.type} | ${violation.location} | ${violation.fixInstruction}`);
   return `${lines.join('\n')}\n`;
 }
 
@@ -350,13 +371,14 @@ export async function runAnalyzeCli(argv, io = {}) {
       allowPositionals: false,
     });
     if (values.help) {
-      stdout('Usage: stylometric-analyze (--file <path> | --stdin) [--lang id|en|auto] [--profile <path>] [--json]\n');
+      stdout('Usage: humanizer-lint (--file <path> | --stdin) [--lang id|en|auto] [--profile <path>] [--json]\n');
       return 0;
     }
     if (Boolean(values.file) === Boolean(values.stdin)) throw new Error('Choose exactly one input: --file or --stdin');
     if (!['id', 'en', 'auto'].includes(values.lang)) throw new Error('--lang must be id, en, or auto');
+    if (values.stdin && io.stdin == null && process.stdin.isTTY) throw new Error('--stdin requires piped input');
     const text = values.file ? await new Promise((resolve, reject) => readFile(values.file, 'utf8', (error, data) => error ? reject(error) : resolve(data))) : await stdin();
-    const profile = values.profile ? JSON.parse(await new Promise((resolve, reject) => readFile(values.profile, 'utf8', (error, data) => error ? reject(error) : resolve(data)))) : DEFAULT_PROFILE;
+    const profile = values.profile ? JSON.parse(await new Promise((resolve, reject) => readFile(values.profile, 'utf8', (error, data) => error ? reject(error) : resolve(data)))) : undefined;
     const result = analyzeText(text, { language: values.lang, profile });
     stdout(values.json ? `${JSON.stringify(result, null, 2)}\n` : formatHuman(result));
     return result.status === 'FAIL' ? 1 : 0;

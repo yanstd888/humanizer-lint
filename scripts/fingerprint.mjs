@@ -91,7 +91,7 @@ export async function runFingerprintCli(argv, io = {}) {
       allowPositionals: false,
     });
     if (values.help) {
-      stdout('Usage: stylometric-fingerprint --input <file-or-dir> --output <profile.json> [--name <name>] [--lang id|en|auto]\n');
+      stdout('Usage: humanizer-fingerprint --input <file-or-dir> --output <profile.json> [--name <name>] [--lang id|en|auto]\n');
       return 0;
     }
     if (!values.input || !values.output) throw new Error('--input and --output are required');

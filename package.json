@@ -1,24 +1,25 @@
 {
-  "name": "stylometric-humanizer",
-  "version": "0.1.0",
-  "description": "Deterministic Indonesian and English prose linting for agent drafts.",
+  "name": "humanizer-lint",
+  "version": "0.2.0",
+  "description": "Closed-loop stylometric linter and anti-AI-slop diagnostic engine for Indonesian and English prose",
   "type": "module",
   "engines": {
     "node": ">=18.3.0"
   },
   "bin": {
-    "stylometric-analyze": "scripts/analyze.mjs",
-    "stylometric-fingerprint": "scripts/fingerprint.mjs"
-  },
-  "scripts": {
-    "test": "node --test tests/test-runner.mjs"
+    "humanizer-lint": "./scripts/analyze.mjs",
+    "humanizer-fingerprint": "./scripts/fingerprint.mjs"
   },
   "files": [
     "SKILL.md",
     "README.md",
-    "scripts",
-    "rules",
-    "profiles"
+    "LICENSE",
+    "scripts/",
+    "rules/",
+    "profiles/"
   ],
+  "scripts": {
+    "test": "node --test tests/test-runner.mjs"
+  },
   "license": "MIT"
 }

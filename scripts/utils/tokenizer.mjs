@@ -4,6 +4,8 @@ const ABBREVIATIONS = {
 };
 
 const DOT = '\uE000';
+const DECIMAL = '\uE001';
+const ELLIPSIS = '\uE002';
 
 function escapeRegExp(value) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -13,7 +15,9 @@ function protectAbbreviations(text, language) {
   const items = language === 'auto'
     ? [...new Set([...ABBREVIATIONS.id, ...ABBREVIATIONS.en])]
     : ABBREVIATIONS[language] ?? ABBREVIATIONS.en;
-  let protectedText = text;
+  let protectedText = text
+    .replace(/\.{2,}/g, ELLIPSIS)
+    .replace(/(\d)\.(\d)/g, `$1${DECIMAL}$2`);
   for (const abbreviation of items.sort((a, b) => b.length - a.length)) {
     protectedText = protectedText.replace(
       new RegExp(`\\b${escapeRegExp(abbreviation)}`, 'gi'),
@@ -24,7 +28,8 @@ function protectAbbreviations(text, language) {
 }
 
 export function tokenizeWords(text) {
-  return (String(text ?? '').toLowerCase().match(/token_entity|[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)?/gu) ?? []);
+  const normalized = String(text ?? '').replace(/—|--/g, ' ');
+  return (normalized.toLowerCase().match(/token_entity|[\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)?(?:-[\p{L}\p{N}]+)*/gu) ?? []);
 }
 
 export function tokenizeText(input, language = 'auto') {
@@ -35,7 +40,11 @@ export function tokenizeText(input, language = 'auto') {
   for (const [paragraphOffset, rawParagraph] of rawParagraphs.entries()) {
     const protectedText = protectAbbreviations(rawParagraph.replace(/\s+/g, ' '), language);
     const markedText = protectedText.replace(/([.!?](?:["')\]”’]+)?)\s+/gu, '$1\n');
-    const parts = markedText.split('\n').map((value) => value.replaceAll(DOT, '.').trim()).filter(Boolean);
+    const parts = markedText.split('\n').map((value) => value
+      .replaceAll(DOT, '.')
+      .replaceAll(DECIMAL, '.')
+      .replaceAll(ELLIPSIS, '...')
+      .trim()).filter(Boolean);
     const paragraphSentences = [];
 
     for (const text of parts) {

@@ -9,6 +9,7 @@ export function sanitizeMarkdown(input) {
   let text = String(input ?? '').replace(/\r\n?/g, '\n');
   text = text.replace(/^---\s*\n[\s\S]*?\n---\s*(?:\n|$)/, '');
   text = text.replace(/^(?:```|~~~)[^\n]*\n[\s\S]*?^(?:```|~~~)\s*$/gm, '\n');
+  text = text.replace(/\[([^\]]+)\]\(https?:\/\/[^\s)]+\)/gi, '$1');
   text = text.replace(/`[^`\n]+`/g, ENTITY);
   text = text.replace(/https?:\/\/[^\s)]+/gi, (match) => {
     const trailing = match.match(/[.!?,;:]+$/u)?.[0] ?? '';

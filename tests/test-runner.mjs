@@ -33,9 +33,12 @@ test('sanitizer removes non-prose and preserves prose paragraphs', () => {
 });
 
 test('sanitizer preserves URL punctuation and complete wrapped list prose', () => {
-  const output = sanitizeMarkdown('- This complete list item wraps onto\n  a second line and ends with punctuation.\n\nSee https://example.com/docs. Then continue.');
+  const output = sanitizeMarkdown('- This complete list item wraps onto\n  a second line and ends with punctuation.\n\nRead the [annual report](https://example.com/report). See https://example.com/docs. Then continue.\n\n| A | B |   ');
   assert.match(output, /This complete list item wraps onto a second line and ends with punctuation\./);
+  assert.match(output, /Read the annual report\./);
+  assert.doesNotMatch(output, /\[annual report\]|TOKEN_ENTITY\)/);
   assert.match(output, /See TOKEN_ENTITY\. Then continue\./);
+  assert.doesNotMatch(output, /\| A \|/);
 });
 
 test('tokenizer protects abbreviations, casing, quotes, and brackets', () => {
@@ -43,6 +46,19 @@ test('tokenizer protects abbreviations, casing, quotes, and brackets', () => {
   assert.equal(result.sentences.length, 4);
   assert.match(result.sentences[0].text, /^Dr\./);
   assert.deepEqual(result.sentences.map((sentence) => sentence.paragraphIndex), [1, 1, 1, 1]);
+});
+
+test('tokenizer preserves reduplication and protects decimals and ellipses', () => {
+  const result = tokenizeText('Anak-anak membaca undang-undang itu... Nilainya 3.5 persen. Biayanya Rp 10.000 sekarang.', 'id');
+  assert.deepEqual(result.sentences[0].words.slice(0, 4), ['anak-anak', 'membaca', 'undang-undang', 'itu']);
+  assert.equal(result.sentences.length, 2);
+  assert.ok(result.sentences.some((sentence) => sentence.text.includes('3.5')));
+  assert.ok(result.sentences.some((sentence) => sentence.text.includes('10.000')));
+});
+
+test('automatic language detection favors Indonesian function words over technical loanwords', () => {
+  const result = analyzeText('Framework cloud ini berjalan di server dan digunakan untuk deployment yang aman dengan konfigurasi dari tim. Operator memeriksa log setelah proses selesai. Catatan terakhir menjelaskan perubahan yang dibuat.', { language: 'auto' });
+  assert.equal(result.language, 'id');
 });
 
 test('metrics implement the specified formulas', () => {
@@ -65,11 +81,30 @@ test('short prose skips statistical scoring without NaN values', () => {
 });
 
 test('Markdown code and Indonesian whitelist words do not create false positives', () => {
-  const text = `Perusahaan menjaga kesehatan pekerja melalui diskusi rutin.\n\n\`\`\`txt\nTidak dapat dipungkiri bahwa pengimplementasian dilakukan.\n\`\`\`\n\nKeputusan itu dicatat oleh tim setelah pertemuan selesai. Kalimat terakhir sengaja dibuat cukup berbeda agar pemeriksaan statistik tetap dapat berjalan dengan aman.`;
+  const text = `Perusahaan menjaga kesehatan anak-anak melalui diskusi distribusi dan digitalisasi rutin.\n\n\`\`\`txt\nTidak dapat dipungkiri bahwa pengimplementasian dilakukan.\n\`\`\`\n\nDiskriminasi dibahas tanpa distorsi oleh tim setelah pertemuan selesai. Undang-undang itu memberi dasar yang jauh lebih rinci untuk evaluasi berikutnya.`;
   const result = analyzeText(text, { language: 'id' });
   assert.equal(result.violations.some((v) => v.type === 'SLOP_PHRASE'), false);
   assert.equal(result.violations.some((v) => v.type === 'EXCESSIVE_NOMINALIZATION'), false);
   assert.equal(result.violations.some((v) => v.type === 'PASSIVE_BLOATING'), false);
+});
+
+test('custom voice profile creates a capped profile penalty when mean sentence length drifts', () => {
+  const text = 'Rina membuka laporan pagi. Tim membaca catatan baru dengan teliti. Setelah data selesai diperiksa, mereka menyusun daftar perubahan yang cukup panjang untuk rapat siang dan membagikan tugas kepada setiap pemilik layanan.';
+  const baseline = analyzeText(text, { language: 'id' });
+  const result = analyzeText(text, {
+    language: 'id',
+    profile: { targets: { meanSentenceLength: 40 } },
+  });
+  assert.ok(result.violations.some((violation) => violation.type === 'VOICE_PROFILE_DEVIATION'));
+  assert.equal(baseline.score - result.score, 5);
+});
+
+test('translationese openings trigger only when consecutive within one paragraph', () => {
+  const sameParagraph = analyzeText('Dengan menggunakan data baru, tim memperbaiki jadwal kerja. Guna memastikan hasilnya stabil, operator memeriksa setiap catatan sebelum rapat dimulai. Mereka lalu mengirim laporan yang jauh lebih panjang kepada pemilik layanan.', { language: 'id' });
+  assert.ok(sameParagraph.violations.some((violation) => violation.type === 'PASSIVE_BLOATING' && /consecutive sentences/i.test(violation.match)));
+
+  const separateParagraphs = analyzeText('Dengan menggunakan data baru, tim memperbaiki jadwal kerja.\n\nGuna memastikan hasilnya stabil, operator memeriksa setiap catatan sebelum rapat dimulai. Kalimat terakhir dibuat jauh lebih panjang agar pemeriksaan statistik tetap berjalan tanpa mengubah tujuan pengujian ini.', { language: 'id' });
+  assert.equal(separateParagraphs.violations.some((violation) => violation.type === 'PASSIVE_BLOATING' && /consecutive sentences/i.test(violation.match)), false);
 });
 
 test('statistical gate failures always include actionable diagnostics', () => {
@@ -144,13 +179,20 @@ test('CLI runners cover PASS, SKIP, FAIL, stdin, and invalid arguments', async (
   assert.equal(skipCode, 0);
   assert.equal(JSON.parse(skippedOutput.join('')).status, 'SKIP');
 
+  const humanOutput = [];
+  assert.equal(await runAnalyzeCli(
+    ['--stdin', '--lang', 'id'],
+    { stdout: (value) => humanOutput.push(value), stderr: (value) => humanOutput.push(value), stdin: async () => 'Pendek. Selesai.' },
+  ), 0);
+  assert.match(humanOutput.join(''), /Status:\s+SKIP[\s\S]*Metrics:/);
+
   const errors = [];
   assert.equal(await runAnalyzeCli([], { stdout: () => {}, stderr: (value) => errors.push(value), stdin: async () => '' }), 2);
   assert.match(errors.join(''), /exactly one input/i);
 });
 
 test('fingerprint aggregates one to five samples and writes a loadable profile', async () => {
-  const dir = await mkdtemp(path.join(tmpdir(), 'stylometric-humanizer-'));
+  const dir = await mkdtemp(path.join(tmpdir(), 'humanizer-lint-'));
   try {
     const first = path.join(dir, 'one.txt');
     const second = path.join(dir, 'two.txt');
@@ -182,18 +224,30 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
 });
 
 test('package metadata and rule catalogs match the public contract', async () => {
-  const packageJson = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
+  const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
+  const packageJson = JSON.parse(packageSource);
   const idRules = JSON.parse(await readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8'));
   const enRules = JSON.parse(await readFile(path.join(root, 'rules', 'en-slop.json'), 'utf8'));
   const skill = await readFile(path.join(root, 'SKILL.md'), 'utf8');
+  const license = await readFile(path.join(root, 'LICENSE'), 'utf8');
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
-  assert.equal(packageJson.bin['stylometric-analyze'], 'scripts/analyze.mjs');
-  assert.equal(packageJson.bin['stylometric-fingerprint'], 'scripts/fingerprint.mjs');
+  assert.equal(packageJson.name, 'humanizer-lint');
+  assert.equal(packageJson.version, '0.2.0');
+  assert.equal(packageJson.bin['humanizer-lint'], './scripts/analyze.mjs');
+  assert.equal(packageJson.bin['humanizer-fingerprint'], './scripts/fingerprint.mjs');
+  assert.equal((packageSource.match(/"files"\s*:/g) ?? []).length, 1);
   assert.ok(idRules.patterns.length >= 40);
   assert.ok(enRules.patterns.length >= 40);
-  assert.match(skill, /^---\nname: stylometric-humanizer\n/);
+  assert.match(skill, /^---\nname: humanizer-lint\n/);
+  assert.match(skill, /compatibility: Node\.js >= 18\.3\.0/);
+  assert.match(skill, /allowed-tools: Bash\(node:\*\) Read Write/);
+  assert.match(skill, /metadata:\n  version: "0\.2\.0"\n  author: "yanstd888"/);
   assert.match(skill, /Mandatory deterministic verification|Run deterministic verification/i);
+  assert.match(license, /MIT License/);
+
+  const rootMarkdown = (await readdir(root)).filter((name) => name.toLowerCase().endsWith('.md')).sort();
+  assert.deepEqual(rootMarkdown, ['README.md', 'SKILL.md']);
 });
 
 test('production scripts use only approved built-ins and forbidden APIs are absent', async () => {

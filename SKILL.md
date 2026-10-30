@@ -1,10 +1,16 @@
 ---
-name: stylometric-humanizer
-description: Lint ID and EN prose with deterministic style metrics.
-version: 0.1.0
+name: humanizer-lint
+description: Closed-loop stylometric linter and anti-AI-slop validator for Indonesian and English prose. Use when writing, editing, humanizing, or auditing articles, essays, documentation, and copy.
+license: MIT
+compatibility: Node.js >= 18.3.0 (zero external dependencies)
+allowed-tools: Bash(node:*) Read Write
+metadata:
+  version: "0.2.0"
+  author: "yanstd888"
+  domain: "writing"
 ---
 
-# Stylometric humanizer
+# Humanizer Lint
 
 Use this skill when writing or revising Indonesian or English prose that must avoid uniform agent rhythm, repeated stock phrases, and excessive translation-style structure. The local analyzer is mandatory. It uses only Node.js built-ins and sends no text over the network.
 

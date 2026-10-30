@@ -41,7 +41,7 @@
     {"id":"ID038","type":"SLOP_PHRASE","pattern":"\\btanpa diragukan lagi\\b","fixInstruction":"Ganti kepastian retoris dengan bukti atau klaim langsung."},
     {"id":"ID039","type":"SLOP_PHRASE","pattern":"\\bmembuka peluang baru\\b","fixInstruction":"Sebutkan peluang yang benar-benar tersedia."},
     {"id":"ID040","type":"SLOP_PHRASE","pattern":"\\bmendorong pertumbuhan berkelanjutan\\b","fixInstruction":"Sebutkan mekanisme dan indikator pertumbuhannya."},
-    {"id":"ID041","type":"DEFINITIONAL_OPENING","scope":"paragraph-start","pattern":"^[A-ZÀ-ÖØ-Þ][\\p{L}\\p{N}\\s-]{2,80} adalah (?:sebuah|suatu|proses|metode|sistem)\\b","fixInstruction":"Ganti definisi kaku dengan fungsi, contoh, atau fakta konkret."},
+    {"id":"ID041","type":"DEFINITIONAL_OPENING","scope":"paragraph-start","pattern":"^[A-ZÀ-ÖØ-Þ][\\p{L}\\p{N}_\\s'\"-]{2,80}\\s+adalah\\s+(?:sebuah|suatu|proses|metode|sistem|cara|langkah|pendekatan)\\b","fixInstruction":"Ganti definisi kaku dengan fungsi, contoh, atau fakta konkret."},
     {"id":"ID042","type":"DEFINITIONAL_OPENING","scope":"paragraph-start","pattern":"^Dalam (?:konteks|dunia|ranah) [\\p{L}\\p{N}\\s-]+,","fixInstruction":"Mulai langsung dari subjek yang dibahas."}
   ],
   "morphology": {
@@ -50,7 +50,8 @@
     "nominalizationMaxRatio": 0.045,
     "passivePattern": "^di[a-z]{4,}(?:kan|i)$",
     "loanwordExclusionPattern": "^(?:diskusi|dinamika|dimensi|direktori|distribusi|divisi|disiplin|digital|diagnosa|diagram|dialek|dialog|diameter|dilema|dinamis|diplomasi|direktur|disertasi|diskon|divergensi|diversifikasi|dedikasi|definisi|delegasi|demokrasi|depresi|deskripsi|destinasi|deteksi|deviasi|dominasi|donasi|durasi)$",
+    "loanwordSuffixExclusionPattern": "(?:asi|isi|ensi|uksi|logi|nomi|grafi|metri|krasi|fobi|pati|terapi|stasi|nasti)$",
     "passiveMaxRatio": 0.035,
-    "subordinateOpeningPattern": "^(?:Dengan menggunakan|Untuk mencapai|Dalam rangka|Melalui pendekatan)\\b"
+    "subordinateOpeningPattern": "^(?:Dengan menggunakan|Untuk mencapai|Dalam rangka|Melalui pendekatan|Guna memastikan|Dengan memanfaatkan)\\b"
   }
 }

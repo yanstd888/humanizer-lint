@@ -1,4 +1,4 @@
-# Stylometric Humanizer
+# Humanizer Lint
 
 A zero-dependency Node.js CLI and `skills.sh` skill for deterministic Indonesian and English prose linting. It measures sentence-length variation, adjacent rhythm, lexical diversity, compression ratio, repeated structure, configured slop phrases, Indonesian nominalization/passive density, and deviation from an optional voice profile.
 
@@ -60,7 +60,7 @@ node scripts/fingerprint.mjs \
   --lang auto
 ```
 
-The output records average sentence length, standard deviation, burstiness CV, adjacent rhythm delta, MATTR, paragraph size, and punctuation rates. The analyzer reports relative `voiceProfileDeviation` when that profile is supplied. Profile deviation is diagnostic and does not change the pass score.
+The output records average sentence length, standard deviation, burstiness CV, adjacent rhythm delta, MATTR, paragraph size, and punctuation rates. The analyzer reports relative `voiceProfileDeviation` when that profile is supplied. A custom profile whose target mean sentence length differs by more than 30% creates a `VOICE_PROFILE_DEVIATION` violation and a 5-point penalty, capped with vocabulary and entropy penalties at 10 points.
 
 ## Checks
 
@@ -103,7 +103,7 @@ The score starts at 100:
 - monotony windows: up to 20;
 - lexical and structural clichés: up to 30;
 - Indonesian nominalization/passive density: up to 15;
-- vocabulary and entropy checks: up to 10.
+- vocabulary, entropy, and custom-profile deviation: up to 10 combined.
 
 A normal-length text passes only when:
 
@@ -156,6 +156,10 @@ Production scripts import only approved Node.js built-ins:
 - `node:util`
 
 The scripts do not use `fetch`, `eval`, `Function`, or `child_process`. They do not execute shell commands. Fingerprint output is written through a temporary file and renamed into place.
+
+## Release policy
+
+Every repository change must update the package and skill version, then publish a matching Git tag and GitHub release after tests and package verification pass.
 
 ## Project layout
 
