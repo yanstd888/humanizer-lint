@@ -5,7 +5,7 @@ license: MIT
 compatibility: Node.js >= 18.3.0 (zero external dependencies)
 allowed-tools: Bash(node:*) Read Write
 metadata:
-  version: "0.2.3"
+  version: "0.2.4"
   author: "yanstd888"
   domain: "writing"
 ---

@@ -256,7 +256,7 @@ test('package metadata and rule catalogs match the public contract', async () =>
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '0.2.3');
+  assert.equal(packageJson.version, '0.2.4');
   assert.equal(packageJson.bin['humanizer-lint'], './scripts/analyze.mjs');
   assert.equal(packageJson.bin['humanizer-fingerprint'], './scripts/fingerprint.mjs');
   assert.equal((packageSource.match(/"files"\s*:/g) ?? []).length, 1);
@@ -265,7 +265,7 @@ test('package metadata and rule catalogs match the public contract', async () =>
   assert.match(skill, /^---\nname: humanizer-lint\n/);
   assert.match(skill, /compatibility: Node\.js >= 18\.3\.0/);
   assert.match(skill, /allowed-tools: Bash\(node:\*\) Read Write/);
-  assert.match(skill, /metadata:\n  version: "0\.2\.3"\n  author: "yanstd888"/);
+  assert.match(skill, /metadata:\n  version: "0\.2\.4"\n  author: "yanstd888"/);
   assert.match(skill, /Mandatory deterministic verification|Run deterministic verification/i);
   assert.match(readme, /\[!\[npm\]\(https:\/\/img\.shields\.io\/npm\/v\/humanizer-lint\)\]\(https:\/\/www\.npmjs\.com\/package\/humanizer-lint\)/);
   assert.match(readme, /\[!\[skills\.sh\]\(https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint\)\]\(https:\/\/skills\.sh\/yanstd888\/humanizer-lint\)/);
