@@ -1,0 +1,24 @@
+{
+  "name": "stylometric-humanizer",
+  "version": "0.1.0",
+  "description": "Deterministic Indonesian and English prose linting for agent drafts.",
+  "type": "module",
+  "engines": {
+    "node": ">=18.3.0"
+  },
+  "bin": {
+    "stylometric-analyze": "scripts/analyze.mjs",
+    "stylometric-fingerprint": "scripts/fingerprint.mjs"
+  },
+  "scripts": {
+    "test": "node --test tests/test-runner.mjs"
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "scripts",
+    "rules",
+    "profiles"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,7 @@
+node_modules/
+.verify-install/
+*.tgz
+.env
+.env.*
+!.env.example
+*.pem
