@@ -1,6 +1,6 @@
 ---
 name: humanizer-lint
-description: Deterministic multilingual AI text humanizer, anti-slop prose linter, and stylometric analyzer (EN, ID, ES, MS, FR, DE, PT, ZH + 100+ languages via Intl.Segmenter). Fixes uniform sentence rhythm, low burstiness (CV), MATTR vocabulary repetition, and LLM clichés using a local zero-dependency Node.js CLI validator.
+description: Make AI-generated text read like human writing — deterministic humanizer and anti-slop prose linter that detects and fixes robotic LLM patterns (uniform sentence rhythm, low burstiness, MATTR repetition, AI cliches) in English, Indonesian, Spanish, French, German, Portuguese, Malay, Chinese and 100+ languages. Local zero-dependency Node.js CLI, no network.
 summary: Deterministic closed-loop AI text humanizer and stylometric prose linter that enforces natural sentence burstiness, vocabulary diversity, and zero LLM clichés across 100+ languages.
 topic: agent-workflows
 tags:

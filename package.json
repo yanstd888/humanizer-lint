@@ -1,7 +1,7 @@
 {
   "name": "humanizer-lint",
   "version": "1.2.2",
-  "description": "Multilingual closed-loop AI text humanizer, anti-slop prose linter, and stylometric burstiness (CV) & MATTR validator (EN, ID, ES, MS, FR, DE, PT, ZH + 100+ universal languages via Intl.Segmenter). Zero dependencies.",
+  "description": "Make AI-generated text read like human writing — deterministic humanizer and anti-slop prose linter that detects and fixes robotic LLM patterns (uniform sentence rhythm, low burstiness, MATTR repetition, AI cliches) in English, Indonesian, Spanish, French, German, Portuguese, Malay, Chinese and 100+ languages. Local zero-dependency Node.js CLI, no network.",
   "type": "module",
   "engines": {
     "node": ">=18.3.0"

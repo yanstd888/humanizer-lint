@@ -417,7 +417,8 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.2
     description: 'Deterministic closed-loop stylometric linter, burstiness (CV) & MATTR analyzer, and anti-slop humanizer for 8 languages (EN, ID, ES, MS, FR, DE, PT, ZH) + 100+ universal languages.',
     skills: ['humanizer-lint']
   }]);
-  assert.match(packageJson.description, /100\+ universal languages via Intl\.Segmenter/);
+  assert.match(packageJson.description, /^Make AI-generated text read like human writing — deterministic humanizer and anti-slop prose linter/);
+  assert.match(packageJson.description, /100\+ languages\. Local zero-dependency Node\.js CLI, no network\./);
   assert.equal(packageJson.homepage, 'https://humanizer.aiclub.ai.id');
   assert.deepEqual(packageJson.files, ['SKILL.md', 'README.md', 'LICENSE', 'scripts/', 'rules/', 'profiles/']);
   assert.deepEqual(packageJson.keywords, ['skills-sh', 'agent-skill', 'ai-humanizer', 'humanizer', 'anti-slop', 'prose-linter', 'stylometry', 'burstiness', 'mattr', 'multilingual-nlp', 'indonesian-nlp', 'copywriting', 'markdown-linter', 'claude-code', 'cursor-skill', 'windsurf', 'codex', 'gemini-cli']);
@@ -433,6 +434,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.2
   }
 
   assert.match(skill, /^---\nname: humanizer-lint\n/);
+  assert.match(skill, /description: Make AI-generated text read like human writing — deterministic humanizer and anti-slop prose linter/);
   assert.match(skill, /version: 1\.2\.2/);
   assert.match(skill, /summary: Deterministic closed-loop AI text humanizer/);
   assert.match(skill, /topic: agent-workflows/);
@@ -444,6 +446,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.2
   assert.match(skill, /## Agent-SEO Trigger Intents & Search Keywords/);
   assert.match(skill, /metadata:\n  version: "1\.2\.2"\n  author: "yanstd888"/);
 
+  assert.match(readme, /### Humanize AI-generated text with a deterministic local AI humanizer and anti-slop prose linter/);
   assert.match(readme, /\[!\[skills\.sh\]\(https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint\)\]\(https:\/\/www\.skills\.sh\/yanstd888\/humanizer-lint\/humanizer-lint\)/);
   assert.match(readme, /\*\*Summary\*\*/);
   assert.match(readme, /Eliminates robotic LLM writing patterns/);

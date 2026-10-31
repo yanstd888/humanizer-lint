@@ -2,7 +2,7 @@
 
 # humanizer-lint
 
-### Deterministic multilingual prose, Markdown, and stylometric linting
+### Humanize AI-generated text with a deterministic local AI humanizer and anti-slop prose linter
 
 Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, and voice-profile drift across **8 built-in language packs plus 100+ Universal Stylometry languages** without sending text to an external service.
 
