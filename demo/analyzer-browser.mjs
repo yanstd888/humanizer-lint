@@ -1,5 +1,7 @@
-import { createAnalyzer } from '../scripts/core/analyzer-core.mjs';
-import { calculateMetricsFromCompressionRatio } from '../scripts/utils/metrics-core.mjs';
+const projectRoot = '..';
+const scriptModule = (...segments) => new URL([projectRoot, 'scripts', ...segments].join('/'), import.meta.url);
+const { createAnalyzer } = await import(scriptModule('core', 'analyzer-core.mjs'));
+const { calculateMetricsFromCompressionRatio } = await import(scriptModule('utils', 'metrics-core.mjs'));
 
 async function compressionRatio(text) {
   const bytes = new TextEncoder().encode(String(text ?? '').trim());

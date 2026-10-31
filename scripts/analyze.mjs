@@ -6,17 +6,14 @@ import { parseArgs } from 'node:util';
 import { createAnalyzer } from './core/analyzer-core.mjs';
 import { calculateMetrics } from './utils/metrics.mjs';
 
-const RULES = {
-  id: JSON.parse(readFileSync(new URL('../rules/id-slop.json', import.meta.url), 'utf8')),
-  en: JSON.parse(readFileSync(new URL('../rules/en-slop.json', import.meta.url), 'utf8')),
-  es: JSON.parse(readFileSync(new URL('../rules/es-slop.json', import.meta.url), 'utf8')),
-  ms: JSON.parse(readFileSync(new URL('../rules/ms-slop.json', import.meta.url), 'utf8')),
-  fr: JSON.parse(readFileSync(new URL('../rules/fr-slop.json', import.meta.url), 'utf8')),
-  de: JSON.parse(readFileSync(new URL('../rules/de-slop.json', import.meta.url), 'utf8')),
-  pt: JSON.parse(readFileSync(new URL('../rules/pt-slop.json', import.meta.url), 'utf8')),
-  zh: JSON.parse(readFileSync(new URL('../rules/zh-slop.json', import.meta.url), 'utf8')),
-};
-const DEFAULT_PROFILE = JSON.parse(readFileSync(new URL('../profiles/default-human.json', import.meta.url), 'utf8'));
+const projectRoot = '..';
+const projectFileUrl = (...segments) => new URL([projectRoot, ...segments].join('/'), import.meta.url);
+const readProjectJson = (...segments) => JSON.parse(readFileSync(projectFileUrl(...segments), 'utf8'));
+const RULES = Object.fromEntries(['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'].map((language) => [
+  language,
+  readProjectJson('rules', `${language}-slop.json`),
+]));
+const DEFAULT_PROFILE = readProjectJson('profiles', 'default-human.json');
 const { analyzeText } = createAnalyzer({ rules: RULES, defaultProfile: DEFAULT_PROFILE, calculateMetrics });
 
 export { analyzeText };

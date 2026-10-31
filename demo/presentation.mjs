@@ -1,4 +1,5 @@
-import { tokenizeText } from '../scripts/utils/tokenizer.mjs';
+const projectRoot = '..';
+const { tokenizeText } = await import(new URL([projectRoot, 'scripts', 'utils', 'tokenizer.mjs'].join('/'), import.meta.url));
 
 const SAMPLE_IDS = new Set(['ai-id', 'human-id', 'ai-en', 'human-en', 'ai-es', 'ai-ms', 'ai-fr', 'ai-de', 'ai-pt', 'ai-zh']);
 const UI_LANGUAGES = new Set(['en', 'id']);

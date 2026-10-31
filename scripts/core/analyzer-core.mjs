@@ -1,6 +1,8 @@
-import { sanitizeMarkdown } from '../utils/sanitizer.mjs';
-import { mean, punctuationRates } from '../utils/metrics-core.mjs';
-import { isCJKText, tokenizeText } from '../utils/tokenizer.mjs';
+const parentDirectory = '..';
+const utilityModule = (...segments) => new URL([parentDirectory, 'utils', ...segments].join('/'), import.meta.url);
+const { sanitizeMarkdown } = await import(utilityModule('sanitizer.mjs'));
+const { mean, punctuationRates } = await import(utilityModule('metrics-core.mjs'));
+const { isCJKText, tokenizeText } = await import(utilityModule('tokenizer.mjs'));
 
 const HAN = /[\u4e00-\u9fff]/gu;
 const KANA = /[\u3040-\u30ff]/u;

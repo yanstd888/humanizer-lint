@@ -104,7 +104,7 @@ await Promise.all([
 
 for (const name of ['analyzer-browser.mjs', 'presentation.mjs']) {
   const browserModule = await readFile(path.join(source, name), 'utf8');
-  await writeFile(path.join(output, name), browserModule.replaceAll("'../scripts/", "'./scripts/"), 'utf8');
+  await writeFile(path.join(output, name), browserModule.replace("const projectRoot = '..';", "const projectRoot = '.';"), 'utf8');
 }
 
 console.log(`Built ${output}`);

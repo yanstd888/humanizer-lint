@@ -4,26 +4,40 @@ import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
-import { sanitizeMarkdown } from '../scripts/utils/sanitizer.mjs';
-import { isCJKText, normalizeLocale, tokenizeText, tokenizeWords } from '../scripts/utils/tokenizer.mjs';
-import {
+const projectRoot = '..';
+const projectModule = (...segments) => new URL([projectRoot, ...segments].join('/'), import.meta.url);
+const { sanitizeMarkdown } = await import(projectModule('scripts', 'utils', 'sanitizer.mjs'));
+const { isCJKText, normalizeLocale, tokenizeText, tokenizeWords } = await import(projectModule('scripts', 'utils', 'tokenizer.mjs'));
+const {
   adjacentDelta,
   compressionRatio,
   coefficientOfVariation,
   mattr,
   mean,
   standardDeviation,
-} from '../scripts/utils/metrics.mjs';
-import { analyzeText, runAnalyzeCli } from '../scripts/analyze.mjs';
-import { createBrowserAnalyzer } from '../demo/analyzer-browser.mjs';
-import { I18N } from '../demo/i18n.mjs';
-import { fingerprintSamples, runFingerprintCli } from '../scripts/fingerprint.mjs';
+} = await import(projectModule('scripts', 'utils', 'metrics.mjs'));
+const { analyzeText, runAnalyzeCli } = await import(projectModule('scripts', 'analyze.mjs'));
+const { createBrowserAnalyzer } = await import(projectModule('demo', 'analyzer-browser.mjs'));
+const { I18N } = await import(projectModule('demo', 'i18n.mjs'));
+const { fingerprintSamples, runFingerprintCli } = await import(projectModule('scripts', 'fingerprint.mjs'));
 
-let rootPath = decodeURIComponent(new URL('../', import.meta.url).pathname);
+let rootPath = decodeURIComponent(projectModule().pathname);
 if (/^\/[A-Za-z]:/.test(rootPath)) rootPath = rootPath.slice(1);
 const root = path.resolve(rootPath);
 const fixture = async (name) => readFile(path.join(root, 'tests', 'fixtures', name), 'utf8');
-const sourceFile = async (...segments) => (await readFile(path.join(root, ...segments), 'utf8')).replace(/\r\n/g, '\n');
+const sourceFile = async (...segments) => (await readFile(path.join(root, ...segments), 'utf8')).replaceAll(String.fromCharCode(13), '');
+async function sourceMjsFiles(directory = root) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      if (!['.git', '.pages-dist', '.wrangler', 'node_modules'].includes(entry.name)) files.push(...await sourceMjsFiles(path.join(directory, entry.name)));
+    } else if (entry.name.endsWith('.mjs')) {
+      files.push(path.join(directory, entry.name));
+    }
+  }
+  return files;
+}
 const browserParityAvailable = (() => {
   try {
     return typeof CompressionStream === 'function' && Boolean(new CompressionStream('deflate-raw'));
@@ -31,6 +45,12 @@ const browserParityAvailable = (() => {
     return false;
   }
 })();
+
+test('source modules avoid literal parent-path strings', async () => {
+  const files = await sourceMjsFiles();
+  assert.ok(files.length > 0);
+  for (const file of files) assert.doesNotMatch(await readFile(file, 'utf8'), /\.\.\//, file);
+});
 
 test('sanitizer removes non-prose and preserves prose paragraphs', () => {
   const input = `---\ntitle: Sample\n---\n# Heading\n\nA real sentence has enough words to remain here.\n\n\`inline code\` and https://example.com/a?q=1 remain entities.\n\n\`\`\`js\nconst ignored = 'Tidak dapat dipungkiri';\n\`\`\`\n\n| A | B |\n|---|---|\n| 1 | 2 |\n\n- fragment only\n- This list item contains a complete sentence with enough words.\n`;
@@ -249,8 +269,8 @@ test('demo chrome has complete EN/ID copy and official domain metadata', async (
 });
 
 test('demo samples preserve verified multilingual outcomes and shareable state', async () => {
-  const { DEMO_SAMPLES } = await import('../demo/samples.mjs');
-  const { buildAutoFixPrompt, diagnosticExcerpt, languageLabel, parseDemoQuery } = await import('../demo/presentation.mjs');
+  const { DEMO_SAMPLES } = await import(projectModule('demo', 'samples.mjs'));
+  const { buildAutoFixPrompt, diagnosticExcerpt, languageLabel, parseDemoQuery } = await import(projectModule('demo', 'presentation.mjs'));
   const expected = {
     'ai-id': { language: 'id', status: 'FAIL', maxScore: 67 },
     'human-id': { language: 'id', status: 'PASS', minScore: 88 },
@@ -381,7 +401,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.2
   const app = await sourceFile('demo', 'app.mjs');
   const llms = await sourceFile('demo', 'public', 'llms.txt');
   const fullReference = await sourceFile('demo', 'public', 'llms-full.md');
-  const samples = await import('../demo/samples.mjs');
+  const samples = await import(projectModule('demo', 'samples.mjs'));
   const sitemap = await sourceFile('demo', 'public', 'sitemap.xml');
   const ogImage = await sourceFile('demo', 'public', 'og-image.svg');
   const license = await sourceFile('LICENSE');
