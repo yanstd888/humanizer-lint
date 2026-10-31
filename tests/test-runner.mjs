@@ -23,6 +23,7 @@ let rootPath = decodeURIComponent(new URL('../', import.meta.url).pathname);
 if (/^\/[A-Za-z]:/.test(rootPath)) rootPath = rootPath.slice(1);
 const root = path.resolve(rootPath);
 const fixture = async (name) => readFile(path.join(root, 'tests', 'fixtures', name), 'utf8');
+const sourceFile = async (...segments) => (await readFile(path.join(root, ...segments), 'utf8')).replace(/\r\n/g, '\n');
 const browserParityAvailable = (() => {
   try {
     return typeof CompressionStream === 'function' && Boolean(new CompressionStream('deflate-raw'));
@@ -308,15 +309,15 @@ test('package, skill, README, CI, and static-demo metadata match the v1.1 contra
   const packageJson = JSON.parse(packageSource);
   const idRules = JSON.parse(await readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8'));
   const enRules = JSON.parse(await readFile(path.join(root, 'rules', 'en-slop.json'), 'utf8'));
-  const skill = await readFile(path.join(root, 'SKILL.md'), 'utf8');
-  const readme = await readFile(path.join(root, 'README.md'), 'utf8');
-  const workflow = await readFile(path.join(root, '.github', 'workflows', 'ci.yml'), 'utf8');
-  const index = await readFile(path.join(root, 'demo', 'index.html'), 'utf8');
-  const build = await readFile(path.join(root, 'demo', 'build.mjs'), 'utf8');
-  const app = await readFile(path.join(root, 'demo', 'app.mjs'), 'utf8');
-  const llms = await readFile(path.join(root, 'demo', 'public', 'llms.txt'), 'utf8');
-  const fullReference = await readFile(path.join(root, 'demo', 'public', 'llms-full.md'), 'utf8');
-  const license = await readFile(path.join(root, 'LICENSE'), 'utf8');
+  const skill = await sourceFile('SKILL.md');
+  const readme = await sourceFile('README.md');
+  const workflow = await sourceFile('.github', 'workflows', 'ci.yml');
+  const index = await sourceFile('demo', 'index.html');
+  const build = await sourceFile('demo', 'build.mjs');
+  const app = await sourceFile('demo', 'app.mjs');
+  const llms = await sourceFile('demo', 'public', 'llms.txt');
+  const fullReference = await sourceFile('demo', 'public', 'llms-full.md');
+  const license = await sourceFile('LICENSE');
 
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
