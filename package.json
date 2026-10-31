@@ -7,8 +7,8 @@
     "node": ">=18.3.0"
   },
   "bin": {
-    "humanizer-lint": "./scripts/analyze.mjs",
-    "humanizer-fingerprint": "./scripts/fingerprint.mjs"
+    "humanizer-lint": "scripts/analyze.mjs",
+    "humanizer-fingerprint": "scripts/fingerprint.mjs"
   },
   "files": [
     "SKILL.md",
@@ -23,7 +23,10 @@
     "build:demo": "node demo/build.mjs"
   },
   "homepage": "https://humanizer.aiclub.ai.id",
-  "repository": "https://github.com/yanstd888/humanizer-lint",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanstd888/humanizer-lint.git"
+  },
   "keywords": [
     "skills-sh",
     "agent-skill",

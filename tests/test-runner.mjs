@@ -324,11 +324,16 @@ test('package, skill, README, CI, and static-demo metadata match the v1.1 contra
   assert.equal(packageJson.name, 'humanizer-lint');
   assert.equal(packageJson.version, '1.1.0');
   assert.equal(packageJson.homepage, 'https://humanizer.aiclub.ai.id');
-  assert.equal(packageJson.repository, 'https://github.com/yanstd888/humanizer-lint');
   assert.deepEqual(packageJson.keywords, ['skills-sh', 'agent-skill', 'ai-humanizer', 'anti-slop', 'prose-linter', 'stylometry', 'burstiness', 'mattr', 'indonesian-nlp', 'claude-code', 'cursor-skill', 'windsurf', 'codex', 'gemini-cli']);
   assert.equal(packageJson.dependencies, undefined);
-  assert.equal(packageJson.bin['humanizer-lint'], './scripts/analyze.mjs');
-  assert.equal(packageJson.bin['humanizer-fingerprint'], './scripts/fingerprint.mjs');
+  assert.deepEqual(packageJson.bin, {
+    'humanizer-lint': 'scripts/analyze.mjs',
+    'humanizer-fingerprint': 'scripts/fingerprint.mjs',
+  });
+  assert.deepEqual(packageJson.repository, {
+    type: 'git',
+    url: 'git+https://github.com/yanstd888/humanizer-lint.git',
+  });
   assert.equal((packageSource.match(/"files"\s*:/g) ?? []).length, 1);
   assert.ok(idRules.patterns.length >= 40);
   assert.ok(enRules.patterns.length >= 40);
