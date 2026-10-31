@@ -1,6 +1,6 @@
 # humanizer-lint
 
-> Version 1.4.0 — deterministic, zero-dependency prose linter with 8 language-specific lexical and morphological packs plus universal `Intl.Segmenter` rhythm diagnostics for 100+ languages.
+> Version 1.4.1 — deterministic, zero-dependency prose linter with 8 language-specific lexical and morphological packs plus universal `Intl.Segmenter` rhythm diagnostics for 100+ languages.
 
 ## Capabilities
 

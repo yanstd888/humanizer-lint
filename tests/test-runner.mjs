@@ -357,7 +357,7 @@ test('Pages build prevents the full technical SEO, security, and accessibility a
     'Referrer-Policy: strict-origin-when-cross-origin',
     'Permissions-Policy: accelerometer=()',
     'Last-Modified: Sat, 31 Oct 2026 00:00:00 GMT',
-    'ETag: W/"humanizer-lint-1.4.0-seo-audit"',
+    'ETag: W/"humanizer-lint-1.4.1-seo-audit"',
     'Cache-Control: public, max-age=0, must-revalidate',
   ]) assert.match(headers, new RegExp(header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   for (const crawler of ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Googlebot', 'Bingbot', 'Applebot', 'Applebot-Extended', 'Amazonbot', 'YouBot', 'DuckAssistBot', 'Bytespider', 'CCBot']) {
@@ -510,7 +510,7 @@ test('benchmark is reproducible across all 16 multilingual fixtures', () => {
   assert.ok(report.meanMsPerAnalysis >= 0);
 });
 
-test('package, skill, README, static demo, and skills.sh config match the v1.4.0 discovery contract', async () => {
+test('package, skill, README, static demo, and skills.sh config match the v1.4.1 discovery contract', async () => {
   const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
   const packageJson = JSON.parse(packageSource);
   const skillsConfig = JSON.parse(await sourceFile('skills.sh.json'));
@@ -533,7 +533,8 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.0
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '1.4.0');
+  assert.equal(packageJson.version, '1.4.1');
+  assert.ok(packageJson.files.includes('demo/samples.mjs'));
   assert.equal(skillsConfig.$schema, 'https://skills.sh/schemas/skills.sh.schema.json');
   assert.equal(skillsConfig.notGrouped, 'bottom');
   assert.deepEqual(skillsConfig.groupings, [{
@@ -544,7 +545,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.0
   assert.match(packageJson.description, /^Deterministic prose linter and stylometric rhythm analyzer/);
   assert.match(packageJson.description, /100\+ languages\. Local zero-dependency Node\.js CLI, no network\./);
   assert.equal(packageJson.homepage, 'https://humanizer.aiclub.ai.id');
-  assert.deepEqual(packageJson.files, ['SKILL.md', 'README.md', 'LICENSE', 'scripts/', 'rules/', 'profiles/']);
+  assert.deepEqual(packageJson.files, ['SKILL.md', 'README.md', 'LICENSE', 'scripts/', 'rules/', 'profiles/', 'demo/samples.mjs']);
   assert.deepEqual(packageJson.keywords, ['skills-sh', 'agent-skill', 'ai-humanizer', 'humanizer', 'anti-slop', 'prose-linter', 'stylometry', 'burstiness', 'mattr', 'multilingual-nlp', 'indonesian-nlp', 'copywriting', 'markdown-linter', 'claude-code', 'cursor-skill', 'windsurf', 'codex', 'gemini-cli']);
   assert.equal(packageJson.dependencies, undefined);
   assert.deepEqual(packageJson.bin, { 'humanizer-lint': 'scripts/analyze.mjs', 'humanizer-fingerprint': 'scripts/fingerprint.mjs' });
@@ -560,7 +561,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.0
   assert.match(skill, /^---\nname: humanizer-lint\n/);
   assert.match(skill, /description: Deterministic prose linter, AI writing style editor/);
   assert.equal((skill.match(/^version:/gm) ?? []).length, 1);
-  assert.match(skill, /version: 1\.4\.0/);
+  assert.match(skill, /version: 1\.4\.1/);
   assert.match(skill, /summary: Local deterministic prose/);
   assert.match(skill, /topic: agent-workflows/);
   assert.match(skill, /allowed-tools: Bash\(node:\*\)/);
@@ -601,9 +602,9 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.0
   for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
   assert.match(build, /ruleCodes = \['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'\]/);
   assert.match(build, /'llms-full\.txt'/);
-  assert.match(llms, /Version 1\.4\.0/);
+  assert.match(llms, /Version 1\.4\.1/);
   assert.match(llms, /## Verified benchmark/);
-  assert.match(fullReference, /Version 1\.4\.0/);
+  assert.match(fullReference, /Version 1\.4\.1/);
   assert.match(fullReference, /## v1\.4 detectors/);
   assert.match(llms, /Intl\.Segmenter/);
   assert.match(fullReference, /\{\{ruleCatalog\}\}/);

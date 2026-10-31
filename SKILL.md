@@ -4,7 +4,7 @@ description: Deterministic prose linter, AI writing style editor, and stylometri
 summary: Local deterministic prose, copywriting, and code-comment linter with 8 lexical anti-cliché packs and universal stylometric rhythm analysis across 100+ languages.
 topic: agent-workflows
 allowed-tools: Bash(node:*)
-version: 1.4.0
+version: 1.4.1
 ---
 
 # Humanizer Lint
