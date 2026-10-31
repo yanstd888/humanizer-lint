@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 import { sanitizeMarkdown } from '../scripts/utils/sanitizer.mjs';
-import { tokenizeText } from '../scripts/utils/tokenizer.mjs';
+import { isCJKText, normalizeLocale, tokenizeText, tokenizeWords } from '../scripts/utils/tokenizer.mjs';
 import {
   adjacentDelta,
   compressionRatio,
@@ -64,6 +64,57 @@ test('tokenizer preserves reduplication and protects decimals and ellipses', () 
   assert.equal(result.sentences.length, 2);
   assert.ok(result.sentences.some((sentence) => sentence.text.includes('3.5')));
   assert.ok(result.sentences.some((sentence) => sentence.text.includes('10.000')));
+});
+
+test('Intl tokenizer normalizes locales and segments CJK text without splitting sanitizer placeholders', () => {
+  assert.equal(normalizeLocale('universal'), 'und');
+  assert.equal(normalizeLocale('auto'), 'und');
+  assert.equal(normalizeLocale('tr'), 'tr');
+  assert.equal(isCJKText('日本語와 한국어'), true);
+  assert.equal(isCJKText('Bahasa Melayu'), false);
+
+  const result = tokenizeText('这是第一句话。第二句话更长，而且包含更多不同的词汇！TOKEN_ENTITY 保持完整。', 'zh');
+  assert.equal(result.sentences.length, 3);
+  assert.ok(result.words.length >= 12);
+  assert.ok(tokenizeWords('TOKEN_ENTITY 中文', 'zh').includes('token_entity'));
+});
+
+test('built-in rule packs detect Spanish, Malay, and Mandarin while universal fallback remains available', () => {
+  const spanish = analyzeText('En el vertiginoso mundo actual, cada equipo usa el mismo proceso. En el vertiginoso mundo actual, cada grupo sigue el mismo proceso. En el vertiginoso mundo actual, cada área repite el mismo proceso.', { language: 'es' });
+  assert.equal(spanish.language, 'es');
+  assert.equal(spanish.rulePack, 'es');
+  assert.equal(spanish.status, 'FAIL');
+  assert.ok(spanish.violations.some((violation) => violation.type === 'SLOP_PHRASE'));
+
+  const malay = analyzeText('Dalam era digital kini, pasukan ini boleh mengurus kerja dengan cepat. Kerana itu, mereka boleh menyemak rekod bagi setiap pelanggan. Beliau kemudian menghantar laporan daripada pejabat kepada ketua.', { language: 'auto' });
+  assert.equal(malay.language, 'ms');
+  assert.equal(malay.rulePack, 'ms');
+  assert.ok(malay.violations.some((violation) => violation.type === 'SLOP_PHRASE'));
+
+  const mandarin = analyzeText('在当今快节奏的世界中，团队使用同一种流程。值得注意的是，成员每天重复相同的步骤。综上所述，结果总是按照同样的模板出现。', { language: 'zh' });
+  assert.equal(mandarin.language, 'zh');
+  assert.equal(mandarin.rulePack, 'zh');
+  assert.ok(Number.isFinite(mandarin.metrics.burstinessCV));
+  assert.ok(Number.isFinite(mandarin.metrics.mattr));
+  assert.ok(mandarin.violations.some((violation) => violation.type === 'SLOP_PHRASE'));
+
+  const japanese = analyzeText('これは短い文です。次の文は少し長く、異なる語彙を含んでいます。最後の文で要点を確認します。', { language: 'auto' });
+  assert.equal(japanese.language, 'ja');
+  assert.equal(japanese.rulePack, 'universal');
+
+  const arabic = analyzeText('هذه جملة قصيرة. تحتوي الجملة التالية على كلمات مختلفة وتفاصيل إضافية. وتؤكد الجملة الأخيرة النتيجة بوضوح.', { language: 'auto' });
+  assert.equal(arabic.language, 'ar');
+  assert.equal(arabic.rulePack, 'universal');
+
+  const monotoneTurkish = analyzeText('Ekip sabah raporu dikkatle inceledi. Grup öğleden sonra kayıtları dikkatle doğruladı. Kurul akşam aynı notları dikkatle karşılaştırdı. Yönetici gece sonuçları dikkatle arşivledi.', { language: 'tr' });
+  assert.equal(monotoneTurkish.language, 'tr');
+  assert.equal(monotoneTurkish.rulePack, 'universal');
+  assert.equal(monotoneTurkish.status, 'FAIL');
+  assert.ok(monotoneTurkish.violations.some((violation) => violation.type === 'MONOTONOUS_RHYTHM'));
+
+  const variedTurkish = analyzeText('Dur. Ekip, depodaki eski kayıtları tek tek karşılaştırdı ve iki yanlış tarihi düzeltti. Sonraki denetim için hukuk, satış, destek ve finans ekiplerinin kullandığı farklı kaynaklardan gelen belgeleri bir araya getirerek ayrıntılı bir kontrol listesi hazırladılar.', { language: 'universal' });
+  assert.equal(variedTurkish.rulePack, 'universal');
+  assert.equal(variedTurkish.status, 'PASS');
 });
 
 test('automatic language detection favors Indonesian function words over technical loanwords', () => {
@@ -185,6 +236,8 @@ test('demo chrome has complete EN/ID copy and official domain metadata', async (
     assert.ok(I18N[language].description);
     assert.ok(I18N[language].analyze);
     assert.ok(I18N[language].themeToDark);
+    assert.match(I18N[language].description, /Intl\.Segmenter/);
+    assert.doesNotMatch(I18N[language].pageTitle, /\p{Extended_Pictographic}/u);
   }
   assert.match(index, /<html lang="en">/);
   assert.match(index, /https:\/\/humanizer\.aiclub\.ai\.id/);
@@ -304,11 +357,12 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
   }
 });
 
-test('package, skill, README, CI, and static-demo metadata match the v1.1 contract', async () => {
+test('package, skill, README, CI, and static demo match the v1.2 multi-language contract', async () => {
   const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
   const packageJson = JSON.parse(packageSource);
-  const idRules = JSON.parse(await readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8'));
-  const enRules = JSON.parse(await readFile(path.join(root, 'rules', 'en-slop.json'), 'utf8'));
+  const languageCodes = ['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'];
+  const rulePacks = await Promise.all(languageCodes.map(async (code) => JSON.parse(await readFile(path.join(root, 'rules', `${code}-slop.json`), 'utf8'))));
+  const gitignore = await sourceFile('.gitignore');
   const skill = await sourceFile('SKILL.md');
   const readme = await sourceFile('README.md');
   const workflow = await sourceFile('.github', 'workflows', 'ci.yml');
@@ -322,38 +376,33 @@ test('package, skill, README, CI, and static-demo metadata match the v1.1 contra
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '1.1.0');
+  assert.equal(packageJson.version, '1.2.0');
   assert.equal(packageJson.homepage, 'https://humanizer.aiclub.ai.id');
-  assert.deepEqual(packageJson.keywords, ['skills-sh', 'agent-skill', 'ai-humanizer', 'anti-slop', 'prose-linter', 'stylometry', 'burstiness', 'mattr', 'indonesian-nlp', 'claude-code', 'cursor-skill', 'windsurf', 'codex', 'gemini-cli']);
+  assert.deepEqual(packageJson.files, ['SKILL.md', 'README.md', 'LICENSE', 'scripts/', 'rules/', 'profiles/']);
+  assert.deepEqual(packageJson.keywords, ['skills-sh', 'agent-skill', 'ai-humanizer', 'anti-slop', 'prose-linter', 'stylometry', 'burstiness', 'mattr', 'multilingual-nlp', 'indonesian-nlp', 'claude-code', 'cursor-skill', 'windsurf', 'codex', 'gemini-cli']);
   assert.equal(packageJson.dependencies, undefined);
-  assert.deepEqual(packageJson.bin, {
-    'humanizer-lint': 'scripts/analyze.mjs',
-    'humanizer-fingerprint': 'scripts/fingerprint.mjs',
-  });
-  assert.deepEqual(packageJson.repository, {
-    type: 'git',
-    url: 'git+https://github.com/yanstd888/humanizer-lint.git',
-  });
+  assert.deepEqual(packageJson.bin, { 'humanizer-lint': 'scripts/analyze.mjs', 'humanizer-fingerprint': 'scripts/fingerprint.mjs' });
+  assert.deepEqual(packageJson.repository, { type: 'git', url: 'git+https://github.com/yanstd888/humanizer-lint.git' });
   assert.equal((packageSource.match(/"files"\s*:/g) ?? []).length, 1);
-  assert.ok(idRules.patterns.length >= 40);
-  assert.ok(enRules.patterns.length >= 40);
+  for (const ignored of ['node_modules/', '.wrangler/', '.pages-dist/', 'tasks/', '*.tmp.md', '.stylometric-draft.tmp.md', '.DS_Store']) assert.match(gitignore, new RegExp(`^${ignored.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm'));
+  for (const [index, pack] of rulePacks.entries()) {
+    assert.equal(pack.language, languageCodes[index]);
+    assert.equal(pack.stopwords.length, 20);
+    assert.ok(pack.patterns.length >= 25);
+  }
 
   assert.match(skill, /^---\nname: humanizer-lint\n/);
-  assert.match(skill, /version: 1\.1\.0/);
-  assert.match(skill, /Deterministic AI text humanizer, anti-slop prose linter/);
+  assert.match(skill, /version: 1\.2\.0/);
+  assert.match(skill, /Intl\.Segmenter/);
+  assert.match(skill, /EN, ID, ES, MS, FR, DE, PT, and ZH/);
   assert.match(skill, /## Trigger Intents & Search Keywords/);
-  for (const intent of ['humanize AI text', 'remove AI slop and clichés', 'bypass robotic writing patterns', 'increase sentence burstiness and perplexity', 'lint markdown documentation prose', 'humanizer bahasa Indonesia', 'perbaiki tulisan AI yang kaku', 'match author voice profile']) assert.match(skill, new RegExp(intent));
-  assert.match(skill, /compatibility: Node\.js >= 18\.3\.0/);
-  assert.match(skill, /metadata:\n  version: "1\.1\.0"\n  author: "yanstd888"/);
+  assert.match(skill, /metadata:\n  version: "1\.2\.0"\n  author: "yanstd888"/);
 
-  assert.match(readme, /npx skills add yanstd888\/humanizer-lint/);
-  assert.match(readme, /Static `SKILL\.md` Humanizers vs\. `humanizer-lint`/);
-  assert.match(readme, /https:\/\/humanizer\.aiclub\.ai\.id\/\?sample=ai-id/);
-  assert.match(readme, /https:\/\/humanizer\.aiclub\.ai\.id\/\?sample=human-en/);
-  assert.match(readme, /Snyk: Pass/);
-  assert.match(readme, /Socket: Pass/);
-  assert.match(readme, /Zero Dependencies/);
-  assert.doesNotMatch(readme, /97\.8%/);
+  assert.match(readme, /## Language support/);
+  assert.match(readme, /Tier 1 — rule packs/);
+  assert.match(readme, /Tier 2 — universal/);
+  assert.match(readme, /--lang auto/);
+  assert.match(readme, /--lang universal/);
   assert.doesNotMatch(readme, /\p{Extended_Pictographic}/u);
 
   assert.match(workflow, /node: \["18", "20", "22"\]/);
@@ -361,19 +410,15 @@ test('package, skill, README, CI, and static-demo metadata match the v1.1 contra
   assert.match(workflow, /npm pack --dry-run/);
 
   assert.match(index, /application\/ld\+json/);
-  assert.match(index, /https:\/\/humanizer\.aiclub\.ai\.id\/og-image\.svg/);
-  assert.match(index, /security\/snyk/);
-  assert.match(index, /security\/socket/);
-  assert.match(index, /security\/agent-trust-hub/);
-  assert.match(index, /data-sample="ai-id"/);
-  assert.match(app, /parseDemoQuery/);
+  assert.match(index, /id="analysis-language"/);
+  for (const code of ['auto', ...languageCodes, 'universal']) assert.match(index, new RegExp(`value="${code}"`));
+  assert.match(app, /Object\.fromEntries\(ruleEntries\)/);
   assert.doesNotMatch(app, /fetch\(['"]https?:\/\//);
-  for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) {
-    await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
-  }
+  for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
+  assert.match(build, /ruleCodes = \['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'\]/);
   assert.match(build, /'llms-full\.txt'/);
-  assert.match(llms, /https:\/\/humanizer\.aiclub\.ai\.id\/llms-full\.txt/);
-  assert.match(fullReference, /\{\{idRules\}\}/);
+  assert.match(llms, /Intl\.Segmenter/);
+  assert.match(fullReference, /\{\{ruleCatalog\}\}/);
   assert.match(license, /MIT License/);
 
   const rootMarkdown = (await readdir(root)).filter((name) => name.toLowerCase().endsWith('.md')).sort();

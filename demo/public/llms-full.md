@@ -1,10 +1,10 @@
 # humanizer-lint — Full Technical Reference
 
-> Version 1.1.0. This document is generated into `/llms-full.txt` with the current checked-in rule catalogs during the static demo build.
+> Version 1.2.0. This document is generated into `/llms-full.txt` with the current checked-in rule catalogs during the static demo build.
 
 ## Purpose
 
-`humanizer-lint` is a deterministic style validator for Indonesian and English prose. It does not estimate authorship, identify a human writer, or send text to a remote model. A result reports configured style checks for the exact input passed to the local CLI or browser analyzer.
+`humanizer-lint` is a deterministic style validator for multi-language prose. Native `Intl.Segmenter` handles sentence and word segmentation locally. EN, ID, ES, MS, FR, DE, PT, and ZH use bundled lexical packs; other ISO 639-1 inputs fall back to universal stylometry. It does not estimate authorship, identify a human writer, or send text to a remote model. A result reports configured style checks for the exact input passed to the local CLI or browser analyzer.
 
 ## Install and run
 
@@ -26,7 +26,8 @@ Exit codes:
 {
   "status": "PASS | FAIL | SKIP",
   "score": 0,
-  "language": "id | en",
+  "language": "ISO 639-1 code | universal",
+  "rulePack": "en | id | es | ms | fr | de | pt | zh | universal",
   "warning": "optional short-text warning",
   "metrics": {
     "wordCount": 0,
@@ -62,7 +63,7 @@ Exit codes:
 - Adjacent rhythm delta: `4`.
 - Short-sentence ratio: `0.15` for sentences of 6 words or fewer on 8+ sentence text.
 - Long-sentence ratio: `0.10` for sentences of 26 words or more on 8+ sentence text.
-- MATTR: `0.72` Indonesian; `0.74` English.
+- MATTR: `0.72` Indonesian and Latin-script universal fallback; `0.74` English; `0.68` CJK fallback and Mandarin.
 - Pass score: `80`.
 - Indonesian nominalization maximum ratio: `0.045`.
 - Indonesian passive maximum ratio: `0.035`.
@@ -91,16 +92,12 @@ A `PASS` additionally requires score at or above the configured pass score, no f
 
 The following JSON blocks are copied directly from the checked-in rules used by the CLI and browser analyzer at build time.
 
-### Indonesian rules (`rules/id-slop.json`)
+### Rule catalog
+
+The following JSON object is copied directly from all checked-in rule packs used by the CLI and browser analyzer at build time.
 
 ```json
-{{idRules}}
-```
-
-### English rules (`rules/en-slop.json`)
-
-```json
-{{enRules}}
+{{ruleCatalog}}
 ```
 
 ### Default profile (`profiles/default-human.json`)

@@ -80,6 +80,18 @@
     <section class="workspace" data-i18n-aria-label="workspaceLabel">
       <div class="input-panel">
         <label for="text" data-i18n="inputLabel">{{inputLabel}}</label>
+        <label class="analysis-language" for="analysis-language"><span data-i18n="analysisLanguage">{{analysisLanguage}}</span><select id="analysis-language" aria-label="Analysis language">
+          <option value="auto" data-i18n="analysisLanguageAuto">{{analysisLanguageAuto}}</option>
+          <option value="id">Indonesia</option>
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="ms">Melayu</option>
+          <option value="fr">Français</option>
+          <option value="de">Deutsch</option>
+          <option value="pt">Português</option>
+          <option value="zh">中文</option>
+          <option value="universal" data-i18n="analysisLanguageUniversal">{{analysisLanguageUniversal}}</option>
+        </select></label>
         <textarea id="text" rows="13" data-i18n-placeholder="placeholder" placeholder="{{placeholder}}"></textarea>
         <p id="error" class="error" role="alert" hidden></p>
         <button id="analyze" type="button" disabled>{{loading}}</button>

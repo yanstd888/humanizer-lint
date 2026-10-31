@@ -1,19 +1,19 @@
 ---
 name: humanizer-lint
-description: Deterministic AI text humanizer, anti-slop prose linter, and stylometric analyzer (EN/ID). Fixes uniform sentence rhythm, low burstiness (CV), MATTR vocabulary repetition, and LLM clichés using a local zero-dependency Node.js CLI validator.
-version: 1.1.0
+description: Deterministic universal multi-language stylometric analyzer and anti-slop prose linter. Uses native Intl.Segmenter plus eight built-in EN, ID, ES, MS, FR, DE, PT, and ZH lexical rule packs with a zero-dependency local Node.js CLI validator.
+version: 1.2.0
 license: MIT
 compatibility: Node.js >= 18.3.0 (zero external dependencies)
 allowed-tools: Bash(node:*) Read Write
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
   author: "yanstd888"
   domain: "writing"
 ---
 
 # Humanizer Lint
 
-Use this skill when writing or revising Indonesian or English prose that must avoid uniform agent rhythm, repeated stock phrases, and excessive translation-style structure. The local analyzer is mandatory. It uses only Node.js built-ins and sends no text over the network.
+Use this skill when writing or revising prose that must avoid uniform agent rhythm, repeated stock phrases, and excessive translation-style structure. The local analyzer is mandatory. Native `Intl.Segmenter` handles sentence and word boundaries; EN, ID, ES, MS, FR, DE, PT, and ZH use bundled lexical packs, while other ISO 639-1 languages use universal stylometry. It uses only Node.js built-ins and sends no text over the network.
 
 ## When to use
 
@@ -34,6 +34,8 @@ Use this skill for requests such as:
 - "increase sentence burstiness and perplexity"
 - "lint markdown documentation prose"
 - "humanizer bahasa Indonesia"
+- "humanize Spanish, Malay, French, German, Portuguese, or Chinese prose"
+- "check Japanese, Arabic, or another language with universal stylometry"
 - "perbaiki tulisan AI yang kaku"
 - "match author voice profile"
 
@@ -50,7 +52,7 @@ These intents apply across Claude Code, Cursor, Windsurf, Cline, Codex, and Gemi
 ### 1. Resolve context
 
 1. Resolve `<skill_dir>` from this `SKILL.md`; never assume the current working directory.
-2. Determine `id`, `en`, or `auto` from the requested output.
+2. Determine `auto`, `universal`, or a two-letter ISO 639-1 code. `auto` selects a bundled pack when evidence is strong; otherwise it uses `universal`.
 3. If `<skill_dir>/profiles/custom-voice.json` exists, pass it with `--profile`. Otherwise use the bundled default profile.
 4. Keep source facts, names, numbers, dates, quotations, citations, and technical terms unchanged unless the user explicitly requests a factual edit.
 

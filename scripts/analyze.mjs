@@ -9,6 +9,12 @@ import { calculateMetrics } from './utils/metrics.mjs';
 const RULES = {
   id: JSON.parse(readFileSync(new URL('../rules/id-slop.json', import.meta.url), 'utf8')),
   en: JSON.parse(readFileSync(new URL('../rules/en-slop.json', import.meta.url), 'utf8')),
+  es: JSON.parse(readFileSync(new URL('../rules/es-slop.json', import.meta.url), 'utf8')),
+  ms: JSON.parse(readFileSync(new URL('../rules/ms-slop.json', import.meta.url), 'utf8')),
+  fr: JSON.parse(readFileSync(new URL('../rules/fr-slop.json', import.meta.url), 'utf8')),
+  de: JSON.parse(readFileSync(new URL('../rules/de-slop.json', import.meta.url), 'utf8')),
+  pt: JSON.parse(readFileSync(new URL('../rules/pt-slop.json', import.meta.url), 'utf8')),
+  zh: JSON.parse(readFileSync(new URL('../rules/zh-slop.json', import.meta.url), 'utf8')),
 };
 const DEFAULT_PROFILE = JSON.parse(readFileSync(new URL('../profiles/default-human.json', import.meta.url), 'utf8'));
 const { analyzeText } = createAnalyzer({ rules: RULES, defaultProfile: DEFAULT_PROFILE, calculateMetrics });
@@ -16,7 +22,7 @@ const { analyzeText } = createAnalyzer({ rules: RULES, defaultProfile: DEFAULT_P
 export { analyzeText };
 
 function formatHuman(result) {
-  const lines = [`Status: ${result.status}`, `Score: ${result.score}`, `Language: ${result.language}`];
+  const lines = [`Status: ${result.status}`, `Score: ${result.score}`, `Language: ${result.language}`, `Rule pack: ${result.rulePack}`];
   if (result.warning) lines.push(`Warning: ${result.warning}`);
   lines.push('', 'Metrics:');
   for (const [name, value] of Object.entries(result.metrics)) lines.push(`  ${name}: ${value}`);
@@ -50,11 +56,11 @@ export async function runAnalyzeCli(argv, io = {}) {
       allowPositionals: false,
     });
     if (values.help) {
-      stdout('Usage: humanizer-lint (--file <path> | --stdin) [--lang id|en|auto] [--profile <path>] [--json]\n');
+      stdout('Usage: humanizer-lint (--file <path> | --stdin) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--json]\n');
       return 0;
     }
     if (Boolean(values.file) === Boolean(values.stdin)) throw new Error('Choose exactly one input: --file or --stdin');
-    if (!['id', 'en', 'auto'].includes(values.lang)) throw new Error('--lang must be id, en, or auto');
+    if (!/^(?:auto|universal|[a-z]{2})$/u.test(values.lang)) throw new Error('--lang must be auto, universal, or an ISO 639-1 code');
     if (values.stdin && io.stdin == null && process.stdin.isTTY) throw new Error('--stdin requires piped input');
     const text = values.file ? await new Promise((resolve, reject) => readFile(values.file, 'utf8', (error, data) => error ? reject(error) : resolve(data))) : await stdin();
     const profile = values.profile ? JSON.parse(await new Promise((resolve, reject) => readFile(values.profile, 'utf8', (error, data) => error ? reject(error) : resolve(data)))) : undefined;
