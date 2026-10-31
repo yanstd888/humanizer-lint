@@ -21,7 +21,7 @@ const findings = document.querySelector('#findings');
 const diagnostic = document.querySelector('#diagnostic');
 const diagnosticText = document.querySelector('#diagnostic-text');
 const themeToggle = document.querySelector('#theme-toggle');
-const languageButtons = [...document.querySelectorAll('[data-language]')];
+const interfaceLanguage = document.querySelector('#interface-language');
 const commandButtons = [...document.querySelectorAll('[data-command]')];
 const sampleList = document.querySelector('#sample-list');
 const installCommand = document.querySelector('#install-command');
@@ -251,11 +251,7 @@ function applyLanguage(nextLanguage, persist = false) {
   document.querySelectorAll('[data-i18n-title]').forEach((element) => {
     element.setAttribute('title', strings[element.dataset.i18nTitle]);
   });
-  languageButtons.forEach((button) => {
-    const active = button.dataset.language === currentLanguage;
-    button.classList.toggle('is-active', active);
-    button.setAttribute('aria-pressed', String(active));
-  });
+  interfaceLanguage.value = currentLanguage;
   analyze.textContent = ready ? strings.analyze : strings.loading;
   renderSampleButtons();
   updateThemeButton();
@@ -361,10 +357,10 @@ async function loadSample(sample, updateUrl = true) {
 applyTheme(initialTheme());
 applyLanguage(queryState.language ?? initialLanguage());
 
-languageButtons.forEach((button) => button.addEventListener('click', () => {
-  applyLanguage(button.dataset.language, true);
+interfaceLanguage.addEventListener('change', () => {
+  applyLanguage(interfaceLanguage.value, true);
   removeLanguageQuery();
-}));
+});
 themeToggle.addEventListener('click', () => applyTheme(currentTheme === 'dark' ? 'light' : 'dark', true));
 commandButtons.forEach((button) => button.addEventListener('click', () => {
   currentCommand = button.dataset.command;

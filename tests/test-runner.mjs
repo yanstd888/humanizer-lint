@@ -261,7 +261,7 @@ test('demo chrome has complete eight-language copy and official domain metadata'
     assert.ok(I18N[language].analyze);
     assert.ok(I18N[language].themeToDark);
     assert.doesNotMatch(I18N[language].pageTitle, /\p{Extended_Pictographic}/u);
-    assert.match(index, new RegExp(`data-language="${language}"`));
+    assert.match(index, new RegExp(`<option value="${language}" data-language="${language}">`));
     assert.match(index, new RegExp(`hreflang="${language}"`));
   }
   assert.match(index, /<html lang="en">/);
@@ -269,6 +269,65 @@ test('demo chrome has complete eight-language copy and official domain metadata'
   assert.match(app, /UI_LANGUAGE_CODES/);
   assert.match(app, /humanizer-lint\.language/);
   assert.match(app, /humanizer-lint\.theme/);
+  assert.match(index, /id="interface-language"/);
+  assert.doesNotMatch(index, /class="language-button"/);
+  assert.match(index, /href="https:\/\/aiclub\.ai\.id" target="_blank" rel="noopener noreferrer">Website/);
+  assert.match(index, /href="https:\/\/t\.me\/aiclub_id" target="_blank" rel="noopener noreferrer">Telegram/);
+});
+
+test('Pages build prevents the full technical SEO, security, and accessibility audit set from regressing', async () => {
+  const dist = path.join(root, '.pages-dist');
+  const index = await readFile(path.join(dist, 'index.html'), 'utf8');
+  const headers = await readFile(path.join(dist, '_headers'), 'utf8');
+  const robots = (await readFile(path.join(dist, 'robots.txt'), 'utf8')).replaceAll(String.fromCharCode(13), '');
+  const missing = await readFile(path.join(dist, '404.html'), 'utf8');
+  const favicon = await readFile(path.join(dist, 'favicon.ico'));
+  for (const asset of ['404.html', '_headers', 'favicon.ico', 'favicon.svg', 'robots.txt', 'sitemap.xml']) {
+    await readFile(path.join(dist, asset));
+  }
+  await assert.rejects(readFile(path.join(dist, '_redirects')));
+
+  assert.match(missing, /<meta name="robots" content="noindex">/);
+  assert.match(missing, /404 — Page Not Found/);
+  assert.match(missing, /https:\/\/humanizer\.aiclub\.ai\.id\//);
+  assert.deepEqual([...favicon.subarray(0, 6)], [0, 0, 1, 0, 1, 0]);
+  assert.match(index, /<link rel="icon" href="\/favicon\.ico" sizes="any">/);
+  assert.match(index, /<link rel="icon" href="\/favicon\.svg" type="image\/svg\+xml">/);
+  assert.match(index, /<link rel="apple-touch-icon" href="\/favicon\.svg">/);
+  assert.match(index, /max-image-preview:large/);
+
+  const schemaMatch = index.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+  assert.ok(schemaMatch);
+  const schema = JSON.parse(schemaMatch[1]);
+  const graph = new Map(schema['@graph'].map((node) => [node['@type'], node]));
+  assert.equal(graph.get('WebSite').publisher['@id'], 'https://humanizer.aiclub.ai.id/#organization');
+  assert.equal(graph.get('Organization').name, 'AI Club Indonesia (aiclub.ai.id)');
+  assert.ok(graph.has('SoftwareApplication'));
+  assert.ok(graph.has('FAQPage'));
+
+  for (const header of [
+    'Strict-Transport-Security: max-age=31536000; includeSubDomains; preload',
+    "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'",
+    'X-Frame-Options: DENY',
+    'X-Content-Type-Options: nosniff',
+    'Referrer-Policy: strict-origin-when-cross-origin',
+    'Permissions-Policy: accelerometer=()',
+    'Last-Modified: Sat, 31 Oct 2026 00:00:00 GMT',
+    'Cache-Control: public, max-age=0, must-revalidate',
+  ]) assert.match(headers, new RegExp(header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  for (const crawler of ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Googlebot', 'Bingbot', 'Applebot', 'Applebot-Extended', 'Amazonbot', 'YouBot', 'DuckAssistBot', 'Bytespider', 'CCBot']) {
+    assert.ok(robots.includes(`User-agent: ${crawler}\nAllow: /`), crawler);
+  }
+  assert.match(robots, /^Sitemap: https:\/\/humanizer\.aiclub\.ai\.id\/sitemap\.xml$/m);
+
+  for (const [, tag, attributes, body] of index.matchAll(/<(button|a)\b([^>]*)>([\s\S]*?)<\/\1>/g)) {
+    assert.ok(/\baria-label=/.test(attributes) || body.replace(/<[^>]+>/g, '').trim(), `${tag} is missing an accessible name`);
+  }
+  assert.match(index, /<select id="interface-language" aria-label="Interface language"/);
+  assert.match(index, /<select id="analysis-language" aria-label="Analysis language">/);
+  assert.match(index, /<label for="text"/);
+  assert.match(await sourceFile('demo', 'app.mjs'), /button\.textContent = sampleLabel\(id\)/);
+  assert.match(await sourceFile('demo', 'app.mjs'), /button\.append\(type, location, instruction\)/);
 });
 
 test('demo samples preserve verified multilingual outcomes and shareable state', async () => {

@@ -19,6 +19,27 @@ function jsonLd(version) {
     '@context': 'https://schema.org',
     '@graph': [
       {
+        '@type': 'WebSite',
+        '@id': 'https://humanizer.aiclub.ai.id/#website',
+        name: 'Humanizer-Lint',
+        alternateName: ['humanizer-lint', 'AI Club Humanizer Lint'],
+        url: siteUrl,
+        inLanguage: ['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh'],
+        publisher: { '@id': 'https://humanizer.aiclub.ai.id/#organization' },
+      },
+      {
+        '@type': 'Organization',
+        '@id': 'https://humanizer.aiclub.ai.id/#organization',
+        name: 'AI Club Indonesia (aiclub.ai.id)',
+        url: 'https://aiclub.ai.id/',
+        logo: { '@type': 'ImageObject', url: 'https://humanizer.aiclub.ai.id/favicon.svg' },
+        sameAs: [
+          'https://github.com/yanstd888/humanizer-lint',
+          'https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint',
+          'https://www.npmjs.com/package/humanizer-lint',
+        ],
+      },
+      {
         '@type': 'SoftwareApplication',
         name: 'humanizer-lint',
         url: siteUrl,
@@ -72,6 +93,9 @@ await Promise.all([
   copy('demo/i18n.mjs', 'i18n.mjs'),
   copy('demo/samples.mjs', 'samples.mjs'),
   copy('demo/styles.css', 'styles.css'),
+  copy('demo/public/404.html', '404.html'),
+  copy('demo/public/_headers', '_headers'),
+  copy('demo/public/favicon.ico', 'favicon.ico'),
   copy('demo/public/favicon.svg', 'favicon.svg'),
   copy('demo/public/og-image.svg', 'og-image.svg'),
   copy('demo/public/robots.txt', 'robots.txt'),

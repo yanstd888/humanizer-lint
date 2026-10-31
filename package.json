@@ -19,7 +19,7 @@
     "profiles/"
   ],
   "scripts": {
-    "test": "node --test tests/test-runner.mjs",
+    "test": "node demo/build.mjs && node --test tests/test-runner.mjs",
     "build:demo": "node demo/build.mjs"
   },
   "homepage": "https://humanizer.aiclub.ai.id",
