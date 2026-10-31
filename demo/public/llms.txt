@@ -1,6 +1,6 @@
 # humanizer-lint
 
-> Deterministic, zero-dependency stylometric prose linter and closed-loop AI text humanizer for English and Indonesian. Built for skills.sh agents and client-side browser analysis.
+> Deterministic, zero-dependency universal multi-language stylometric prose linter and closed-loop AI text humanizer. Native `Intl.Segmenter` supports local word and sentence segmentation in the browser and Node.js.
 
 `humanizer-lint` measures the finished draft instead of trusting a prompt alone. It reports configured lexical, rhythm, vocabulary, structural, and morphology diagnostics so a writer or agent can revise the exact text and verify it locally.
 
@@ -10,6 +10,13 @@
 - Standalone CLI: `npx humanizer-lint --file draft.md --lang auto --json`
 - Stdin pipe: `cat draft.md | npx humanizer-lint --stdin --json`
 - Web playground: [https://humanizer.aiclub.ai.id/](https://humanizer.aiclub.ai.id/)
+
+## Language tiers
+
+- **Tier 1 — rule packs:** `en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, and `zh` run universal stylometry plus their bundled lexical packs. Indonesian also applies its morphology checks.
+- **Tier 2 — universal:** `universal` and other ISO 639-1 inputs run burstiness, adjacent rhythm delta, adaptive MATTR, paragraph symmetry, repeated starters, and compression-ratio checks. CJK inputs use a default MATTR target of `0.68`; other fallback languages use `0.72`.
+
+Use `--lang auto` to select a supported pack only when the script or stopword evidence is strong, `--lang <ISO-639-1>` to request a language, or `--lang universal` to force Tier 2.
 
 ## Core Mathematical Metrics
 

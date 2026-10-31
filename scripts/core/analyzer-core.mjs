@@ -1,23 +1,45 @@
 import { sanitizeMarkdown } from '../utils/sanitizer.mjs';
 import { mean, punctuationRates } from '../utils/metrics-core.mjs';
-import { tokenizeText } from '../utils/tokenizer.mjs';
+import { isCJKText, tokenizeText } from '../utils/tokenizer.mjs';
 
-const ID_WORDS = new Set(['yang', 'dan', 'di', 'ini', 'untuk', 'dengan', 'dari', 'pada', 'dalam', 'tidak', 'akan', 'atau', 'juga', 'oleh', 'adalah', 'sebagai', 'bahwa', 'dapat', 'karena', 'tersebut']);
-const EN_WORDS = new Set(['the', 'and', 'of', 'to', 'in', 'is', 'that', 'for', 'it', 'with', 'as', 'on', 'are', 'this', 'by', 'be', 'at', 'or', 'from', 'an']);
+const HAN = /[\u4e00-\u9fff]/gu;
+const KANA = /[\u3040-\u30ff]/u;
+const ARABIC = /[\u0600-\u06ff]/u;
+const ID_EXCLUSIVE_WORDS = new Set(['tidak', 'karena', 'bisa', 'seperti', 'dari', 'bahwa']);
+const MS_EXCLUSIVE_WORDS = new Set(['tak', 'kerana', 'boleh', 'bagi', 'daripada', 'bahawa', 'beliau']);
 
 function round(value, places = 4) {
   const factor = 10 ** places;
   return Math.round(value * factor) / factor;
 }
 
-function detectLanguage(words) {
-  let id = 0;
-  let en = 0;
-  for (const word of words) {
-    if (ID_WORDS.has(word)) id += 1;
-    if (EN_WORDS.has(word)) en += 1;
+function detectLanguage(text, words, rules) {
+  if (KANA.test(text)) return 'ja';
+  if (ARABIC.test(text)) return 'ar';
+  const hanCount = (text.match(HAN) ?? []).length;
+  if (hanCount > 0 && isCJKText(text)) return 'zh';
+
+  const scores = new Map();
+  for (const [language, rule] of Object.entries(rules)) {
+    let score = 0;
+    const stopwords = new Set(rule.stopwords ?? []);
+    for (const word of words) if (stopwords.has(word)) score += 1;
+    scores.set(language, score);
   }
-  return en > id ? 'en' : 'id';
+  if (scores.has('id') && scores.has('ms')) {
+    const idExclusive = words.filter((word) => ID_EXCLUSIVE_WORDS.has(word)).length;
+    const msExclusive = words.filter((word) => MS_EXCLUSIVE_WORDS.has(word)).length;
+    scores.set('id', scores.get('id') + idExclusive * 2);
+    scores.set('ms', scores.get('ms') + msExclusive * 2);
+  }
+
+  const [language, score] = [...scores.entries()].sort((left, right) => right[1] - left[1])[0] ?? ['universal', 0];
+  return score >= Math.max(2, Math.ceil(words.length * 0.04)) ? language : 'universal';
+}
+
+function mattrThreshold(thresholds, language, tokenized) {
+  if (typeof thresholds.mattr?.[language] === 'number') return thresholds.mattr[language];
+  return isCJKText(tokenized.words.join('')) ? 0.68 : 0.72;
 }
 
 function locationFor(sentence) {
@@ -29,6 +51,7 @@ function regexFor(pattern) {
 }
 
 function patternViolations(tokenized, rules, wordCount) {
+  if (!rules?.patterns) return [];
   const violations = [];
   for (const rule of rules.patterns) {
     const candidates = [];
@@ -122,7 +145,7 @@ function structuralViolations(tokenized, metrics) {
   return violations;
 }
 
-function statisticalViolations(metrics, thresholds, language) {
+function statisticalViolations(metrics, thresholds, mattrTarget) {
   const violations = [];
   const cvTarget = metrics.sentenceCount >= 8 ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
   if (metrics.burstinessCV < cvTarget) {
@@ -152,12 +175,12 @@ function statisticalViolations(metrics, thresholds, language) {
       fixInstruction: 'Change neighboring sentence lengths by splitting or merging only where the content allows it.',
     });
   }
-  if (metrics.mattr < thresholds.mattr[language]) {
+  if (metrics.mattr < mattrTarget) {
     violations.push({
       type: 'LOW_LEXICAL_DIVERSITY',
       location: 'Whole text',
       actual: round(metrics.mattr),
-      target: thresholds.mattr[language],
+      target: mattrTarget,
       fixInstruction: 'Replace repeated generic wording with precise terms already supported by the source.',
     });
   }
@@ -244,7 +267,7 @@ function voiceDeviation(metrics, tokenized, text, profile) {
   return result < 0.0005 ? 0 : result;
 }
 
-function scoreResult(metrics, violations, language, thresholds) {
+function scoreResult(metrics, violations, thresholds, mattrTarget) {
   const cvTarget = metrics.sentenceCount >= 8 ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
   let burstinessPenalty = metrics.burstinessCV < cvTarget ? Math.min(25, Math.round((cvTarget - metrics.burstinessCV) * 100)) : 0;
   if (metrics.sentenceCount >= 8 && (metrics.shortSentenceRatio < thresholds.shortSentenceRatio || metrics.longSentenceRatio < thresholds.longSentenceRatio)) {
@@ -259,7 +282,7 @@ function scoreResult(metrics, violations, language, thresholds) {
   const morphologyPenalty = Math.min(15,
     (violations.some((violation) => violation.type === 'EXCESSIVE_NOMINALIZATION') ? 7.5 : 0)
     + Math.min(15, violations.filter((violation) => violation.type === 'PASSIVE_BLOATING').length * 7.5));
-  const vocabularyPenalty = metrics.mattr < thresholds.mattr[language] ? 5 : 0;
+  const vocabularyPenalty = metrics.mattr < mattrTarget ? 5 : 0;
   const entropyPenalty = violations.some((violation) => ['LOW_ENTROPY_REPETITION', 'SYMMETRIC_PARAGRAPHS', 'REPETITIVE_STARTERS'].includes(violation.type)) ? 5 : 0;
   const profilePenalty = violations.some((violation) => violation.type === 'VOICE_PROFILE_DEVIATION') ? 5 : 0;
   const vocabularyAndProfilePenalty = Math.min(10, vocabularyPenalty + entropyPenalty + profilePenalty);
@@ -267,25 +290,27 @@ function scoreResult(metrics, violations, language, thresholds) {
 }
 
 export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calculateMetricsAsync }) {
-  if (!rules?.id || !rules?.en || !defaultProfile || typeof calculateMetrics !== 'function') {
+  if (!rules || !defaultProfile || typeof calculateMetrics !== 'function') {
     throw new TypeError('createAnalyzer requires rules, defaultProfile, and calculateMetrics');
   }
 
   const prepare = (input, options) => {
     const sanitized = sanitizeMarkdown(input);
-    const initial = tokenizeText(sanitized, options.language ?? 'auto');
-    const language = options.language && options.language !== 'auto' ? options.language : detectLanguage(initial.words);
-    if (!rules[language]) throw new Error(`Unsupported language: ${language}`);
+    const requestedLanguage = String(options.language ?? 'auto').toLowerCase();
+    const initial = tokenizeText(sanitized, requestedLanguage);
+    const language = requestedLanguage === 'auto' ? detectLanguage(sanitized, initial.words, rules) : requestedLanguage;
     return {
       sanitized,
       language,
-      tokenized: language === (options.language ?? 'auto') ? initial : tokenizeText(sanitized, language),
+      rulePack: rules[language] ? language : 'universal',
+      tokenized: language === requestedLanguage ? initial : tokenizeText(sanitized, language),
     };
   };
 
-  const analyzePrepared = ({ sanitized, language, tokenized }, options, metrics) => {
+  const analyzePrepared = ({ sanitized, language, rulePack, tokenized }, options, metrics) => {
     const profile = options.profile ?? defaultProfile;
     const thresholds = { ...defaultProfile.thresholds, ...(profile.thresholds ?? {}) };
+    const mattrTarget = mattrThreshold(thresholds, language, tokenized);
     const patternMatches = patternViolations(tokenized, rules[language], metrics.wordCount);
 
     if (metrics.wordCount < thresholds.minimumWords || metrics.sentenceCount < thresholds.minimumSentences) {
@@ -294,13 +319,14 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
         status: 'SKIP',
         score: 100,
         language,
+        rulePack,
         warning: 'Text too short for statistical stylometry (< 3 sentences)',
         metrics: Object.fromEntries(Object.entries({ ...metrics, nominalizationRatio: 0, passiveRatio: 0, voiceProfileDeviation: 0 }).map(([key, value]) => [key, typeof value === 'number' ? round(value) : value])),
         violations,
       };
     }
 
-    const morphology = morphologyViolations(tokenized, rules[language].morphology);
+    const morphology = morphologyViolations(tokenized, rules[language]?.morphology);
     metrics.nominalizationRatio = morphology.nominalizationRatio;
     metrics.passiveRatio = morphology.passiveRatio;
     metrics.voiceProfileDeviation = voiceDeviation(metrics, tokenized, sanitized, profile);
@@ -319,9 +345,9 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
       ...structuralViolations(tokenized, metrics),
       ...morphology.violations,
       ...profileViolations,
-      ...statisticalViolations(metrics, thresholds, language),
+      ...statisticalViolations(metrics, thresholds, mattrTarget),
     ];
-    const score = scoreResult(metrics, violations, language, thresholds);
+    const score = scoreResult(metrics, violations, thresholds, mattrTarget);
     const cvTarget = metrics.sentenceCount >= 8 ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
     const forbidden = violations.some((violation) => violation.type === 'SLOP_PHRASE' || violation.type === 'DEFINITIONAL_OPENING');
     const rhythmPass = metrics.adjacentDelta >= thresholds.adjacentDelta;
@@ -332,6 +358,7 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
       status,
       score,
       language,
+      rulePack,
       metrics: Object.fromEntries(Object.entries(metrics).map(([key, value]) => [key, typeof value === 'number' ? round(value) : value])),
       violations,
     };

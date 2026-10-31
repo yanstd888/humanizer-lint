@@ -1,7 +1,7 @@
 {
   "name": "humanizer-lint",
-  "version": "1.1.0",
-  "description": "Closed-loop stylometric linter and anti-AI-slop diagnostic engine for Indonesian and English prose",
+  "version": "1.2.0",
+  "description": "Universal multi-language stylometric linter and anti-AI-slop diagnostic engine with native Intl.Segmenter",
   "type": "module",
   "engines": {
     "node": ">=18.3.0"
@@ -36,6 +36,7 @@
     "stylometry",
     "burstiness",
     "mattr",
+    "multilingual-nlp",
     "indonesian-nlp",
     "claude-code",
     "cursor-skill",

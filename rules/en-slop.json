@@ -1,5 +1,6 @@
 {
   "language": "en",
+  "stopwords": ["the", "and", "of", "to", "in", "is", "that", "for", "it", "with", "as", "on", "are", "this", "by", "be", "at", "or", "from", "an"],
   "patterns": [
     {"id":"EN001","type":"SLOP_PHRASE","pattern":"\\bdelve\\b","fixInstruction":"Name the exact action or subject instead."},
     {"id":"EN002","type":"SLOP_PHRASE","pattern":"\\btapestry\\b","fixInstruction":"Replace the metaphor with a concrete description."},

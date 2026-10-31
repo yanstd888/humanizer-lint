@@ -1,5 +1,6 @@
 {
   "language": "id",
+  "stopwords": ["yang", "dan", "di", "ini", "untuk", "dengan", "dari", "pada", "dalam", "tidak", "akan", "atau", "juga", "oleh", "adalah", "sebagai", "bahwa", "dapat", "karena", "tersebut"],
   "patterns": [
     {"id":"ID001","type":"SLOP_PHRASE","pattern":"\\bdi era digital\\b","fixInstruction":"Mulai langsung dari subjek atau fakta konkret."},
     {"id":"ID002","type":"SLOP_PHRASE","pattern":"\\bdi tengah pesatnya\\b","fixInstruction":"Hapus pembuka umum dan sebutkan perubahan yang dimaksud."},

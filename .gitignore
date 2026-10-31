@@ -1,6 +1,10 @@
 node_modules/
-.pages-dist/
 .wrangler/
+.pages-dist/
+tasks/
+*.tmp.md
+.stylometric-draft.tmp.md
+.DS_Store
 .verify-install/
 *.tgz
 .env

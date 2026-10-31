@@ -14,7 +14,7 @@ const copy = async (from, to = from) => {
   await cp(path.join(root, from), destination, { recursive: true });
 };
 
-function jsonLd() {
+function jsonLd(version) {
   return JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': [
@@ -24,7 +24,7 @@ function jsonLd() {
         url: siteUrl,
         applicationCategory: 'DeveloperApplication',
         operatingSystem: 'Cross-platform (Node.js >= 18.3, Web Browser)',
-        softwareVersion: '1.1.0',
+        softwareVersion: version,
         author: {
           '@type': 'Person',
           name: 'Muhammad Dian (yanstd888)',
@@ -74,8 +74,8 @@ function renderTemplate(template, values) {
   });
 }
 
-function renderIndex(template) {
-  return renderTemplate(template, { ...I18N.en, jsonLd: jsonLd() });
+function renderIndex(template, version) {
+  return renderTemplate(template, { ...I18N.en, jsonLd: jsonLd(version) });
 }
 
 await rm(output, { recursive: true, force: true });
@@ -98,18 +98,19 @@ await Promise.all([
   copy('profiles', 'profiles'),
 ]);
 
-const [indexTemplate, fullReferenceTemplate, idRules, enRules, profile] = await Promise.all([
+const ruleCodes = ['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'];
+const [indexTemplate, fullReferenceTemplate, profile, packageJson, ruleEntries] = await Promise.all([
   readFile(path.join(source, 'index.html'), 'utf8'),
   readFile(path.join(source, 'public', 'llms-full.md'), 'utf8'),
-  readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8'),
-  readFile(path.join(root, 'rules', 'en-slop.json'), 'utf8'),
   readFile(path.join(root, 'profiles', 'default-human.json'), 'utf8'),
+  readFile(path.join(root, 'package.json'), 'utf8').then(JSON.parse),
+  Promise.all(ruleCodes.map(async (code) => [code, JSON.parse(await readFile(path.join(root, 'rules', `${code}-slop.json`), 'utf8'))])),
 ]);
+const ruleCatalog = Object.fromEntries(ruleEntries);
 await Promise.all([
-  writeFile(path.join(output, 'index.html'), renderIndex(indexTemplate), 'utf8'),
+  writeFile(path.join(output, 'index.html'), renderIndex(indexTemplate, packageJson.version), 'utf8'),
   writeFile(path.join(output, 'llms-full.txt'), renderTemplate(fullReferenceTemplate, {
-    idRules: JSON.stringify(JSON.parse(idRules), null, 2),
-    enRules: JSON.stringify(JSON.parse(enRules), null, 2),
+    ruleCatalog: JSON.stringify(ruleCatalog, null, 2),
     defaultProfile: JSON.stringify(JSON.parse(profile), null, 2),
   }), 'utf8'),
 ]);

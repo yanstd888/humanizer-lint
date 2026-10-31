@@ -2,7 +2,7 @@
 
 # humanizer-lint
 
-### Deterministic prose and Markdown style linting for Indonesian and English
+### Deterministic multi-language prose and Markdown style linting
 
 Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, and voice-profile drift without sending text to an external service.
 
@@ -23,7 +23,7 @@ Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, an
 
 </div>
 
-**humanizer-lint is an open-source natural-text and Markdown prose linter that deterministically identifies style patterns often associated with AI-generated writing in Indonesian and English; it is a style validator, not an authorship detector.**
+**humanizer-lint is an open-source natural-text and Markdown prose linter. Native `Intl.Segmenter` provides local sentence and word boundaries; eight bundled anti-slop packs cover English, Indonesian, Spanish, Malay, French, German, Portuguese, and Mandarin. Other ISO 639-1 inputs use universal stylometric checks. It is a style validator, not an authorship detector.**
 
 ```sh
 npx skills add yanstd888/humanizer-lint
@@ -52,13 +52,20 @@ It works locally with zero runtime dependencies. Instead of rewriting text throu
 
 It can serve as a CLI text humanizer guardrail, automated writing style linter, or CI/CD documentation linter. The bundled rules flag overused AI clichés such as `delve` and `tapestry` without rewriting the source.
 
+## Language support
+
+| Tier | Languages | Checks |
+|---|---|---|
+| Tier 1 — rule packs | `en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh` | Universal stylometric metrics plus lexical, definitional-opening, and structural-cliché packs; Indonesian keeps its morphology rules. |
+| Tier 2 — universal | `universal` or another ISO 639-1 code such as `tr`, `ja`, or `ar` | Universal stylometry through native `Intl.Segmenter`: burstiness, adjacent rhythm delta, adaptive MATTR, paragraph symmetry, repeated starters, and compression ratio. |
+
 ## What it does
 
 `humanizer-lint` analyzes prose after removing or neutralizing common non-prose Markdown structures. It then combines lexical rules, sentence-length statistics, structural checks, Indonesian morphology checks, and an optional voice profile into a score from 0 to 100.
 
 The project includes:
 
-- 86 reviewable lexical and structural regex rules: 42 Indonesian and 44 English.
+- Eight reviewable lexical and structural rule packs for EN, ID, ES, MS, FR, DE, PT, and ZH.
 - Sentence-length burstiness, adjacent rhythm delta, short/long sentence ratios, and adaptive MATTR.
 - Repetition checks based on paragraph symmetry, repeated sentence starters, and compression ratio.
 - Indonesian nominalization, passive-voice, loanword, and translation-style opening checks.
@@ -192,10 +199,22 @@ No dependency installation or build step is required.
 
 ## Quick start
 
-Analyze one file:
+Analyze one file with auto-detection:
 
 ```sh
 humanizer-lint --file draft.md --lang auto
+```
+
+Force universal stylometry for a language without a bundled pack:
+
+```sh
+humanizer-lint --file draft.md --lang universal
+```
+
+Request an ISO 639-1 language directly:
+
+```sh
+humanizer-lint --file draft.md --lang es
 ```
 
 Return machine-readable JSON:
@@ -265,7 +284,7 @@ Untuk contoh ini, skor naik dari **38** menjadi **100** setelah frasa template d
 ### Analyzer
 
 ```text
-humanizer-lint (--file <path> | --stdin) [--lang id|en|auto] [--profile <path>] [--json]
+humanizer-lint (--file <path> | --stdin) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--json]
 ```
 
 | Option | Required | Description |

@@ -16,6 +16,7 @@ const result = document.querySelector('#result');
 const score = document.querySelector('#score');
 const status = document.querySelector('#status');
 const language = document.querySelector('#language');
+const analysisLanguage = document.querySelector('#analysis-language');
 const findings = document.querySelector('#findings');
 const diagnostic = document.querySelector('#diagnostic');
 const diagnosticText = document.querySelector('#diagnostic-text');
@@ -125,7 +126,7 @@ function renderMetrics(report) {
     rhythmHealthy,
   );
 
-  const mattrTarget = thresholds.mattr[report.language];
+  const mattrTarget = thresholds.mattr[report.language] ?? (['zh', 'ja', 'ko'].includes(report.language) ? 0.68 : 0.72);
   const lexicalHealthy = metrics.mattr >= mattrTarget;
   setMetric(
     metricElements.lexical,
@@ -308,7 +309,7 @@ async function runAnalysis() {
   analyze.disabled = true;
   try {
     lastText = text.value;
-    lastResult = await analyzer.analyzeTextAsync(lastText, { language: 'auto' });
+    lastResult = await analyzer.analyzeTextAsync(lastText, { language: analysisLanguage.value });
     render(lastResult);
   } catch {
     setError(copy().analysisFailed);
@@ -345,13 +346,12 @@ copyAutoFix.addEventListener('click', () => {
 analyze.addEventListener('click', runAnalysis);
 
 try {
-  const [idRules, enRules, profile] = await Promise.all([
-    loadJson('./rules/id-slop.json'),
-    loadJson('./rules/en-slop.json'),
+  const [ruleEntries, profile] = await Promise.all([
+    Promise.all(['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'].map(async (code) => [code, await loadJson(`./rules/${code}-slop.json`)])),
     loadJson('./profiles/default-human.json'),
   ]);
   defaultProfile = profile;
-  analyzer = createBrowserAnalyzer({ rules: { id: idRules, en: enRules }, defaultProfile });
+  analyzer = createBrowserAnalyzer({ rules: Object.fromEntries(ruleEntries), defaultProfile });
   ready = true;
   analyze.disabled = false;
   analyze.textContent = copy().analyze;
