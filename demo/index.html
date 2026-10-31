@@ -3,10 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
-  <meta property="og:url" content="https://humanizer.aiclub.ai.id">
-  <link rel="canonical" href="https://humanizer.aiclub.ai.id">
-  <title></title>
+  <meta name="description" content="{{description}}" data-i18n-content="description">
+  <meta name="keywords" content="{{keywords}}">
+  <meta name="theme-color" content="#121814">
+  <meta property="og:title" content="{{ogTitle}}" data-i18n-content="ogTitle">
+  <meta property="og:description" content="{{ogDescription}}" data-i18n-content="ogDescription">
+  <meta property="og:url" content="https://humanizer.aiclub.ai.id/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="humanizer-lint">
+  <meta property="og:locale" content="en_US" data-i18n-content="ogLocale">
+  <meta property="og:locale:alternate" content="id_ID" data-i18n-content="ogLocaleAlternate">
+  <meta property="og:image" content="https://humanizer.aiclub.ai.id/og-image.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ogTitle}}" data-i18n-content="ogTitle">
+  <meta name="twitter:description" content="{{ogDescription}}" data-i18n-content="ogDescription">
+  <meta name="twitter:image" content="https://humanizer.aiclub.ai.id/og-image.svg">
+  <link rel="canonical" href="https://humanizer.aiclub.ai.id/">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <title>{{pageTitle}}</title>
+  <script type="application/ld+json">{{jsonLd}}</script>
   <script>(function(){try{var saved=localStorage.getItem('humanizer-lint.theme');var theme=saved==='light'||saved==='dark'?saved:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.classList.toggle('theme-dark',theme==='dark')}catch(error){if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('theme-dark')}}())</script>
   <link rel="stylesheet" href="./styles.css">
 </head>
@@ -14,14 +29,14 @@
   <main class="shell">
     <header class="masthead">
       <div class="brand-lockup">
-        <a class="brand" href="https://humanizer.aiclub.ai.id">humanizer-lint</a>
-        <p data-i18n="brandTagline"></p>
+        <a class="brand" href="https://humanizer.aiclub.ai.id/">humanizer-lint</a>
+        <p data-i18n="brandTagline">{{brandTagline}}</p>
       </div>
       <div class="controls">
         <div class="language-toggle" role="group" data-i18n-aria-label="languageToggle">
-          <button class="language-button" type="button" data-language="en" data-i18n="languageEn"></button>
+          <button class="language-button" type="button" data-language="en" data-i18n="languageEn">{{languageEn}}</button>
           <span aria-hidden="true">/</span>
-          <button class="language-button" type="button" data-language="id" data-i18n="languageId"></button>
+          <button class="language-button" type="button" data-language="id" data-i18n="languageId">{{languageId}}</button>
         </div>
         <button id="theme-toggle" class="icon-button" type="button">
           <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
@@ -31,43 +46,97 @@
     </header>
 
     <section class="intro" aria-labelledby="title">
-      <p class="eyebrow" data-i18n="eyebrow"></p>
-      <h1 id="title" data-i18n="heading"></h1>
-      <p data-i18n="intro"></p>
+      <p class="eyebrow" data-i18n="eyebrow">{{eyebrow}}</p>
+      <h1 id="title" data-i18n="heading">{{heading}}</h1>
+      <p data-i18n="intro">{{intro}}</p>
+    </section>
+
+    <section class="install-panel" data-i18n-aria-label="installLabel">
+      <div class="command-tabs" role="group" data-i18n-aria-label="installLabel">
+        <button class="command-tab is-active" type="button" data-command="skill" data-i18n="installPrimary">{{installPrimary}}</button>
+        <button class="command-tab" type="button" data-command="cli" data-i18n="installCli">{{installCli}}</button>
+      </div>
+      <code id="install-command">npx skills add yanstd888/humanizer-lint</code>
+      <button id="copy-install" class="copy-button" type="button" data-copy-key="copy"><svg class="copy-icon copy-icon-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1"></rect><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"></path></svg><svg class="copy-icon copy-icon-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg><span data-copy-label data-i18n="copy">{{copy}}</span></button>
+      <span id="copy-status" class="copy-status" role="status" aria-live="polite"></span>
+      <div class="security-badges">
+        <a href="https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint/security/agent-trust-hub" target="_blank" rel="noopener noreferrer" data-i18n="securityAgentTrust">{{securityAgentTrust}}</a>
+        <a href="https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint/security/socket" target="_blank" rel="noopener noreferrer" data-i18n="securitySocket">{{securitySocket}}</a>
+        <a href="https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint/security/snyk" target="_blank" rel="noopener noreferrer" data-i18n="securitySnyk">{{securitySnyk}}</a>
+        <span data-i18n="securityClient">{{securityClient}}</span>
+      </div>
+    </section>
+
+    <section class="samples" data-i18n-aria-label="samplesLabel">
+      <p class="eyebrow" data-i18n="samplesLabel">{{samplesLabel}}</p>
+      <div class="sample-list">
+        <button type="button" data-sample="ai-id" data-i18n="sampleAiId">{{sampleAiId}}</button>
+        <button type="button" data-sample="human-id" data-i18n="sampleHumanId">{{sampleHumanId}}</button>
+        <button type="button" data-sample="ai-en" data-i18n="sampleAiEn">{{sampleAiEn}}</button>
+        <button type="button" data-sample="human-en" data-i18n="sampleHumanEn">{{sampleHumanEn}}</button>
+      </div>
     </section>
 
     <section class="workspace" data-i18n-aria-label="workspaceLabel">
       <div class="input-panel">
-        <label for="text" data-i18n="inputLabel"></label>
-        <textarea id="text" rows="13" data-i18n-placeholder="placeholder"></textarea>
+        <label for="text" data-i18n="inputLabel">{{inputLabel}}</label>
+        <textarea id="text" rows="13" data-i18n-placeholder="placeholder" placeholder="{{placeholder}}"></textarea>
         <p id="error" class="error" role="alert" hidden></p>
-        <button id="analyze" type="button" disabled></button>
+        <button id="analyze" type="button" disabled>{{loading}}</button>
       </div>
 
       <section id="result" class="result-panel" aria-live="polite" hidden>
         <div class="result-head">
           <div>
-            <p class="eyebrow" data-i18n="results"></p>
+            <p class="eyebrow" data-i18n="results">{{results}}</p>
             <p class="score"><span id="score">—</span><small>/100</small></p>
           </div>
           <dl class="meta">
-            <div><dt data-i18n="status"></dt><dd id="status">—</dd></div>
-            <div><dt data-i18n="language"></dt><dd id="language">—</dd></div>
+            <div><dt data-i18n="status">{{status}}</dt><dd id="status">—</dd></div>
+            <div><dt data-i18n="language">{{language}}</dt><dd id="language">—</dd></div>
           </dl>
         </div>
-        <h2 data-i18n="findings"></h2>
+
+        <div id="metric-grid" class="metric-grid">
+          <article class="metric-card"><h3 data-i18n="metricBurstiness" data-i18n-title="metricBurstinessHelp">{{metricBurstiness}}</h3><p id="metric-burstiness">—</p></article>
+          <article class="metric-card"><h3 data-i18n="metricRhythm" data-i18n-title="metricRhythmHelp">{{metricRhythm}}</h3><p id="metric-rhythm">—</p></article>
+          <article class="metric-card"><h3 data-i18n="metricLexical" data-i18n-title="metricLexicalHelp">{{metricLexical}}</h3><p id="metric-lexical">—</p></article>
+          <article class="metric-card"><h3 data-i18n="metricSlop" data-i18n-title="metricSlopHelp">{{metricSlop}}</h3><p id="metric-slop">—</p></article>
+        </div>
+
+        <div class="findings-head">
+          <h2 data-i18n="findings">{{findings}}</h2>
+          <button id="copy-autofix" class="copy-button" type="button" hidden data-copy-key="copyAutoFix"><svg class="copy-icon copy-icon-copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1"></rect><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"></path></svg><svg class="copy-icon copy-icon-check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"></path></svg><span data-copy-label data-i18n="copyAutoFix">{{copyAutoFix}}</span></button>
+        </div>
         <ul id="findings"></ul>
+        <aside id="diagnostic" class="diagnostic" hidden tabindex="-1">
+          <p class="eyebrow" data-i18n="selectedSentence">{{selectedSentence}}</p>
+          <blockquote id="diagnostic-text"></blockquote>
+        </aside>
       </section>
+    </section>
+
+    <section class="how-it-works" aria-labelledby="how-title">
+      <p class="eyebrow" data-i18n="howEyebrow">{{howEyebrow}}</p>
+      <h2 id="how-title" data-i18n="howTitle">{{howTitle}}</h2>
+      <p class="how-intro" data-i18n="howIntro">{{howIntro}}</p>
+      <div class="how-grid">
+        <article><h3 data-i18n="howLexicalTitle">{{howLexicalTitle}}</h3><p data-i18n="howLexicalText">{{howLexicalText}}</p></article>
+        <article><h3 data-i18n="howRhythmTitle">{{howRhythmTitle}}</h3><p data-i18n="howRhythmText">{{howRhythmText}}</p></article>
+        <article><h3 data-i18n="howDiversityTitle">{{howDiversityTitle}}</h3><p data-i18n="howDiversityText">{{howDiversityText}}</p></article>
+        <article><h3 data-i18n="howStructureTitle">{{howStructureTitle}}</h3><p data-i18n="howStructureText">{{howStructureText}}</p></article>
+        <article><h3 data-i18n="howVerifyTitle">{{howVerifyTitle}}</h3><p data-i18n="howVerifyText">{{howVerifyText}}</p></article>
+      </div>
     </section>
 
     <footer>
       <div>
-        <p class="eyebrow" data-i18n="cli"></p>
+        <p class="eyebrow" data-i18n="cli">{{cli}}</p>
         <code>npx humanizer-lint --file tulisan.md --lang id</code>
       </div>
       <nav data-i18n-aria-label="projectLinks">
         <a href="https://www.npmjs.com/package/humanizer-lint">npm</a>
-        <a href="https://skills.sh/yanstd888/humanizer-lint">skills.sh</a>
+        <a href="https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint">skills.sh</a>
         <a href="https://github.com/yanstd888/humanizer-lint">GitHub</a>
       </nav>
     </footer>

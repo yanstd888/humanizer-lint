@@ -9,9 +9,14 @@ Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, an
 [![GitHub Release](https://img.shields.io/github/v/release/yanstd888/humanizer-lint?style=flat-square&logo=github)](https://github.com/yanstd888/humanizer-lint/releases)
 [![npm](https://img.shields.io/npm/v/humanizer-lint)](https://www.npmjs.com/package/humanizer-lint)
 [![CI](https://img.shields.io/github/actions/workflow/status/yanstd888/humanizer-lint/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/yanstd888/humanizer-lint/actions/workflows/ci.yml)
+[![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-126a4a?style=flat-square)](package.json)
+[![Snyk: Pass](https://img.shields.io/badge/Snyk-Pass-126a4a?style=flat-square)](https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint/security/snyk)
+[![Socket: Pass](https://img.shields.io/badge/Socket-Pass-126a4a?style=flat-square)](https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint/security/socket)
+[![Agent Trust Hub: Pass](https://img.shields.io/badge/Agent%20Trust%20Hub-Pass-126a4a?style=flat-square)](https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint/security/agent-trust-hub)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-humanizer.aiclub.ai.id-126a4a?style=flat-square)](https://humanizer.aiclub.ai.id/)
 [![License](https://img.shields.io/github/license/yanstd888/humanizer-lint?style=flat-square)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.3-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)](https://skills.sh/yanstd888/humanizer-lint)
+[![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)](https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint)
 [![GitHub Stars](https://img.shields.io/github/stars/yanstd888/humanizer-lint?style=flat-square)](https://github.com/yanstd888/humanizer-lint/stargazers)
 
 [What it does](#what-it-does) | [Try in your browser](#try-in-your-browser) | [Install](#install) | [Quick start](#quick-start) | [CLI reference](#cli-reference) | [Detectors](#detectors-and-violation-types) | [Agent skill](#use-as-an-agent-skill) | [FAQ](#frequently-asked-questions)
@@ -20,11 +25,28 @@ Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, an
 
 **humanizer-lint is an open-source natural-text and Markdown prose linter that deterministically identifies style patterns often associated with AI-generated writing in Indonesian and English; it is a style validator, not an authorship detector.**
 
+```sh
+npx skills add yanstd888/humanizer-lint
+```
+
+Use the command above to install the agent skill. For one-off local linting, run the published `humanizer-lint` CLI below.
+
 ## Try in your browser
 
 Use the official demo: [humanizer.aiclub.ai.id](https://humanizer.aiclub.ai.id).
 
 [humanizer-lint.pages.dev](https://humanizer-lint.pages.dev) remains available as a mirror.
+
+Open a deterministic sample view directly:
+
+| Sample | URL | Expected result |
+|---|---|---|
+| AI sample (ID) | [open](https://humanizer.aiclub.ai.id/?sample=ai-id) | `FAIL`, score `< 65` |
+| Human sample (ID) | [open](https://humanizer.aiclub.ai.id/?sample=human-id) | `PASS`, score `>= 88` |
+| AI sample (EN) | [open](https://humanizer.aiclub.ai.id/?sample=ai-en) | `FAIL`, score `< 65` |
+| Human sample (EN) | [open](https://humanizer.aiclub.ai.id/?sample=human-en) | `PASS`, score `>= 88` |
+
+Use `?lang=en` or `?lang=id` to open the playground chrome in a chosen language for that visit; it does not overwrite a saved browser preference.
 
 It works locally with zero runtime dependencies. Instead of rewriting text through another language model, it reports paragraph- and sentence-level violations with specific correction instructions. Use it to lint LLM-generated documentation, remove robotic AI phrasing from Markdown, check burstiness and lexical diversity, or add a deterministic prose gate to an agent workflow.
 
@@ -109,20 +131,21 @@ Language: en
 
 and exits with code `0`.
 
-## Why humanizer-lint
+## Static `SKILL.md` Humanizers vs. `humanizer-lint` (Closed-Loop CLI)
 
-Many AI humanizer services send text to another model and return a rewritten version. That can alter facts, quotations, formatting, or technical meaning. `humanizer-lint` takes the smaller and more predictable approach: it identifies the prose that needs attention and leaves the edit under your control.
+A static writing prompt can ask a model to vary prose, but it cannot verify the finished draft. `humanizer-lint` takes the smaller, deterministic approach: inspect the exact text after drafting, make only flagged revisions, then check again locally.
 
-| Capability | humanizer-lint | Web rewriting service | General grammar checker |
-|---|---|---|---|
-| Detects configured LLM clichés | Yes, with rule IDs and locations | Usually rewrites them | Usually not |
-| Measures sentence rhythm | Yes | Usually not exposed | Limited |
-| Preserves source text | Yes, analysis only | No, returns a rewrite | Depends on product |
-| Handles common Markdown structures | Yes, through deterministic sanitization | Product-dependent | Product-dependent |
-| Runs offline after installation | Yes | Usually no | Product-dependent |
-| Supports Indonesian and English lexical rules | Yes | Product-dependent | Product-dependent |
-| Produces JSON | Yes | Product-dependent | Product-dependent |
-| Proves human authorship | No | No | No |
+| Capability | Static `SKILL.md` humanizer prompt | `humanizer-lint` closed-loop CLI |
+|---|---|---|
+| Checks the completed draft | No | Yes, exact input is measured |
+| Measures sentence rhythm | Prompt guidance only | CV, adjacent delta, short/long distribution |
+| Measures vocabulary repetition | Prompt guidance only | Adaptive MATTR and repetition checks |
+| Flags configured AI clichés | Model-dependent | Rule IDs and locations |
+| Preserves source text | Depends on rewrite | Yes, analysis only |
+| Runs offline after installation | Depends on agent/model | Yes |
+| Supports EN and ID lexical rules | Prompt-dependent | Yes |
+| Produces JSON and exit codes | Usually no | Yes |
+| Proves human authorship | No | No |
 
 If you are looking for an AI writing detector linter, a ChatGPT tone remover CLI, or an open-source alternative to AI humanizers, note the boundary: this tool detects configured style signals and rhythm problems. It does not claim to determine whether a human or model wrote the text.
 
@@ -147,7 +170,7 @@ npm install -g humanizer-lint
 The recommended installation for coding agents is through the skills CLI:
 
 ```sh
-npx skills add yanstd888/humanizer-lint --skill humanizer-lint
+npx skills add yanstd888/humanizer-lint
 ```
 
 The public listing, installation command, and install count are available on [skills.sh](https://skills.sh/yanstd888/humanizer-lint).
@@ -398,7 +421,7 @@ The skill is indexed on skills.sh and its current listing passes the platform's 
 
 The skills.sh badge at the top of this README is the public source for anonymous installation activity. GitHub's native `Used by` sidebar is generated automatically from its dependency graph; repository owners cannot set that count manually.
 
-Because the CLI is not published to npm, skill installations are represented by skills.sh rather than GitHub package dependents. The GitHub panel will appear when downstream repositories declare a dependency that GitHub can detect.
+Because the CLI is published on npm, npm downloads and downstream package manifests are the relevant distribution signals. The skills.sh listing separately represents agent-skill installation activity.
 
 ## CI and repository automation
 
@@ -464,7 +487,7 @@ It can identify the exact paragraph or sentence that matches a configured phrase
 <details>
 <summary><strong>Can I install it from npm?</strong></summary>
 
-Not currently. Install the agent skill with `npx skills add yanstd888/humanizer-lint --skill humanizer-lint`, or clone the repository and use `npm link` for the local CLI binaries.
+Yes. Run `npx humanizer-lint --file draft.md --lang auto` for a one-off command, or install it globally with `npm install -g humanizer-lint`. Install the agent skill separately with `npx skills add yanstd888/humanizer-lint`.
 
 </details>
 
