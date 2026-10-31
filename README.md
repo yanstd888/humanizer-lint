@@ -2,9 +2,9 @@
 
 # humanizer-lint
 
-### Deterministic multi-language prose and Markdown style linting
+### Deterministic multilingual prose, Markdown, and stylometric linting
 
-Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, and voice-profile drift without sending text to an external service.
+Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, and voice-profile drift across **8 built-in language packs plus 100+ Universal Stylometry languages** without sending text to an external service.
 
 [![GitHub Release](https://img.shields.io/github/v/release/yanstd888/humanizer-lint?style=flat-square&logo=github)](https://github.com/yanstd888/humanizer-lint/releases)
 [![npm](https://img.shields.io/npm/v/humanizer-lint)](https://www.npmjs.com/package/humanizer-lint)
@@ -45,6 +45,12 @@ Open a deterministic sample view directly:
 | Human sample (ID) | [open](https://humanizer.aiclub.ai.id/?sample=human-id) | `PASS`, score `>= 88` |
 | AI sample (EN) | [open](https://humanizer.aiclub.ai.id/?sample=ai-en) | `FAIL`, score `< 65` |
 | Human sample (EN) | [open](https://humanizer.aiclub.ai.id/?sample=human-en) | `PASS`, score `>= 88` |
+| AI sample (ES) | [open](https://humanizer.aiclub.ai.id/?sample=ai-es) | `FAIL`, score `< 68` |
+| AI sample (MS) | [open](https://humanizer.aiclub.ai.id/?sample=ai-ms) | `FAIL`, score `< 68` |
+| AI sample (FR) | [open](https://humanizer.aiclub.ai.id/?sample=ai-fr) | `FAIL`, score `< 68` |
+| AI sample (DE) | [open](https://humanizer.aiclub.ai.id/?sample=ai-de) | `FAIL`, score `< 68` |
+| AI sample (PT) | [open](https://humanizer.aiclub.ai.id/?sample=ai-pt) | `FAIL`, score `< 68` |
+| AI sample (ZH) | [open](https://humanizer.aiclub.ai.id/?sample=ai-zh) | `FAIL`, score `< 68` |
 
 Use `?lang=en` or `?lang=id` to open the playground chrome in a chosen language for that visit; it does not overwrite a saved browser preference.
 
@@ -58,6 +64,12 @@ It can serve as a CLI text humanizer guardrail, automated writing style linter, 
 |---|---|---|
 | Tier 1 — rule packs | `en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh` | Universal stylometric metrics plus lexical, definitional-opening, and structural-cliché packs; Indonesian keeps its morphology rules. |
 | Tier 2 — universal | `universal` or another ISO 639-1 code such as `tr`, `ja`, or `ar` | Universal stylometry through native `Intl.Segmenter`: burstiness, adjacent rhythm delta, adaptive MATTR, paragraph symmetry, repeated starters, and compression ratio. |
+
+## Use cases & agent integration
+
+Use this local AI text humanizer and prose linter for copywriting, blog posts, SEO articles, technical documentation, Markdown proofreading, academic prose, and natural translation polishing. Tier 1 packs flag native anti-slop phrases in English, Indonesian, Spanish, Malay, French, German, Portuguese, and Mandarin; Tier 2 applies deterministic stylometry to 100+ languages.
+
+For a closed-loop agent workflow, install `npx skills add yanstd888/humanizer-lint`, draft without changing facts, run `humanizer-lint --lang auto`, revise only flagged prose, and re-run before returning the text. It works with Claude Code, Cursor, Windsurf, Cline, Codex, and Gemini CLI without a runtime dependency or network text upload.
 
 ## What it does
 
@@ -291,7 +303,7 @@ humanizer-lint (--file <path> | --stdin) [--lang auto|universal|<ISO-639-1>] [--
 |---|---:|---|
 | `--file <path>` | One input required | Read one UTF-8 text or Markdown file. |
 | `--stdin` | One input required | Read the complete document from standard input. |
-| `--lang id|en|auto` | No | Select Indonesian, English, or function-word auto-detection. Default: `auto`. |
+| `--lang auto|universal|<ISO-639-1>` | No | Select auto-detection, a bundled Tier 1 pack, or universal stylometry. Default: `auto`. |
 | `--profile <path>` | No | Load a JSON voice profile. |
 | `--json` | No | Print JSON only. Without it, print the terminal report. |
 | `--help` | No | Print command usage. |
@@ -428,7 +440,7 @@ The real result may contain additional metric properties and violations.
 
 After installation, an agent can use the skill as a closed verification loop:
 
-1. Draft or edit Indonesian or English prose without changing supported facts.
+1. Draft or edit prose in a supported Tier 1 language or any Universal Stylometry language without changing supported facts.
 2. Run the analyzer against the exact complete draft.
 3. Read every violation and edit only the affected prose or named whole-document gate.
 4. Re-run the analyzer, stopping after three iterations.
@@ -513,7 +525,7 @@ Yes. Run `npx humanizer-lint --file draft.md --lang auto` for a one-off command,
 <details>
 <summary><strong>Which languages are supported?</strong></summary>
 
-The configured lexical and language-detection paths support Indonesian and English. Do not treat the current statistical thresholds as validated defaults for other languages.
+The configured lexical packs support English, Indonesian, Spanish, Malay, French, German, Portuguese, and Mandarin. Other ISO 639-1 languages use universal stylometry through native `Intl.Segmenter`; these checks measure rhythm and repetition without inventing a lexical pack.
 
 </details>
 

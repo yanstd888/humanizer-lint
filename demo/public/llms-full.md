@@ -1,6 +1,6 @@
 # humanizer-lint — Full Technical Reference
 
-> Version 1.2.0. This document is generated into `/llms-full.txt` with the current checked-in rule catalogs during the static demo build.
+> Version 1.2.1. This document is generated into `/llms-full.txt` with the current checked-in rule catalogs during the static demo build.
 
 ## Purpose
 
@@ -13,6 +13,8 @@ npx skills add yanstd888/humanizer-lint
 npx humanizer-lint --file draft.md --lang auto --json
 cat draft.md | npx humanizer-lint --stdin --json
 ```
+
+CLI language selection: `--lang auto|universal|<ISO-639-1>`. Playground deep-links: `?sample=ai-id`, `?sample=ai-en`, `?sample=ai-es`, `?sample=ai-ms`, `?sample=ai-fr`, `?sample=ai-de`, `?sample=ai-pt`, and `?sample=ai-zh`.
 
 Exit codes:
 

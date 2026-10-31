@@ -25,11 +25,17 @@ function jsonLd(version) {
         applicationCategory: 'DeveloperApplication',
         operatingSystem: 'Cross-platform (Node.js >= 18.3, Web Browser)',
         softwareVersion: version,
-        author: {
-          '@type': 'Person',
-          name: 'Muhammad Dian (yanstd888)',
-          url: 'https://github.com/yanstd888',
-        },
+        inLanguage: ['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh'],
+        featureList: [
+          'Burstiness coefficient of variation (CV)',
+          'Adjacent Rhythm Delta',
+          'Adaptive MATTR lexical diversity',
+          'Zlib compression entropy',
+          'Author voice fingerprinting',
+          'Eight multilingual anti-slop rule packs',
+          'Universal Intl.Segmenter stylometry for 100+ languages',
+        ],
+        author: { '@type': 'Person', name: 'Muhammad Dian (yanstd888)', url: 'https://github.com/yanstd888' },
         codeRepository: 'https://github.com/yanstd888/humanizer-lint',
         installUrl: 'https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint',
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
@@ -37,31 +43,12 @@ function jsonLd(version) {
       {
         '@type': 'FAQPage',
         mainEntity: [
-          {
-            '@type': 'Question',
-            name: 'Why is prompt-only rewriting not enough?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'A prompt can request natural prose, but it does not measure the finished draft. humanizer-lint checks the exact output for configured lexical, rhythm, vocabulary, structural, and morphology signals before publication.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'How do burstiness and adjacent rhythm delta work?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Burstiness is the coefficient of variation across sentence lengths. Adjacent rhythm delta is the mean word-count difference between neighboring sentences. The analyzer reports both values and its configured thresholds.',
-            },
-          },
-          {
-            '@type': 'Question',
-            name: 'How do I install humanizer-lint as an agent skill?',
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: 'Run npx skills add yanstd888/humanizer-lint, then use the local deterministic CLI during drafting and review.',
-            },
-          },
-        ],
+          ['How do I humanize AI text without sending it to another service?', 'Paste the draft into the client-side tool or run the local CLI, revise only flagged prose, and verify the exact revision again.'],
+          ['Bagaimana burstiness bekerja?', 'Burstiness adalah koefisien variasi panjang kalimat. Nilai yang sehat menunjukkan ritme tidak terlalu seragam.'],
+          ['Which languages are supported?', 'Eight Tier 1 packs cover EN, ID, ES, MS, FR, DE, PT, and ZH. Universal stylometry supports 100+ languages through Intl.Segmenter.'],
+          ['Is my text private?', 'Yes. Browser analysis runs client-side and the Node.js CLI has no runtime network dependency.'],
+          ['How do I install the agent skill?', 'Run npx skills add yanstd888/humanizer-lint.'],
+        ].map(([name, text]) => ({ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text } })),
       },
     ],
   }).replaceAll('<', '\\u003c');

@@ -1,7 +1,7 @@
 {
   "name": "humanizer-lint",
-  "version": "1.2.0",
-  "description": "Universal multi-language stylometric linter and anti-AI-slop diagnostic engine with native Intl.Segmenter",
+  "version": "1.2.1",
+  "description": "Multilingual closed-loop AI text humanizer, anti-slop prose linter, and stylometric burstiness (CV) & MATTR validator (EN, ID, ES, MS, FR, DE, PT, ZH + 100+ universal languages via Intl.Segmenter). Zero dependencies.",
   "type": "module",
   "engines": {
     "node": ">=18.3.0"
@@ -31,6 +31,7 @@
     "skills-sh",
     "agent-skill",
     "ai-humanizer",
+    "humanizer",
     "anti-slop",
     "prose-linter",
     "stylometry",
@@ -38,6 +39,8 @@
     "mattr",
     "multilingual-nlp",
     "indonesian-nlp",
+    "copywriting",
+    "markdown-linter",
     "claude-code",
     "cursor-skill",
     "windsurf",

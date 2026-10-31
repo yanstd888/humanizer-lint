@@ -53,4 +53,51 @@ Before leaving, she added a startup check that rejects missing buckets and wrote
 Her bag was still beside the door. Dinner was cold, but the queue was empty.
 `,
   },
+  'ai-es': {
+    language: 'es',
+    labelKey: 'sampleAiEs',
+    text: `En el vertiginoso mundo actual, cada equipo debe adoptar una estrategia sólida para alcanzar resultados óptimos. En el vertiginoso mundo actual, cada departamento necesita una plataforma robusta para mejorar cada proceso. En el vertiginoso mundo actual, cada líder debe impulsar una transformación integral para crear valor sostenible.
+
+Cabe destacar que esta solución desempeña un papel crucial para todas las organizaciones. Además, la plataforma permite una colaboración fluida y una experiencia transformadora para cada usuario. En conclusión, este enfoque abre nuevas oportunidades y garantiza un futuro más eficiente.
+`,
+  },
+  'ai-ms': {
+    language: 'ms',
+    labelKey: 'sampleAiMs',
+    text: `Dalam era digital kini, setiap organisasi perlu menggunakan strategi yang menyeluruh untuk mencapai hasil yang optimum. Dalam era digital kini, setiap pasukan memerlukan platform yang kukuh untuk meningkatkan setiap proses. Dalam era digital kini, setiap pemimpin perlu memacu transformasi yang menyeluruh untuk mencipta nilai yang mampan.
+
+Tidak dapat dinafikan bahawa penyelesaian ini memainkan peranan penting untuk semua organisasi. Selain itu, platform ini menyediakan kerjasama yang lancar dan pengalaman yang lebih baik untuk setiap pengguna. Secara keseluruhannya, pendekatan ini membuka peluang baharu dan memastikan masa depan yang lebih cekap.
+`,
+  },
+  'ai-fr': {
+    language: 'fr',
+    labelKey: 'sampleAiFr',
+    text: `Dans le monde trépidant d'aujourd'hui, chaque équipe doit adopter une stratégie solide pour obtenir des résultats optimaux. Dans le monde trépidant d'aujourd'hui, chaque service a besoin d'une plateforme robuste pour améliorer chaque processus. Dans le monde trépidant d'aujourd'hui, chaque dirigeant doit conduire une transformation complète afin de créer une valeur durable.
+
+Il est important de noter que cette solution joue un rôle crucial pour toutes les organisations. De plus, la plateforme offre une collaboration fluide et une expérience améliorée pour chaque utilisateur. En conclusion, cette approche ouvre de nouvelles possibilités et garantit un avenir plus efficace.
+`,
+  },
+  'ai-de': {
+    language: 'de',
+    labelKey: 'sampleAiDe',
+    text: `In der heutigen schnelllebigen Welt muss jedes Team eine robuste Strategie einsetzen, um optimale Ergebnisse zu erzielen. In der heutigen schnelllebigen Welt benötigt jede Abteilung eine leistungsstarke Plattform, um jeden Prozess zu verbessern. In der heutigen schnelllebigen Welt muss jede Führungskraft eine umfassende Transformation vorantreiben, um nachhaltigen Wert zu schaffen.
+
+Es ist wichtig zu beachten, dass diese Lösung eine entscheidende Rolle für alle Organisationen spielt. Darüber hinaus ermöglicht die Plattform eine nahtlose Zusammenarbeit und eine bessere Erfahrung für jeden Nutzer. Zusammenfassend lässt sich sagen, dass dieser Ansatz neue Möglichkeiten eröffnet und eine effizientere Zukunft sichert.
+`,
+  },
+  'ai-pt': {
+    language: 'pt',
+    labelKey: 'sampleAiPt',
+    text: `No mundo acelerado de hoje, cada equipe deve adotar uma estratégia robusta para alcançar resultados ideais. No mundo acelerado de hoje, cada departamento precisa de uma plataforma forte para melhorar cada processo. No mundo acelerado de hoje, cada líder deve conduzir uma transformação completa para criar valor sustentável.
+
+Vale ressaltar que esta solução desempenha um papel crucial para todas as organizações. Além disso, a plataforma oferece colaboração fluida e uma experiência melhor para cada usuário. Em conclusão, essa abordagem abre novas oportunidades e garante um futuro mais eficiente.
+`,
+  },
+  'ai-zh': {
+    language: 'zh',
+    labelKey: 'sampleAiZh',
+    text: `在当今快节奏的世界中，每个团队都必须采用稳健策略来取得最佳成果。在当今快节奏的世界中，每个部门都需要强大平台来改进每个流程。在当今快节奏的世界中，每位领导者都必须推动全面转型以创造可持续价值。
+
+值得注意的是，该解决方案对所有组织都发挥着关键作用。此外，该平台为每位用户提供无缝协作和更好的体验。总而言之，这种方法会开启新的机会并确保更高效的未来。`,
+  },
 };
