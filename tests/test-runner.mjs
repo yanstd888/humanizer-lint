@@ -313,6 +313,7 @@ test('Pages build prevents the full technical SEO, security, and accessibility a
     'Referrer-Policy: strict-origin-when-cross-origin',
     'Permissions-Policy: accelerometer=()',
     'Last-Modified: Sat, 31 Oct 2026 00:00:00 GMT',
+    'ETag: W/"humanizer-lint-1.3.0-seo-audit"',
     'Cache-Control: public, max-age=0, must-revalidate',
   ]) assert.match(headers, new RegExp(header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   for (const crawler of ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Googlebot', 'Bingbot', 'Applebot', 'Applebot-Extended', 'Amazonbot', 'YouBot', 'DuckAssistBot', 'Bytespider', 'CCBot']) {
