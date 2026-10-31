@@ -194,6 +194,46 @@ test('demo chrome has complete EN/ID copy and official domain metadata', async (
   assert.match(app, /humanizer-lint\.theme/);
 });
 
+test('demo samples preserve fixture outcomes and shareable state', async () => {
+  const { DEMO_SAMPLES } = await import('../demo/samples.mjs');
+  const { buildAutoFixPrompt, diagnosticExcerpt, parseDemoQuery } = await import('../demo/presentation.mjs');
+  const expected = {
+    'ai-id': { fixture: 'ai-sample-id.txt', language: 'id', status: 'FAIL', maxScore: 64 },
+    'human-id': { fixture: 'human-sample-id.txt', language: 'id', status: 'PASS', minScore: 88 },
+    'ai-en': { fixture: 'ai-sample-en.txt', language: 'en', status: 'FAIL', maxScore: 64 },
+    'human-en': { fixture: 'human-sample-en.txt', language: 'en', status: 'PASS', minScore: 88 },
+  };
+
+  for (const [id, expectation] of Object.entries(expected)) {
+    const source = await fixture(expectation.fixture);
+    assert.equal(DEMO_SAMPLES[id].text, source, `${id} must use the checked fixture`);
+    const report = analyzeText(DEMO_SAMPLES[id].text, { language: expectation.language });
+    assert.equal(report.status, expectation.status, id);
+    if (expectation.maxScore != null) assert.ok(report.score <= expectation.maxScore, id);
+    if (expectation.minScore != null) assert.ok(report.score >= expectation.minScore, id);
+    if (id.startsWith('ai-')) {
+      const types = new Set(report.violations.map((violation) => violation.type));
+      assert.ok(types.has('SLOP_PHRASE'), id);
+      assert.ok(types.has('MONOTONOUS_RHYTHM'), id);
+      assert.ok(types.has('LOW_BURSTINESS'), id);
+    } else {
+      assert.equal(report.violations.length, 0, id);
+    }
+  }
+
+  assert.deepEqual(parseDemoQuery('?sample=ai-id&lang=en'), { sample: 'ai-id', language: 'en' });
+  assert.deepEqual(parseDemoQuery('?sample=unknown&lang=fr'), { sample: null, language: null });
+
+  const source = DEMO_SAMPLES['ai-id'].text;
+  const report = analyzeText(source, { language: 'id' });
+  const first = report.violations[0];
+  assert.match(diagnosticExcerpt(source, first), /Di era digital/);
+  const prompt = buildAutoFixPrompt({ text: source, report });
+  assert.match(prompt, /LOW_BURSTINESS/);
+  assert.match(prompt, /burstinessCV/);
+  assert.match(prompt, /Di era digital/);
+});
+
 test('CLI runners cover PASS, SKIP, FAIL, stdin, and invalid arguments', async () => {
   const failedOutput = [];
   const failCode = await runAnalyzeCli(
