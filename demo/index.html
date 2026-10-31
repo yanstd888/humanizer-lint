@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="{{description}}" data-i18n-content="description">
-  <meta name="keywords" content="{{keywords}}">
+  <meta name="description" content="Free 100% client-side AI text humanizer, anti-slop prose linter, and stylometric burstiness (CV) &amp; MATTR analyzer. Audit prose in English, Indonesian, Spanish, Malay, French, German, Portuguese, Chinese, and 100+ languages locally or via skills.sh CLI." data-i18n-content="description">
+  <meta name="keywords" content="ai humanizer, prose linter, anti-slop skill, burstiness checker, stylometric analyzer, humanizer-lint, skills.sh humanizer, humanizer bahasa indonesia, cek tulisan ai gratis, cara agar tulisan ai tidak kaku, ubah tulisan chatgpt jadi manusia, hilangkan kata klise ai, bypass ai writing patterns, fix uniform sentence length, mattr lexical diversity, markdown prose linter, claude code writing skill, cursor anti-slop skill, windsurf skill, gemini cli skill, semak ayat ai bahasa melayu, humanizador de texto ia, humaniseur de texte ia, ki-text humanisieren, AI文章人性化">
   <meta name="theme-color" content="#121814">
   <meta property="og:title" content="{{ogTitle}}" data-i18n-content="ogTitle">
   <meta property="og:description" content="{{ogDescription}}" data-i18n-content="ogDescription">
@@ -19,8 +19,13 @@
   <meta name="twitter:description" content="{{ogDescription}}" data-i18n-content="ogDescription">
   <meta name="twitter:image" content="https://humanizer.aiclub.ai.id/og-image.svg">
   <link rel="canonical" href="https://humanizer.aiclub.ai.id/">
+  <link rel="alternate" hreflang="x-default" href="https://humanizer.aiclub.ai.id/">
+  <link rel="alternate" hreflang="en" href="https://humanizer.aiclub.ai.id/?lang=en">
+  <link rel="alternate" hreflang="id" href="https://humanizer.aiclub.ai.id/?lang=id">
+  <link rel="alternate" type="text/markdown" href="https://humanizer.aiclub.ai.id/llms.txt" title="LLM Summary Specification">
+  <link rel="alternate" type="text/markdown" href="https://humanizer.aiclub.ai.id/llms-full.txt" title="LLM Full Technical Specification">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <title>{{pageTitle}}</title>
+  <title>Humanizer-Lint — Multilingual AI Text Humanizer, Anti-Slop Prose Linter &amp; Burstiness Checker (EN/ID/ES/MS/FR/DE/PT/ZH)</title>
   <script type="application/ld+json">{{jsonLd}}</script>
   <script>(function(){try{var saved=localStorage.getItem('humanizer-lint.theme');var theme=saved==='light'||saved==='dark'?saved:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.classList.toggle('theme-dark',theme==='dark')}catch(error){if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('theme-dark')}}())</script>
   <link rel="stylesheet" href="./styles.css">
@@ -74,6 +79,12 @@
         <button type="button" data-sample="human-id" data-i18n="sampleHumanId">{{sampleHumanId}}</button>
         <button type="button" data-sample="ai-en" data-i18n="sampleAiEn">{{sampleAiEn}}</button>
         <button type="button" data-sample="human-en" data-i18n="sampleHumanEn">{{sampleHumanEn}}</button>
+        <button type="button" data-sample="ai-es" data-i18n="sampleAiEs">{{sampleAiEs}}</button>
+        <button type="button" data-sample="ai-ms" data-i18n="sampleAiMs">{{sampleAiMs}}</button>
+        <button type="button" data-sample="ai-fr" data-i18n="sampleAiFr">{{sampleAiFr}}</button>
+        <button type="button" data-sample="ai-de" data-i18n="sampleAiDe">{{sampleAiDe}}</button>
+        <button type="button" data-sample="ai-pt" data-i18n="sampleAiPt">{{sampleAiPt}}</button>
+        <button type="button" data-sample="ai-zh" data-i18n="sampleAiZh">{{sampleAiZh}}</button>
       </div>
     </section>
 
@@ -82,14 +93,14 @@
         <label for="text" data-i18n="inputLabel">{{inputLabel}}</label>
         <label class="analysis-language" for="analysis-language"><span data-i18n="analysisLanguage">{{analysisLanguage}}</span><select id="analysis-language" aria-label="Analysis language">
           <option value="auto" data-i18n="analysisLanguageAuto">{{analysisLanguageAuto}}</option>
-          <option value="id">Indonesia</option>
-          <option value="en">English</option>
-          <option value="es">Español</option>
-          <option value="ms">Melayu</option>
-          <option value="fr">Français</option>
-          <option value="de">Deutsch</option>
-          <option value="pt">Português</option>
-          <option value="zh">中文</option>
+          <option value="en">English (en)</option>
+          <option value="id">Bahasa Indonesia (id)</option>
+          <option value="es">Español (es)</option>
+          <option value="ms">Bahasa Melayu (ms)</option>
+          <option value="fr">Français (fr)</option>
+          <option value="de">Deutsch (de)</option>
+          <option value="pt">Português (pt)</option>
+          <option value="zh">中文 / Mandarin (zh)</option>
           <option value="universal" data-i18n="analysisLanguageUniversal">{{analysisLanguageUniversal}}</option>
         </select></label>
         <textarea id="text" rows="13" data-i18n-placeholder="placeholder" placeholder="{{placeholder}}"></textarea>
@@ -138,6 +149,37 @@
         <article><h3 data-i18n="howDiversityTitle">{{howDiversityTitle}}</h3><p data-i18n="howDiversityText">{{howDiversityText}}</p></article>
         <article><h3 data-i18n="howStructureTitle">{{howStructureTitle}}</h3><p data-i18n="howStructureText">{{howStructureText}}</p></article>
         <article><h3 data-i18n="howVerifyTitle">{{howVerifyTitle}}</h3><p data-i18n="howVerifyText">{{howVerifyText}}</p></article>
+      </div>
+    </section>
+
+    <section class="seo-content" aria-labelledby="coverage-title">
+      <p class="eyebrow">Multilingual coverage</p>
+      <h2 id="coverage-title">Eight anti-slop packs, plus universal stylometry</h2>
+      <p>Humanizer-Lint is a client-side AI text humanizer and burstiness checker. It measures sentence-length variation, including <strong>CV ≥ 0.45</strong> and adjacent rhythm delta, while its Tier 1 packs flag language-specific AI clichés.</p>
+      <div class="coverage-grid">
+        <article><h3>EN — English</h3><p>Flags clichés such as <em>delve</em> and <em>tapestry</em>.</p></article>
+        <article><h3>ID — Bahasa Indonesia</h3><p>Flags <em>tidak dapat dipungkiri</em>, <em>di era digital</em>, and translationese.</p></article>
+        <article><h3>ES — Español</h3><p>Flags <em>en el vertiginoso mundo actual</em>.</p></article>
+        <article><h3>MS — Bahasa Melayu</h3><p>Flags <em>tidak dapat dinafikan</em>.</p></article>
+        <article><h3>FR — Français</h3><p>Flags <em>dans le monde trépidant</em>.</p></article>
+        <article><h3>DE — Deutsch</h3><p>Flags <em>in der heutigen schnelllebigen Welt</em>.</p></article>
+        <article><h3>PT — Português</h3><p>Flags <em>no mundo acelerado de hoje</em>.</p></article>
+        <article><h3>ZH — 中文 / Mandarin</h3><p>Flags <em>值得注意的是</em> and <em>总而言之</em>.</p></article>
+        <article><h3>Tier 2 — 100+ languages</h3><p>Universal stylometry via <code>Intl.Segmenter</code> for Latin, Cyrillic, Arabic, Japanese, Korean, Hindi, Turkish, Vietnamese, and more.</p></article>
+      </div>
+      <div class="use-case-grid">
+        <article><h3>AI Text Humanizer &amp; Burstiness Optimizer</h3><p>Audit ChatGPT or Claude drafts before publishing. The local analyzer checks CV, adjacent rhythm delta, adaptive MATTR, repetition, and configured anti-slop phrases without sending text to a server.</p></article>
+        <article><h3>Humanizer Bahasa Indonesia &amp; Cek Skor Tulisan AI</h3><p>Periksa tulisan AI yang kaku, klise, pasif <code>di-...-kan</code>, serta nominalisasi <code>pe-...-an</code> dan <code>ke-...-an</code> tanpa mengubah kata benda konkret.</p></article>
+        <article><h3>Copywriting, blog, SEO, and documentation</h3><p>Use the prose linter for copywriting, blog posts, SEO articles, academic prose, Markdown documentation, translation polishing, and deterministic editing reviews.</p></article>
+        <article><h3>Autonomous coding-agent skill</h3><p>Install with <code>npx skills add yanstd888/humanizer-lint</code> for Claude Code, Cursor, Windsurf, Cline, Codex, and Gemini CLI.</p></article>
+      </div>
+      <div class="faq" aria-labelledby="faq-title">
+        <h2 id="faq-title">FAQ / Pertanyaan umum</h2>
+        <details><summary>How do I humanize AI text without sending it to another service?</summary><p>Paste the draft into this browser tool or run the local CLI, revise only the flagged prose, then verify the exact revision again.</p></details>
+        <details><summary>Bagaimana burstiness bekerja?</summary><p>Burstiness adalah koefisien variasi panjang kalimat. Nilai yang lebih sehat menunjukkan ritme tidak terlalu seragam.</p></details>
+        <details><summary>Which languages are supported?</summary><p>Eight Tier 1 packs cover EN, ID, ES, MS, FR, DE, PT, and ZH. Universal stylometry supports 100+ languages through Intl.Segmenter.</p></details>
+        <details><summary>Is my text private?</summary><p>Yes. Browser analysis runs client-side and the Node.js CLI has no runtime network dependency.</p></details>
+        <details><summary>How do I install the agent skill?</summary><p>Run <code>npx skills add yanstd888/humanizer-lint</code>.</p></details>
       </div>
     </section>
 

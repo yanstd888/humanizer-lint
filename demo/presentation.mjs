@@ -1,15 +1,35 @@
 import { tokenizeText } from '../scripts/utils/tokenizer.mjs';
 
-const SAMPLE_IDS = new Set(['ai-id', 'human-id', 'ai-en', 'human-en']);
-const LANGUAGES = new Set(['en', 'id']);
+const SAMPLE_IDS = new Set(['ai-id', 'human-id', 'ai-en', 'human-en', 'ai-es', 'ai-ms', 'ai-fr', 'ai-de', 'ai-pt', 'ai-zh']);
+const UI_LANGUAGES = new Set(['en', 'id']);
+const TARGET_LANGUAGES = new Set(['auto', 'en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh', 'universal']);
+
+const LANGUAGE_LABELS = {
+  auto: 'Auto-Detect (Recommended)',
+  en: 'English (Tier 1 Pack)',
+  id: 'Bahasa Indonesia (Tier 1 Pack)',
+  es: 'Español (Tier 1 Pack)',
+  ms: 'Bahasa Melayu (Tier 1 Pack)',
+  fr: 'Français (Tier 1 Pack)',
+  de: 'Deutsch (Tier 1 Pack)',
+  pt: 'Português (Tier 1 Pack)',
+  zh: '中文 / Mandarin (Tier 1 Pack)',
+  universal: 'Universal Stylometry (Tier 2)',
+};
+
+export function languageLabel(language) {
+  return LANGUAGE_LABELS[language] ?? LANGUAGE_LABELS.universal;
+}
 
 export function parseDemoQuery(search) {
   const query = new URLSearchParams(search);
   const sample = query.get('sample');
   const language = query.get('lang');
+  const targetLang = query.get('targetLang');
   return {
     sample: SAMPLE_IDS.has(sample) ? sample : null,
-    language: LANGUAGES.has(language) ? language : null,
+    language: UI_LANGUAGES.has(language) ? language : null,
+    targetLang: TARGET_LANGUAGES.has(targetLang) ? targetLang : null,
   };
 }
 
@@ -38,5 +58,5 @@ export function buildAutoFixPrompt({ text, report }) {
     .map(([key, value]) => `- ${key}: ${value}`)
     .join('\n');
 
-  return `# Targeted prose revision\n\nRewrite only the sentences cited below. Preserve facts, names, numbers, quotations, and the original language. Remove flagged slop without adding unsupported claims. Aim for stronger sentence-length variation and no slop phrases, then re-run humanizer-lint to verify the result.\n\n## Analyzer report\n- Status: ${report.status}\n- Score: ${report.score}/100\n- Language: ${report.language}\n\n## Measured metrics\n${metrics}\n\n## Flagged diagnostics\n${violations}\n\n## Original text\n${text}`;
+  return `# Targeted prose revision\n\nRewrite only the sentences cited below in ${languageLabel(report.language)}. Preserve facts, names, numbers, quotations, and the original language. Remove flagged slop without adding unsupported claims. Aim for stronger sentence-length variation and no slop phrases, then re-run humanizer-lint to verify the result.\n\n## Analyzer report\n- Status: ${report.status}\n- Score: ${report.score}/100\n- Detected language: ${languageLabel(report.language)}\n- Rule pack: ${languageLabel(report.rulePack)}\n\n## Measured metrics\n${metrics}\n\n## Flagged diagnostics\n${violations}\n\n## Original text\n${text}`;
 }

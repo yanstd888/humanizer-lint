@@ -1,45 +1,41 @@
 ---
 name: humanizer-lint
-description: Deterministic universal multi-language stylometric analyzer and anti-slop prose linter. Uses native Intl.Segmenter plus eight built-in EN, ID, ES, MS, FR, DE, PT, and ZH lexical rule packs with a zero-dependency local Node.js CLI validator.
-version: 1.2.0
+description: Deterministic multilingual AI text humanizer, anti-slop prose linter, copywriting/blog/docs editor, and stylometric analyzer (EN, ID, ES, MS, FR, DE, PT, ZH + 100+ languages via Intl.Segmenter). Fixes robotic LLM tone, uniform sentence rhythm, low burstiness (CV), MATTR vocabulary repetition, and translationese clichés using a local zero-dependency Node.js CLI validator.
+version: 1.2.1
 license: MIT
 compatibility: Node.js >= 18.3.0 (zero external dependencies)
 allowed-tools: Bash(node:*) Read Write
 metadata:
-  version: "1.2.0"
+  version: "1.2.1"
   author: "yanstd888"
   domain: "writing"
 ---
 
 # Humanizer Lint
 
-Use this skill when writing or revising prose that must avoid uniform agent rhythm, repeated stock phrases, and excessive translation-style structure. The local analyzer is mandatory. Native `Intl.Segmenter` handles sentence and word boundaries; EN, ID, ES, MS, FR, DE, PT, and ZH use bundled lexical packs, while other ISO 639-1 languages use universal stylometry. It uses only Node.js built-ins and sends no text over the network.
+Use this skill when writing, editing, translating, or humanizing prose, blog posts, SEO articles, copywriting, or technical documentation across **8 deep language rule packs (English, Indonesian, Spanish, Malay, French, German, Portuguese, Mandarin Chinese)** and **100+ languages in Universal Stylometric Mode (`Intl.Segmenter`)**. The local deterministic CLI analyzer is mandatory, uses only Node.js built-ins, and sends zero text over the network.
 
 ## When to use
 
-- Humanize an agent-generated draft in Indonesian or English.
-- Check prose for uniform sentence rhythm and repeated lexical templates.
-- Match a user voice profile generated from writing samples.
-- Verify edited prose before returning it.
+- Humanize agent-generated drafts, articles, essays, copywriting, and documentation in any language (`--lang auto`).
+- Audit and fix uniform sentence rhythm (low Burstiness $CV$ and monotonous 3-sentence windows).
+- Strip LLM stock phrases, filler transitions, and rigid translationese morphology (`EN`, `ID`, `ES`, `MS`, `FR`, `DE`, `PT`, `ZH`).
+- Match a user's personal writing style using a local voice fingerprint profile (`scripts/fingerprint.mjs`).
+- Verify edited prose deterministically (`PASS` / `FAIL`) before returning it to the user.
+
+## Supported Languages (Two-Tier Multilingual Architecture)
+
+- **Tier 1 — Full Lexical Anti-Slop + Stylometric Math (8 Languages):** `en` (English), `id` (Bahasa Indonesia), `es` (Español), `ms` (Bahasa Melayu), `fr` (Français), `de` (Deutsch), `pt` (Português), `zh` (中文 / Mandarin).
+- **Tier 2 — Universal Stylometric Engine (100+ Languages via `Intl.Segmenter`):** Automatic sentence-length Burstiness ($CV$), Adjacent Rhythm Delta ($\Delta_{adj}$), Adaptive $MATTR$, paragraph symmetry, starter repetition, and compression entropy for Latin, Cyrillic, Arabic, Japanese, Korean, Hindi, Turkish, Vietnamese, and other scripts via `--lang auto` or `--lang universal`.
+
+## Agent-SEO Trigger Intents & Search Keywords
+
+- **Core Humanizer & Anti-Slop:** `humanizer`, `ai humanizer`, `humanize text`, `anti-slop`, `remove ai slop`, `prose linter`, `stylometric linter`, `bypass robotic ai writing`, `burstiness checker`, `perplexity and burstiness`, `mattr lexical diversity`.
+- **Writing, Copywriting & Docs Workflows:** `writing assistant`, `copywriting linter`, `blog post writer`, `seo article humanizer`, `markdown prose linter`, `technical documentation editor`, `proofreading and editing`, `natural translation polishing`, `voice cloning stylometry`.
+- **Indonesian & Malay Intents:** `humanizer bahasa indonesia`, `cara agar tulisan ai tidak terdeteksi`, `perbaiki tulisan ai yang kaku`, `ubah teks chatgpt jadi natural`, `cek skor tulisan ai`, `parafrase anti-ai`, `semak ayat ai bahasa melayu`.
+- **Global Multilingual Intents:** `humanizador de texto ia` (ES/PT), `humaniseur de texte ia` (FR), `ki-text humanisieren` (DE), `消除AI味 / AI文章人性化` (ZH).
 
 Do not use it to alter code, commands, structured data, quotations, legal language, or factual identifiers. The sanitizer excludes common Markdown structures, but the agent must still preserve meaning and supported facts.
-
-## Trigger Intents & Search Keywords
-
-Use this skill for requests such as:
-
-- "humanize AI text"
-- "remove AI slop and clichés"
-- "bypass robotic writing patterns"
-- "increase sentence burstiness and perplexity"
-- "lint markdown documentation prose"
-- "humanizer bahasa Indonesia"
-- "humanize Spanish, Malay, French, German, Portuguese, or Chinese prose"
-- "check Japanese, Arabic, or another language with universal stylometry"
-- "perbaiki tulisan AI yang kaku"
-- "match author voice profile"
-
-These intents apply across Claude Code, Cursor, Windsurf, Cline, Codex, and Gemini CLI when the request needs deterministic EN/ID prose validation rather than an unmeasured rewrite.
 
 ## Prerequisites
 

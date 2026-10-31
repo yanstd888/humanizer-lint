@@ -1,6 +1,6 @@
 import { createBrowserAnalyzer } from './analyzer-browser.mjs';
 import { I18N } from './i18n.mjs';
-import { buildAutoFixPrompt, diagnosticExcerpt, parseDemoQuery } from './presentation.mjs';
+import { buildAutoFixPrompt, diagnosticExcerpt, languageLabel, parseDemoQuery } from './presentation.mjs';
 import { DEMO_SAMPLES } from './samples.mjs';
 
 const LANGUAGE_KEY = 'humanizer-lint.language';
@@ -190,7 +190,7 @@ function render(report) {
   score.textContent = String(report.score);
   status.textContent = report.status;
   status.dataset.status = report.status.toLowerCase();
-  language.textContent = report.language;
+  language.textContent = languageLabel(report.language);
   renderMetrics(report);
   renderFindings(report.violations);
   copyAutoFix.hidden = !report.violations.length;
@@ -252,6 +252,12 @@ function applyTheme(nextTheme, persist = false) {
 function replaceSampleQuery(sample) {
   const url = new URL(window.location.href);
   url.searchParams.set('sample', sample);
+  history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+}
+
+function replaceTargetLangQuery(targetLang) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('targetLang', targetLang);
   history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
 }
 
@@ -322,7 +328,11 @@ async function loadSample(sample, updateUrl = true) {
   const selected = DEMO_SAMPLES[sample];
   if (!selected) return;
   text.value = selected.text;
-  if (updateUrl) replaceSampleQuery(sample);
+  analysisLanguage.value = selected.language;
+  if (updateUrl) {
+    replaceSampleQuery(sample);
+    replaceTargetLangQuery(selected.language);
+  }
   await runAnalysis();
 }
 
@@ -344,6 +354,10 @@ copyAutoFix.addEventListener('click', () => {
   if (lastResult) copyText(buildAutoFixPrompt({ text: lastText, report: lastResult }), copyAutoFix);
 });
 analyze.addEventListener('click', runAnalysis);
+analysisLanguage.addEventListener('change', async () => {
+  replaceTargetLangQuery(analysisLanguage.value);
+  if (text.value.trim()) await runAnalysis();
+});
 
 try {
   const [ruleEntries, profile] = await Promise.all([
@@ -355,7 +369,11 @@ try {
   ready = true;
   analyze.disabled = false;
   analyze.textContent = copy().analyze;
-  if (queryState.sample) await loadSample(queryState.sample, false);
+  analysisLanguage.value = queryState.targetLang ?? DEMO_SAMPLES[queryState.sample]?.language ?? 'auto';
+  if (queryState.sample) {
+    text.value = DEMO_SAMPLES[queryState.sample].text;
+    await runAnalysis();
+  }
 } catch {
   setError(copy().analysisFailed);
 }
