@@ -18,13 +18,17 @@ const { analyzeText } = createAnalyzer({ rules: RULES, defaultProfile: DEFAULT_P
 
 export { analyzeText };
 
-function formatHuman(result) {
+function formatHuman(result, includeDeliveryGate = false) {
   const lines = [`Status: ${result.status}`, `Score: ${result.score}`, `Language: ${result.language}`, `Rule pack: ${result.rulePack}`];
   if (result.warning) lines.push(`Warning: ${result.warning}`);
   lines.push('', 'Metrics:');
   for (const [name, value] of Object.entries(result.metrics)) lines.push(`  ${name}: ${value}`);
   if (result.violations.length) lines.push('', 'Violations:');
   for (const violation of result.violations) lines.push(`  ${violation.type} | ${violation.location} | ${violation.fixInstruction}`);
+  if (includeDeliveryGate) {
+    lines.push('', 'Delivery Gate:');
+    for (const [name, block] of Object.entries(result.deliveryGate)) lines.push(`  ${name}: ${JSON.stringify(block)}`);
+  }
   return `${lines.join('\n')}\n`;
 }
 
@@ -47,13 +51,14 @@ export async function runAnalyzeCli(argv, io = {}) {
         lang: { type: 'string', default: 'auto' },
         profile: { type: 'string' },
         json: { type: 'boolean' },
+        'delivery-gate': { type: 'boolean' },
         help: { type: 'boolean' },
       },
       strict: true,
       allowPositionals: false,
     });
     if (values.help) {
-      stdout('Usage: humanizer-lint (--file <path> | --stdin) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--json]\n');
+      stdout('Usage: humanizer-lint (--file <path> | --stdin) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--json] [--delivery-gate]\n');
       return 0;
     }
     if (Boolean(values.file) === Boolean(values.stdin)) throw new Error('Choose exactly one input: --file or --stdin');
@@ -61,8 +66,8 @@ export async function runAnalyzeCli(argv, io = {}) {
     if (values.stdin && io.stdin == null && process.stdin.isTTY) throw new Error('--stdin requires piped input');
     const text = values.file ? await new Promise((resolve, reject) => readFile(values.file, 'utf8', (error, data) => error ? reject(error) : resolve(data))) : await stdin();
     const profile = values.profile ? JSON.parse(await new Promise((resolve, reject) => readFile(values.profile, 'utf8', (error, data) => error ? reject(error) : resolve(data)))) : undefined;
-    const result = analyzeText(text, { language: values.lang, profile });
-    stdout(values.json ? `${JSON.stringify(result, null, 2)}\n` : formatHuman(result));
+    const result = analyzeText(text, { language: values.lang, profile, sourcePath: values.file });
+    stdout(values.json ? `${JSON.stringify(result, null, 2)}\n` : formatHuman(result, values['delivery-gate']));
     return result.status === 'FAIL' ? 1 : 0;
   } catch (error) {
     stderr(`ERROR: ${error.message}\n`);

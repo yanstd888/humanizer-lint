@@ -20,6 +20,8 @@ const { analyzeText, runAnalyzeCli } = await import(projectModule('scripts', 'an
 const { createBrowserAnalyzer } = await import(projectModule('demo', 'analyzer-browser.mjs'));
 const { I18N } = await import(projectModule('demo', 'i18n.mjs'));
 const { fingerprintSamples, runFingerprintCli } = await import(projectModule('scripts', 'fingerprint.mjs'));
+const { lintCopywriting, lintCodeComments, lintUiAndAccessibility } = await import(projectModule('scripts', 'utils', 'domain-linters.mjs'));
+const { runBenchmark } = await import(projectModule('scripts', 'benchmark.mjs'));
 
 let rootPath = decodeURIComponent(projectModule().pathname);
 if (/^\/[A-Za-z]:/.test(rootPath)) rootPath = rootPath.slice(1);
@@ -217,6 +219,48 @@ test('required rule edge cases are detected', () => {
   assert.ok(indonesian.violations.some((violation) => violation.type === 'DEFINITIONAL_OPENING'));
 });
 
+test('v1.4 rhythm, repetition, rhetoric, and surgical hints are deterministic', () => {
+  const flatParagraph = analyzeText('Tim memeriksa catatan pagi dengan teliti. Tim meninjau angka siang dengan cermat. Tim membaca laporan sore dengan hati-hati. Tim mengecek hasil malam dengan saksama.', { language: 'id' });
+  assert.ok(flatParagraph.violations.some((item) => item.type === 'FLAT_PARAGRAPH_RHYTHM'));
+
+  const clauses = analyzeText('Rina membuka laporan, memeriksa angka, lalu mencatat hasil. Dimas membaca log, menandai anomali, lalu mengirim catatan. Sari menguji cache, mengukur latency, lalu menyimpan data. Bima memeriksa deployment, membaca status, lalu menutup tiket.', { language: 'id' });
+  assert.ok(clauses.violations.some((item) => item.type === 'UNIFORM_CLAUSE_STRUCTURE'));
+
+  const repeated = Array.from({ length: 8 }, (_, index) => `Tim ${index} memeriksa catatan rilis harian sebelum rapat dan catatan rilis harian tetap dipakai untuk menilai hasil.`).join(' ');
+  assert.ok(analyzeText(repeated, { language: 'id' }).violations.some((item) => item.type === 'REPETITIVE_NGRAM'));
+
+  const rhetoric = analyzeText('Mengapa demikian? Tim menguji perubahan pada server produksi dengan catatan lengkap. Menarik, bukan? Operator lalu memeriksa hasil yang berbeda untuk memastikan setiap angka dapat ditelusuri kembali.', { language: 'id' });
+  assert.ok(rhetoric.violations.some((item) => item.type === 'RHETORICAL_SLOP'));
+
+  const hints = analyzeText('Tidak dapat dipungkiri bahwa pengimplementasian sistem ini dilakukan oleh tim karena jadwal berubah dan layanan harus tetap tersedia untuk pelanggan. Pengoptimalan konfigurasi dilakukan sebelum operator membuka akses produksi. Tim lalu memeriksa log yang jauh lebih rinci untuk memastikan hasil pengujian tetap dapat ditelusuri.', { language: 'id' });
+  assert.ok(hints.violations.some((item) => item.type === 'SLOP_PHRASE' && item.suggestedReplacement));
+  assert.ok(hints.violations.some((item) => item.type === 'EXCESSIVE_NOMINALIZATION' && item.suggestedReplacement));
+  assert.ok(hints.violations.some((item) => item.splitSuggestion));
+});
+
+test('mixed Indonesian-English technical prose keeps Indonesian routing without false morphology flags', () => {
+  const result = analyzeText('Tim deployment memeriksa latency pada middleware dan cache sebelum pull request digabungkan. Setelah itu, operator membaca log server untuk memastikan konfigurasi tetap aman. Catatan perubahan menjelaskan alasan teknis dan langkah pemulihan jika layanan gagal.', { language: 'auto' });
+  assert.equal(result.language, 'id');
+  assert.equal(result.violations.some((item) => ['SLOP_PHRASE', 'EXCESSIVE_NOMINALIZATION', 'PASSIVE_BLOATING'].includes(item.type)), false);
+});
+
+test('domain linters cover copy, code comments, and UI accessibility without dependencies', () => {
+  assert.ok(lintCopywriting('Click here to supercharge your workflow.').some((item) => item.type === 'WEAK_CTA'));
+  assert.ok(lintCopywriting('Klik di sini untuk solusi terlengkap dan terbaik.').some((item) => item.type === 'HYPERBOLIC_CLAIM'));
+  const comments = lintCodeComments('// Import dependencies\n// === Helpers ===\n// ... rest of code');
+  for (const type of ['TAUTOLOGICAL_CODE_COMMENT', 'DECORATIVE_COMMENT_BANNER', 'LAZY_AI_PLACEHOLDER']) assert.ok(comments.some((item) => item.type === type), type);
+  const ui = lintUiAndAccessibility('<h1>Title</h1><h3>Skip</h3><button></button><img src="x.png"><div class="bg-gradient-to-r w-[900px]"></div>', 'page.html');
+  for (const type of ['MISSING_ACCESSIBLE_NAME', 'MISSING_IMG_ALT', 'HEADING_ORDER_SKIP', 'AI_GRADIENT_CLICHE', 'NON_RESPONSIVE_FIXED_WIDTH']) assert.ok(ui.some((item) => item.type === type), type);
+});
+
+test('delivery gate exposes four stable blocks and prioritized fixes', () => {
+  const report = analyzeText('In today’s fast-paced world, teams delve into a robust landscape. Moreover, this pivotal approach fosters seamless collaboration across every project. In conclusion, the solution unlocks valuable insights for everyone.', { language: 'en' });
+  assert.deepEqual(Object.keys(report.deliveryGate), ['rhythmAndStylometry', 'lexicalAndMorphology', 'domainHygiene', 'finalVerdict']);
+  assert.equal(report.deliveryGate.finalVerdict.score, report.score);
+  assert.equal(report.deliveryGate.finalVerdict.status, report.status);
+  assert.ok(report.deliveryGate.finalVerdict.prioritizedFixes.length > 0);
+});
+
 test('AI fixtures fail below 70 with actionable violations', async () => {
   for (const [name, language] of [['ai-sample-id.txt', 'id'], ['ai-sample-en.txt', 'en']]) {
     const result = analyzeText(await fixture(name), { language });
@@ -313,7 +357,7 @@ test('Pages build prevents the full technical SEO, security, and accessibility a
     'Referrer-Policy: strict-origin-when-cross-origin',
     'Permissions-Policy: accelerometer=()',
     'Last-Modified: Sat, 31 Oct 2026 00:00:00 GMT',
-    'ETag: W/"humanizer-lint-1.3.0-seo-audit"',
+    'ETag: W/"humanizer-lint-1.4.0-seo-audit"',
     'Cache-Control: public, max-age=0, must-revalidate',
   ]) assert.match(headers, new RegExp(header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   for (const crawler of ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Googlebot', 'Bingbot', 'Applebot', 'Applebot-Extended', 'Amazonbot', 'YouBot', 'DuckAssistBot', 'Bytespider', 'CCBot']) {
@@ -328,7 +372,9 @@ test('Pages build prevents the full technical SEO, security, and accessibility a
   assert.match(index, /<select id="analysis-language" aria-label="Analysis language">/);
   assert.match(index, /<label for="text"/);
   assert.match(await sourceFile('demo', 'app.mjs'), /button\.textContent = sampleLabel\(id\)/);
-  assert.match(await sourceFile('demo', 'app.mjs'), /button\.append\(type, location, instruction\)/);
+  assert.match(await sourceFile('demo', 'app.mjs'), /button\.append\(type, location, instruction, replacement, split\)/);
+  assert.match(index, /id="gate-rhythm"/);
+  assert.match(index, /id="gate-verdict"/);
 });
 
 test('demo samples preserve verified multilingual outcomes and shareable state', async () => {
@@ -404,6 +450,13 @@ test('CLI runners cover PASS, SKIP, FAIL, stdin, and invalid arguments', async (
   ), 0);
   assert.match(humanOutput.join(''), /Status:\s+SKIP[\s\S]*Metrics:/);
 
+  const gateOutput = [];
+  await runAnalyzeCli(
+    ['--stdin', '--lang', 'en', '--delivery-gate'],
+    { stdout: (value) => gateOutput.push(value), stderr: (value) => gateOutput.push(value), stdin: async () => fixture('human-sample-en.txt') },
+  );
+  assert.match(gateOutput.join(''), /Delivery Gate:[\s\S]*rhythmAndStylometry/);
+
   const errors = [];
   assert.equal(await runAnalyzeCli([], { stdout: () => {}, stderr: (value) => errors.push(value), stdin: async () => '' }), 2);
   assert.match(errors.join(''), /exactly one input/i);
@@ -433,6 +486,13 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
     assert.equal(JSON.parse(cliMessages.join('')).sampleCount, 1);
     assert.equal(JSON.parse(await readFile(cliOutput, 'utf8')).name, 'cli-test');
 
+    const aliasOutput = path.join(dir, 'alias-profile.json');
+    assert.equal(await runFingerprintCli(
+      ['--dir', dir, '--out', aliasOutput, '--lang', 'auto'],
+      { stdout: () => {}, stderr: () => {} },
+    ), 0);
+    assert.equal(JSON.parse(await readFile(aliasOutput, 'utf8')).sampleCount, 2);
+
     const singleProfile = await fingerprintSamples([first]);
     const selfAnalysis = analyzeText(await readFile(first, 'utf8'), { language: 'id', profile: singleProfile });
     assert.equal(selfAnalysis.metrics.voiceProfileDeviation, 0);
@@ -441,7 +501,16 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
   }
 });
 
-test('package, skill, README, static demo, and skills.sh config match the v1.3.0 discovery contract', async () => {
+test('benchmark is reproducible across all 16 multilingual fixtures', () => {
+  const report = runBenchmark(2);
+  assert.equal(report.fixtures, 16);
+  assert.equal(report.accuracy, 1);
+  assert.equal(report.deterministic, true);
+  assert.ok(report.meanScoreSeparation > 0);
+  assert.ok(report.meanMsPerAnalysis >= 0);
+});
+
+test('package, skill, README, static demo, and skills.sh config match the v1.4.0 discovery contract', async () => {
   const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
   const packageJson = JSON.parse(packageSource);
   const skillsConfig = JSON.parse(await sourceFile('skills.sh.json'));
@@ -464,16 +533,16 @@ test('package, skill, README, static demo, and skills.sh config match the v1.3.0
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '1.3.0');
+  assert.equal(packageJson.version, '1.4.0');
   assert.equal(skillsConfig.$schema, 'https://skills.sh/schemas/skills.sh.schema.json');
   assert.equal(skillsConfig.notGrouped, 'bottom');
   assert.deepEqual(skillsConfig.groupings, [{
-    title: 'Multilingual Prose Linting & AI Humanizer',
-    description: 'Deterministic closed-loop stylometric linter, burstiness (CV) & MATTR analyzer, and anti-slop humanizer for 8 languages (EN, ID, ES, MS, FR, DE, PT, ZH) + 100+ universal languages.',
+    title: 'Multilingual Prose & Rhythm Linting',
+    description: 'Deterministic local prose linter with 8 language-specific anti-cliche packs and universal Intl.Segmenter rhythm diagnostics for 100+ languages.',
     skills: ['humanizer-lint']
   }]);
-  assert.match(packageJson.description, /^Deterministic multilingual AI text humanizer, anti-slop prose linter/);
-  assert.match(packageJson.description, /100\+ universal languages\. Local zero-dependency Node\.js CLI, no network\./);
+  assert.match(packageJson.description, /^Deterministic prose linter and stylometric rhythm analyzer/);
+  assert.match(packageJson.description, /100\+ languages\. Local zero-dependency Node\.js CLI, no network\./);
   assert.equal(packageJson.homepage, 'https://humanizer.aiclub.ai.id');
   assert.deepEqual(packageJson.files, ['SKILL.md', 'README.md', 'LICENSE', 'scripts/', 'rules/', 'profiles/']);
   assert.deepEqual(packageJson.keywords, ['skills-sh', 'agent-skill', 'ai-humanizer', 'humanizer', 'anti-slop', 'prose-linter', 'stylometry', 'burstiness', 'mattr', 'multilingual-nlp', 'indonesian-nlp', 'copywriting', 'markdown-linter', 'claude-code', 'cursor-skill', 'windsurf', 'codex', 'gemini-cli']);
@@ -489,22 +558,24 @@ test('package, skill, README, static demo, and skills.sh config match the v1.3.0
   }
 
   assert.match(skill, /^---\nname: humanizer-lint\n/);
-  assert.match(skill, /description: Deterministic multilingual AI text humanizer, anti-slop prose linter/);
-  assert.match(skill, /version: 1\.3\.0/);
-  assert.match(skill, /summary: Deterministic closed-loop AI text humanizer/);
+  assert.match(skill, /description: Deterministic prose linter, AI writing style editor/);
+  assert.equal((skill.match(/^version:/gm) ?? []).length, 1);
+  assert.match(skill, /version: 1\.4\.0/);
+  assert.match(skill, /summary: Local deterministic prose/);
   assert.match(skill, /topic: agent-workflows/);
-  assert.match(skill, /  - marketing/);
-  assert.match(skill, /\*\*Audit, lint, and humanize AI-generated prose across 100\+ languages/);
+  assert.match(skill, /allowed-tools: Bash\(node:\*\)/);
+  assert.match(skill, /\*\*Audit prose locally, revise only measured problems/);
   assert.match(skill, /`node <skill_dir>\/scripts\/analyze\.mjs --stdin --json`/);
-  assert.match(skill, /8 deep anti-slop lexical & morphological rule packs/);
-  assert.match(skill, /## Supported Languages \(Two-Tier Multilingual Architecture\)/);
-  assert.match(skill, /## Agent-SEO Trigger Intents & Search Keywords/);
-  assert.match(skill, /metadata:\n  version: "1\.3\.0"\n  author: "yanstd888"/);
+  assert.match(skill, /## Workflow A — Drafting New Prose/);
+  assert.match(skill, /## Workflow B — Auditing and Revising Existing Text/);
+  assert.match(skill, /## Metrics Are Diagnostics, Not Rigid Targets/);
+  assert.match(skill, /## Search Intents & Editorial Keywords[\s\S]*$/);
+  assert.doesNotMatch(skill, /\b(?:bypass|skripsi|perplexity)\b|cara agar tulisan ai tidak terdeteksi|降低AI率/iu);
 
-  assert.match(readme, /### Humanize AI-generated text with a deterministic local AI humanizer and anti-slop prose linter/);
+  assert.match(readme, /### Edit stiff AI-shaped prose with a deterministic local prose and rhythm linter/);
   assert.match(readme, /\[!\[skills\.sh\]\(https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint\)\]\(https:\/\/www\.skills\.sh\/yanstd888\/humanizer-lint\/humanizer-lint\)/);
   assert.match(readme, /\*\*Summary\*\*/);
-  assert.match(readme, /Eliminates robotic LLM writing patterns/);
+  assert.match(readme, /## Verified benchmark/);
   assert.match(readme, /## Language support/);
   assert.match(readme, /Tier 1 — rule packs/);
   assert.match(readme, /Tier 2 — universal/);
@@ -518,8 +589,8 @@ test('package, skill, README, static demo, and skills.sh config match the v1.3.0
 
   assert.match(index, /application\/ld\+json/);
   assert.match(index, /{{pageTitle}}/);
-  assert.match(index, /humanizer bahasa indonesia/);
-  assert.match(index, /Eight anti-slop packs, plus universal stylometry/);
+  assert.match(index, /perbaiki tulisan AI yang kaku/i);
+  assert.match(index, /Eight anti-cliché packs, plus universal rhythm diagnostics/);
   assert.match(index, /hreflang="x-default"/);
   assert.match(index, /id="analysis-language"/);
   for (const code of ['auto', ...languageCodes, 'universal']) assert.match(index, new RegExp(`value="${code}"`));
@@ -530,12 +601,10 @@ test('package, skill, README, static demo, and skills.sh config match the v1.3.0
   for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
   assert.match(build, /ruleCodes = \['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'\]/);
   assert.match(build, /'llms-full\.txt'/);
-  assert.match(llms, /Version 1\.3\.0/);
-  assert.match(llms, /## Executive summary/);
-  assert.match(llms, /Eliminates robotic LLM writing patterns/);
-  assert.match(fullReference, /Version 1\.3\.0/);
-  assert.match(fullReference, /## Executive summary/);
-  assert.match(fullReference, /Eliminates robotic LLM writing patterns/);
+  assert.match(llms, /Version 1\.4\.0/);
+  assert.match(llms, /## Verified benchmark/);
+  assert.match(fullReference, /Version 1\.4\.0/);
+  assert.match(fullReference, /## v1\.4 detectors/);
   assert.match(llms, /Intl\.Segmenter/);
   assert.match(fullReference, /\{\{ruleCatalog\}\}/);
   assert.match(license, /MIT License/);
@@ -555,7 +624,7 @@ test('production scripts use only approved built-ins and forbidden APIs are abse
     }
   };
   await visit(scriptsRoot);
-  const allowed = new Set(['node:fs', 'node:path', 'node:os', 'node:zlib', 'node:util']);
+  const allowed = new Set(['node:fs', 'node:path', 'node:os', 'node:zlib', 'node:util', 'node:perf_hooks']);
   for (const file of files) {
     const source = await readFile(file, 'utf8');
     assert.doesNotMatch(source, /child_process|\beval\s*\(|\bFunction\s*\(|\bfetch\s*\(/, file);

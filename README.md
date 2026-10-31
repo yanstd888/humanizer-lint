@@ -4,9 +4,9 @@
 
 # humanizer-lint
 
-### Humanize AI-generated text with a deterministic local AI humanizer and anti-slop prose linter
+### Edit stiff AI-shaped prose with a deterministic local prose and rhythm linter
 
-Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, and voice-profile drift across **8 built-in language packs plus 100+ Universal Stylometry languages** without sending text to an external service.
+Detect repetitive stock phrasing, uniform sentence rhythm, structural clichés, and voice-profile drift with **8 language-specific lexical and morphological packs plus universal `Intl.Segmenter` rhythm diagnostics for 100+ languages** without sending text to an external service.
 
 [![GitHub Release](https://img.shields.io/github/v/release/yanstd888/humanizer-lint?style=flat-square&logo=github)](https://github.com/yanstd888/humanizer-lint/releases)
 [![npm](https://img.shields.io/npm/v/humanizer-lint)](https://www.npmjs.com/package/humanizer-lint)
@@ -26,10 +26,10 @@ Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, an
 
 **Summary**
 
-- Eliminates robotic LLM writing patterns when users ask to "humanize text", "remove AI slop", "fix uniform sentence rhythm", or "write natural blog, SEO, and documentation prose"
-- Provides mandatory `node <skill_dir>/scripts/analyze.mjs --stdin --json` verification and `npx humanizer-lint` CLI to enforce Burstiness (`CV >= 0.45`), Adjacent Rhythm Delta, and Adaptive `MATTR` vocabulary diversity
-- Ships with **8 deep anti-slop lexical & morphological rule packs** (`en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh`) plus **Universal Stylometric Mode** (`Intl.Segmenter`) for 100+ languages with zero external dependencies
-- Supports personal author voice cloning via `node <skill_dir>/scripts/fingerprint.mjs` and passes all 3 `skills.sh` security audits (Gen Agent Trust Hub, Socket, Snyk) with zero network calls
+- Flags repetitive AI stock phrases, flat sentence rhythm, and rigid translation patterns in blog posts, SEO articles, copy, and technical documentation.
+- Reports diagnostic CV, paragraph CV, adjacent rhythm delta, MATTR, n-gram repetition, and one-pass fix hints; these values are indicators, not mechanical style targets.
+- Ships **8 language-specific lexical and morphological packs** (`en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh`) plus universal `Intl.Segmenter` sentence-rhythm analysis for 100+ languages.
+- Supports local author voice profiling via `node <skill_dir>/scripts/fingerprint.mjs` and passes the listed skills.sh security audits with zero network text uploads.
 
 ```sh
 npx skills add yanstd888/humanizer-lint
@@ -38,6 +38,16 @@ npx skills add yanstd888/humanizer-lint
 Use the command above to install the agent skill. For one-off local linting, run the published `humanizer-lint` CLI below.
 
 **8-language summary:** EN — local AI text humanizer and prose linter. ID — humanizer bahasa Indonesia dan cek tulisan AI. ES — humanizador de texto IA y corrector de ritmo. MS — humanizer teks AI dan semak ayat. FR — humaniseur de texte IA et analyseur stylométrique. DE — KI-Text humanisieren und KI-Floskeln entfernen. PT — humanizador de texto IA e corretor de burstiness. ZH — AI文章人性化与句式节奏分析.
+
+## Verified benchmark
+
+Run `npm run benchmark` to reproduce the current 16-fixture benchmark on the local machine.
+
+| Fixtures | Accuracy | Mean AI score | Mean human score | Separation | Mean runtime |
+|---:|---:|---:|---:|---:|---:|
+| 16 (8 languages × AI/Human) | 100% | 26.00 | 100.00 | 74.00 points | ~0.40 ms / analysis |
+
+The benchmark measures deterministic fixture separation and runtime. It does not classify authorship.
 
 ## Try in your browser
 

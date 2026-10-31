@@ -28,6 +28,12 @@ const installCommand = document.querySelector('#install-command');
 const copyInstall = document.querySelector('#copy-install');
 const copyAutoFix = document.querySelector('#copy-autofix');
 const copyStatus = document.querySelector('#copy-status');
+const gateElements = {
+  rhythmAndStylometry: document.querySelector('#gate-rhythm'),
+  lexicalAndMorphology: document.querySelector('#gate-lexical'),
+  domainHygiene: document.querySelector('#gate-domain'),
+  finalVerdict: document.querySelector('#gate-verdict'),
+};
 const metricElements = {
   burstiness: document.querySelector('#metric-burstiness'),
   rhythm: document.querySelector('#metric-rhythm'),
@@ -197,9 +203,13 @@ function renderFindings(violations) {
     location.textContent = ` — ${violation.location}`;
     const instruction = document.createElement('span');
     instruction.textContent = `: ${violation.fixInstruction}`;
+    const replacement = document.createElement('span');
+    replacement.textContent = violation.suggestedReplacement ? ` Replacement: ${violation.suggestedReplacement}.` : '';
+    const split = document.createElement('span');
+    split.textContent = violation.splitSuggestion ? ` ${violation.splitSuggestion}` : '';
     button.type = 'button';
     button.className = 'finding-button';
-    button.append(type, location, instruction);
+    button.append(type, location, instruction, replacement, split);
     button.addEventListener('click', () => showDiagnostic(violation));
     item.append(button);
     findings.append(item);
@@ -213,6 +223,7 @@ function render(report) {
   status.dataset.status = report.status.toLowerCase();
   language.textContent = languageLabel(report.language);
   renderMetrics(report);
+  for (const [name, element] of Object.entries(gateElements)) element.textContent = JSON.stringify(report.deliveryGate[name], null, 2);
   renderFindings(report.violations);
   copyAutoFix.hidden = !report.violations.length;
 }

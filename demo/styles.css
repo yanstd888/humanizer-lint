@@ -95,10 +95,11 @@ h3 { font-size: 0.86rem; letter-spacing: 0.01em; margin: 0; }
 .sample-list button:hover { border-color: var(--accent); color: var(--accent); }
 
 .workspace { display: grid; gap: 20px; grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr); margin-top: 20px; }
+.workspace > * { min-width: 0; }
 .input-panel, .result-panel { padding: 20px; }
 label { display: block; font-weight: 750; margin-bottom: 10px; }
 .analysis-language { align-items: center; display: flex; font-size: 0.82rem; gap: 10px; }
-.analysis-language select { background: var(--field); border: 1px solid var(--line); color: var(--ink); flex: 1; min-height: 34px; padding: 5px 8px; }
+.analysis-language select { background: var(--field); border: 1px solid var(--line); color: var(--ink); flex: 1; min-height: 34px; min-width: 0; padding: 5px 8px; width: 100%; }
 textarea { background: var(--field); border: 1px solid var(--line); color: var(--ink); min-height: 280px; padding: 14px; resize: vertical; width: 100%; }
 textarea:focus, select:focus, button:focus-visible, a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 #analyze { background: var(--accent); border: 0; color: var(--accent-contrast); cursor: pointer; font-weight: 800; margin-top: 14px; min-height: 42px; padding: 10px 16px; }
@@ -131,6 +132,10 @@ dd { font-weight: 800; margin: 0; }
 .finding-button strong { color: var(--accent); }
 .diagnostic { border-left: 3px solid var(--accent); margin-top: 14px; padding: 12px 0 0 14px; }
 .diagnostic blockquote { color: var(--ink); margin: 0; }
+.delivery-gate { margin-top: 24px; }
+.delivery-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.delivery-grid article { border: 1px solid var(--line); min-width: 0; padding: 14px; }
+.delivery-grid pre { font-size: 0.75rem; margin: 8px 0 0; overflow: auto; white-space: pre-wrap; word-break: break-word; }
 
 .how-it-works { margin-top: 20px; padding: 24px; }
 .how-intro { color: var(--muted); max-width: 760px; }
@@ -177,7 +182,7 @@ a { color: var(--accent); }
   .primary-nav { gap: 16px; }
   .site-footer { grid-template-columns: 1fr; }
   .result-head { align-items: flex-start; }
-  .how-grid, .coverage-grid, .use-case-grid { grid-template-columns: 1fr; }
+  .how-grid, .coverage-grid, .use-case-grid, .delivery-grid { grid-template-columns: 1fr; }
   .how-grid article:last-child { grid-column: auto; }
 }
 

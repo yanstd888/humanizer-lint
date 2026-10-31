@@ -82,7 +82,9 @@ export async function runFingerprintCli(argv, io = {}) {
       args: argv,
       options: {
         input: { type: 'string' },
+        dir: { type: 'string' },
         output: { type: 'string' },
+        out: { type: 'string' },
         name: { type: 'string' },
         lang: { type: 'string', default: 'auto' },
         help: { type: 'boolean' },
@@ -91,14 +93,16 @@ export async function runFingerprintCli(argv, io = {}) {
       allowPositionals: false,
     });
     if (values.help) {
-      stdout('Usage: humanizer-fingerprint --input <file-or-dir> --output <profile.json> [--name <name>] [--lang id|en|auto]\n');
+      stdout('Usage: humanizer-fingerprint (--input <file-or-dir> | --dir <samples-dir>) (--output <profile.json> | --out <profile.json>) [--name <name>] [--lang id|en|auto]\n');
       return 0;
     }
-    if (!values.input || !values.output) throw new Error('--input and --output are required');
+    const input = values.input ?? values.dir;
+    const output = values.output ?? values.out;
+    if (!input || !output) throw new Error('--input/--dir and --output/--out are required');
     if (!['id', 'en', 'auto'].includes(values.lang)) throw new Error('--lang must be id, en, or auto');
-    const files = await collectInput(values.input);
+    const files = await collectInput(input);
     if (!files.length) throw new Error('No .txt or .md samples found');
-    const profile = await fingerprintSamples(files, { output: values.output, name: values.name, language: values.lang });
+    const profile = await fingerprintSamples(files, { output, name: values.name, language: values.lang });
     stdout(`${JSON.stringify(profile, null, 2)}\n`);
     return 0;
   } catch (error) {

@@ -49,6 +49,9 @@ export function punctuationRates(text, wordCount) {
 
 export function calculateMetricsFromCompressionRatio(tokenized, compressionRatio) {
   const lengths = tokenized.sentences.map((sentence) => sentence.wordCount);
+  const paragraphCVs = tokenized.paragraphs
+    .filter((paragraph) => paragraph.sentences.length >= 4)
+    .map((paragraph) => coefficientOfVariation(paragraph.sentences.map((sentence) => sentence.wordCount)));
   const wordCount = tokenized.words.length;
   const sentenceCount = lengths.length;
   return {
@@ -57,6 +60,7 @@ export function calculateMetricsFromCompressionRatio(tokenized, compressionRatio
     meanSentenceLength: mean(lengths),
     stdDev: standardDeviation(lengths),
     burstinessCV: coefficientOfVariation(lengths),
+    paragraphBurstinessCV: paragraphCVs.length ? mean(paragraphCVs) : 0,
     adjacentDelta: adjacentDelta(lengths),
     shortSentenceRatio: sentenceCount ? lengths.filter((length) => length <= 6).length / sentenceCount : 0,
     longSentenceRatio: sentenceCount ? lengths.filter((length) => length >= 26).length / sentenceCount : 0,

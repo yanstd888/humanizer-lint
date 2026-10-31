@@ -3,8 +3,8 @@
   "notGrouped": "bottom",
   "groupings": [
     {
-      "title": "Multilingual Prose Linting & AI Humanizer",
-      "description": "Deterministic closed-loop stylometric linter, burstiness (CV) & MATTR analyzer, and anti-slop humanizer for 8 languages (EN, ID, ES, MS, FR, DE, PT, ZH) + 100+ universal languages.",
+      "title": "Multilingual Prose & Rhythm Linting",
+      "description": "Deterministic local prose linter with 8 language-specific anti-cliche packs and universal Intl.Segmenter rhythm diagnostics for 100+ languages.",
       "skills": [
         "humanizer-lint"
       ]

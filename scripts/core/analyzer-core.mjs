@@ -1,8 +1,9 @@
 const parentDirectory = '..';
 const utilityModule = (...segments) => new URL([parentDirectory, 'utils', ...segments].join('/'), import.meta.url);
 const { sanitizeMarkdown } = await import(utilityModule('sanitizer.mjs'));
-const { mean, punctuationRates } = await import(utilityModule('metrics-core.mjs'));
+const { coefficientOfVariation, mean, punctuationRates } = await import(utilityModule('metrics-core.mjs'));
 const { isCJKText, tokenizeText } = await import(utilityModule('tokenizer.mjs'));
+const { lintDomainHygiene } = await import(utilityModule('domain-linters.mjs'));
 
 const HAN = /[\u4e00-\u9fff]/gu;
 const KANA = /[\u3040-\u30ff]/u;
@@ -52,6 +53,21 @@ function regexFor(pattern) {
   return new RegExp(pattern, 'giu');
 }
 
+function suggestedReplacement(type, match, matches = []) {
+  const value = String(match ?? matches[0] ?? '').toLowerCase();
+  const replacements = [
+    [/pengimplementasian/iu, 'penerapan / menerapkan'],
+    [/\bdelve(?: into)?\b/iu, 'examine / explore'],
+    [/tidak dapat dipungkiri(?: bahwa)?/iu, 'state the concrete claim directly'],
+  ];
+  const found = replacements.find(([pattern]) => pattern.test(value));
+  if (found) return found[1];
+  if (type === 'EXCESSIVE_NOMINALIZATION') return 'Replace the listed noun forms with a concrete actor and active verb.';
+  if (type === 'PASSIVE_BLOATING') return 'Name the actor, then use the active verb.';
+  if (type === 'SLOP_PHRASE') return 'Replace the stock phrase with the specific fact or action.';
+  return undefined;
+}
+
 function patternViolations(tokenized, rules, wordCount) {
   if (!rules?.patterns) return [];
   const violations = [];
@@ -76,6 +92,7 @@ function patternViolations(tokenized, rules, wordCount) {
         location: locationFor(candidate.sentence),
         match: candidate.match,
         fixInstruction: rule.fixInstruction,
+        suggestedReplacement: suggestedReplacement(rule.type, candidate.match),
       });
     }
   }
@@ -99,6 +116,87 @@ function monotonyViolations(tokenized) {
     }
   }
   return violations;
+}
+
+function paragraphRhythmViolations(tokenized) {
+  const violations = [];
+  for (const paragraph of tokenized.paragraphs) {
+    if (paragraph.sentences.length < 4) continue;
+    const lengths = paragraph.sentences.map((sentence) => sentence.wordCount);
+    const paragraphCV = coefficientOfVariation(lengths);
+    const range = Math.max(...lengths) - Math.min(...lengths);
+    if (paragraphCV < 0.25 && range < 7) {
+      violations.push({
+        type: 'FLAT_PARAGRAPH_RHYTHM',
+        location: `Paragraph ${paragraph.paragraphIndex}`,
+        actual: round(paragraphCV),
+        range,
+        fixInstruction: 'Review the paragraph for uniform cadence; vary structure only where the meaning supports it.',
+      });
+    }
+
+    for (let index = 0; index <= paragraph.sentences.length - 4; index += 1) {
+      const window = paragraph.sentences.slice(index, index + 4);
+      const windowLengths = window.map((sentence) => sentence.wordCount);
+      const punctuationCounts = window.map((sentence) => (sentence.text.match(/[,;—，]/gu) ?? []).length);
+      if (punctuationCounts.every((count) => count === 1 || count === 2) && Math.max(...windowLengths) - Math.min(...windowLengths) <= 5) {
+        violations.push({
+          type: 'UNIFORM_CLAUSE_STRUCTURE',
+          location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${window[0].sentenceIndex}-${window[3].sentenceIndex}`,
+          lengths: windowLengths,
+          fixInstruction: 'Change one clause pattern or punctuation shape where the ideas have a different relationship.',
+        });
+      }
+    }
+  }
+  return violations;
+}
+
+function repetitiveNgramViolations(tokenized, stopwords = []) {
+  if (tokenized.words.length < 120) return [];
+  const ignored = new Set(stopwords);
+  const content = tokenized.words
+    .map((word, index) => ({ word, index }))
+    .filter(({ word }) => !ignored.has(word) && word !== 'token_entity');
+  const violations = [];
+  const seen = new Set();
+  for (const size of [4, 3]) {
+    const occurrences = new Map();
+    for (let index = 0; index <= content.length - size; index += 1) {
+      const phrase = content.slice(index, index + size).map(({ word }) => word).join(' ');
+      const positions = occurrences.get(phrase) ?? [];
+      positions.push(content[index].index);
+      occurrences.set(phrase, positions);
+    }
+    for (const [phrase, positions] of occurrences) {
+      if (seen.has(phrase)) continue;
+      const repeated = positions.some((start, index) => positions[index + 2] != null && positions[index + 2] - start <= 400);
+      if (!repeated) continue;
+      seen.add(phrase);
+      violations.push({
+        type: 'REPETITIVE_NGRAM',
+        location: 'Whole text',
+        match: phrase,
+        occurrences: positions.length,
+        fixInstruction: 'Remove repeated wording or replace it with a precise reference that preserves the meaning.',
+      });
+      if (violations.length >= 5) return violations;
+    }
+  }
+  return violations;
+}
+
+function rhetoricalViolations(tokenized) {
+  const hooks = /^(?:mengapa demikian\?|menarik, bukan\?|here['’]s the kicker:|want to know the best part\?|let that sink in\.?)/iu;
+  const shortQuestions = tokenized.sentences.filter((sentence) => sentence.text.endsWith('?') && sentence.wordCount <= 6);
+  return tokenized.sentences
+    .filter((sentence) => hooks.test(sentence.text) || (shortQuestions.length >= 3 && sentence.text.endsWith('?') && sentence.wordCount <= 6))
+    .map((sentence) => ({
+      type: 'RHETORICAL_SLOP',
+      location: locationFor(sentence),
+      match: sentence.text,
+      fixInstruction: 'Remove the staged conversational hook and state the point directly.',
+    }));
 }
 
 function structuralViolations(tokenized, metrics) {
@@ -210,6 +308,7 @@ function morphologyViolations(tokenized, morphology) {
       ratio: round(nominalizationRatio),
       matches: [...new Set(nominalizations)],
       fixInstruction: 'Replace abstract nominalizations with concrete actors and verbs.',
+      suggestedReplacement: suggestedReplacement('EXCESSIVE_NOMINALIZATION', '', nominalizations),
     });
   }
   if (passiveRatio > morphology.passiveMaxRatio) {
@@ -219,6 +318,7 @@ function morphologyViolations(tokenized, morphology) {
       ratio: round(passiveRatio),
       matches: [...new Set(passives)],
       fixInstruction: 'Name the actor and use an active verb where the actor is known.',
+      suggestedReplacement: suggestedReplacement('PASSIVE_BLOATING', '', passives),
     });
   }
 
@@ -241,6 +341,34 @@ function morphologyViolations(tokenized, morphology) {
     if (foundConsecutiveOpening) break;
   }
   return { violations, nominalizationRatio, passiveRatio };
+}
+
+function splitSuggestion(sentence) {
+  if (!sentence || sentence.wordCount < 16) return undefined;
+  const candidates = [...sentence.text.matchAll(/\b(?:sehingga|tetapi|namun|karena|however|because|while)\b|[;,]/giu)];
+  if (!candidates.length) return undefined;
+  const middle = sentence.text.length / 2;
+  const best = candidates.sort((left, right) => Math.abs(left.index - middle) - Math.abs(right.index - middle))[0];
+  return `Consider splitting near “${best[0]}” if both resulting sentences remain complete.`;
+}
+
+function attachSurgicalHints(violations, tokenized) {
+  return violations.map((violation) => {
+    const sentenceMatch = /Sentence (\d+)/u.exec(violation.location ?? '');
+    const rangeMatch = /Sentences (\d+)-(\d+)/u.exec(violation.location ?? '');
+    const sentence = sentenceMatch
+      ? tokenized.sentences.find((item) => item.sentenceIndex === Number(sentenceMatch[1]))
+      : rangeMatch
+        ? tokenized.sentences.find((item) => item.sentenceIndex >= Number(rangeMatch[1]) && item.sentenceIndex <= Number(rangeMatch[2]) && item.wordCount >= 16)
+        : undefined;
+    const replacement = violation.suggestedReplacement ?? suggestedReplacement(violation.type, violation.match, violation.matches);
+    const split = splitSuggestion(sentence);
+    return {
+      ...violation,
+      ...(replacement ? { suggestedReplacement: replacement } : {}),
+      ...(split ? { splitSuggestion: split } : {}),
+    };
+  });
 }
 
 function voiceDeviation(metrics, tokenized, text, profile) {
@@ -275,20 +403,59 @@ function scoreResult(metrics, violations, thresholds, mattrTarget) {
   if (metrics.sentenceCount >= 8 && (metrics.shortSentenceRatio < thresholds.shortSentenceRatio || metrics.longSentenceRatio < thresholds.longSentenceRatio)) {
     burstinessPenalty = Math.min(25, burstinessPenalty + 8);
   }
-  const rhythmPenalty = Math.min(20, violations.filter((violation) => violation.type === 'MONOTONOUS_RHYTHM').length * 6);
+  if (violations.some((violation) => violation.type === 'FLAT_PARAGRAPH_RHYTHM')) burstinessPenalty = Math.min(25, burstinessPenalty + 5);
+  const rhythmPenalty = Math.min(20, violations.reduce((total, violation) => {
+    if (violation.type === 'MONOTONOUS_RHYTHM') return total + 6;
+    if (violation.type === 'UNIFORM_CLAUSE_STRUCTURE') return total + 5;
+    return total;
+  }, 0));
   const lexicalPenalty = Math.min(30, violations.reduce((total, violation) => {
     if (violation.type === 'SLOP_PHRASE' || violation.type === 'DEFINITIONAL_OPENING') return total + 5;
     if (violation.type === 'STRUCTURAL_CLICHE') return total + 4;
+    if (['RHETORICAL_SLOP', 'WEAK_CTA', 'HYPERBOLIC_CLAIM', 'TAUTOLOGICAL_CODE_COMMENT', 'DECORATIVE_COMMENT_BANNER', 'LAZY_AI_PLACEHOLDER', 'MISSING_ACCESSIBLE_NAME', 'MISSING_IMG_ALT', 'HEADING_ORDER_SKIP', 'AI_GRADIENT_CLICHE', 'NON_RESPONSIVE_FIXED_WIDTH'].includes(violation.type)) return total + 4;
     return total;
   }, 0));
   const morphologyPenalty = Math.min(15,
     (violations.some((violation) => violation.type === 'EXCESSIVE_NOMINALIZATION') ? 7.5 : 0)
     + Math.min(15, violations.filter((violation) => violation.type === 'PASSIVE_BLOATING').length * 7.5));
   const vocabularyPenalty = metrics.mattr < mattrTarget ? 5 : 0;
-  const entropyPenalty = violations.some((violation) => ['LOW_ENTROPY_REPETITION', 'SYMMETRIC_PARAGRAPHS', 'REPETITIVE_STARTERS'].includes(violation.type)) ? 5 : 0;
+  const entropyPenalty = violations.some((violation) => ['LOW_ENTROPY_REPETITION', 'SYMMETRIC_PARAGRAPHS', 'REPETITIVE_STARTERS', 'REPETITIVE_NGRAM'].includes(violation.type)) ? 5 : 0;
   const profilePenalty = violations.some((violation) => violation.type === 'VOICE_PROFILE_DEVIATION') ? 5 : 0;
   const vocabularyAndProfilePenalty = Math.min(10, vocabularyPenalty + entropyPenalty + profilePenalty);
   return Math.max(0, Math.round(100 - burstinessPenalty - rhythmPenalty - lexicalPenalty - morphologyPenalty - vocabularyAndProfilePenalty));
+}
+
+function deliveryGate({ metrics, violations, language, rulePack, score, status }) {
+  const types = (names) => violations.filter((violation) => names.includes(violation.type));
+  const prioritizedFixes = violations.slice(0, 8).map((violation) => ({
+    type: violation.type,
+    location: violation.location,
+    fixInstruction: violation.fixInstruction,
+    ...(violation.suggestedReplacement ? { suggestedReplacement: violation.suggestedReplacement } : {}),
+    ...(violation.splitSuggestion ? { splitSuggestion: violation.splitSuggestion } : {}),
+  }));
+  return {
+    rhythmAndStylometry: {
+      burstinessCV: metrics.burstinessCV,
+      paragraphBurstinessCV: metrics.paragraphBurstinessCV,
+      adjacentDelta: metrics.adjacentDelta,
+      clauseSymmetry: types(['UNIFORM_CLAUSE_STRUCTURE']),
+      rhythmFindings: types(['LOW_BURSTINESS', 'FLAT_PARAGRAPH_RHYTHM', 'MONOTONOUS_RHYTHM', 'MISSING_SENTENCE_RANGE', 'LOW_ADJACENT_DELTA']),
+    },
+    lexicalAndMorphology: {
+      language,
+      rulePack,
+      mode: rulePack === 'universal' ? 'Universal stylometry' : '8 language-specific lexical pack',
+      ngrams: types(['REPETITIVE_NGRAM']),
+      morphology: types(['SLOP_PHRASE', 'EXCESSIVE_NOMINALIZATION', 'PASSIVE_BLOATING', 'DEFINITIONAL_OPENING']),
+    },
+    domainHygiene: {
+      copywritingAndCta: types(['WEAK_CTA', 'HYPERBOLIC_CLAIM']),
+      codeComments: types(['TAUTOLOGICAL_CODE_COMMENT', 'DECORATIVE_COMMENT_BANNER', 'LAZY_AI_PLACEHOLDER']),
+      uiAccessibilityResponsive: types(['MISSING_ACCESSIBLE_NAME', 'MISSING_IMG_ALT', 'HEADING_ORDER_SKIP', 'AI_GRADIENT_CLICHE', 'NON_RESPONSIVE_FIXED_WIDTH']),
+    },
+    finalVerdict: { score, status, prioritizedFixes },
+  };
 }
 
 export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calculateMetricsAsync }) {
@@ -297,11 +464,13 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
   }
 
   const prepare = (input, options) => {
-    const sanitized = sanitizeMarkdown(input);
+    const original = String(input ?? '');
+    const sanitized = sanitizeMarkdown(original);
     const requestedLanguage = String(options.language ?? 'auto').toLowerCase();
     const initial = tokenizeText(sanitized, requestedLanguage);
     const language = requestedLanguage === 'auto' ? detectLanguage(sanitized, initial.words, rules) : requestedLanguage;
     return {
+      original,
       sanitized,
       language,
       rulePack: rules[language] ? language : 'universal',
@@ -309,15 +478,19 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
     };
   };
 
-  const analyzePrepared = ({ sanitized, language, rulePack, tokenized }, options, metrics) => {
+  const analyzePrepared = ({ original, sanitized, language, rulePack, tokenized }, options, metrics) => {
     const profile = options.profile ?? defaultProfile;
     const thresholds = { ...defaultProfile.thresholds, ...(profile.thresholds ?? {}) };
     const mattrTarget = mattrThreshold(thresholds, language, tokenized);
     const patternMatches = patternViolations(tokenized, rules[language], metrics.wordCount);
+    const domainFindings = lintDomainHygiene(original, options.sourcePath);
 
     if (metrics.wordCount < thresholds.minimumWords || metrics.sentenceCount < thresholds.minimumSentences) {
-      const violations = patternMatches.filter((violation) => violation.type === 'SLOP_PHRASE');
-      return {
+      const violations = attachSurgicalHints([
+        ...patternMatches.filter((violation) => violation.type === 'SLOP_PHRASE'),
+        ...domainFindings,
+      ], tokenized);
+      const result = {
         status: 'SKIP',
         score: 100,
         language,
@@ -326,6 +499,8 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
         metrics: Object.fromEntries(Object.entries({ ...metrics, nominalizationRatio: 0, passiveRatio: 0, voiceProfileDeviation: 0 }).map(([key, value]) => [key, typeof value === 'number' ? round(value) : value])),
         violations,
       };
+      result.deliveryGate = deliveryGate(result);
+      return result;
     }
 
     const morphology = morphologyViolations(tokenized, rules[language]?.morphology);
@@ -341,22 +516,27 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
       match: 'Mean sentence length deviates >30% from target voice profile',
       fixInstruction: 'Adjust overall sentence complexity so mean sentence length approaches the target profile.',
     }] : [];
-    const violations = [
+    const violations = attachSurgicalHints([
       ...patternMatches,
       ...monotonyViolations(tokenized),
+      ...paragraphRhythmViolations(tokenized),
       ...structuralViolations(tokenized, metrics),
+      ...repetitiveNgramViolations(tokenized, rules[language]?.stopwords),
+      ...rhetoricalViolations(tokenized),
       ...morphology.violations,
       ...profileViolations,
       ...statisticalViolations(metrics, thresholds, mattrTarget),
-    ];
+      ...domainFindings,
+    ], tokenized);
     const score = scoreResult(metrics, violations, thresholds, mattrTarget);
     const cvTarget = metrics.sentenceCount >= 8 ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
-    const forbidden = violations.some((violation) => violation.type === 'SLOP_PHRASE' || violation.type === 'DEFINITIONAL_OPENING');
+    const forbiddenTypes = new Set(['SLOP_PHRASE', 'DEFINITIONAL_OPENING', 'RHETORICAL_SLOP', 'WEAK_CTA', 'HYPERBOLIC_CLAIM', 'TAUTOLOGICAL_CODE_COMMENT', 'DECORATIVE_COMMENT_BANNER', 'LAZY_AI_PLACEHOLDER', 'MISSING_ACCESSIBLE_NAME', 'MISSING_IMG_ALT', 'HEADING_ORDER_SKIP', 'AI_GRADIENT_CLICHE', 'NON_RESPONSIVE_FIXED_WIDTH']);
+    const forbidden = violations.some((violation) => forbiddenTypes.has(violation.type));
     const rhythmPass = metrics.adjacentDelta >= thresholds.adjacentDelta;
     const distributionPass = metrics.sentenceCount < 8 || (metrics.shortSentenceRatio >= thresholds.shortSentenceRatio && metrics.longSentenceRatio >= thresholds.longSentenceRatio);
     const status = score >= thresholds.passScore && !forbidden && metrics.burstinessCV >= cvTarget && rhythmPass && distributionPass ? 'PASS' : 'FAIL';
 
-    return {
+    const result = {
       status,
       score,
       language,
@@ -364,6 +544,8 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
       metrics: Object.fromEntries(Object.entries(metrics).map(([key, value]) => [key, typeof value === 'number' ? round(value) : value])),
       violations,
     };
+    result.deliveryGate = deliveryGate(result);
+    return result;
   };
 
   return {

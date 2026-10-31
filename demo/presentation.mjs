@@ -53,11 +53,13 @@ export function buildAutoFixPrompt({ text, report }) {
   const violations = report.violations.map((violation) => [
     `- ${violation.type} — ${violation.location}`,
     `  Instruction: ${violation.fixInstruction}`,
-  ].join('\n')).join('\n');
+    violation.suggestedReplacement ? `  Suggested replacement: ${violation.suggestedReplacement}` : null,
+    violation.splitSuggestion ? `  Split suggestion: ${violation.splitSuggestion}` : null,
+  ].filter(Boolean).join('\n')).join('\n');
   const metrics = Object.entries(report.metrics)
     .filter(([key]) => ['burstinessCV', 'adjacentDelta', 'mattr'].includes(key))
     .map(([key, value]) => `- ${key}: ${value}`)
     .join('\n');
 
-  return `# Targeted prose revision\n\nRewrite only the sentences cited below in ${languageLabel(report.language)}. Preserve facts, names, numbers, quotations, and the original language. Remove flagged slop without adding unsupported claims. Aim for stronger sentence-length variation and no slop phrases, then re-run humanizer-lint to verify the result.\n\n## Analyzer report\n- Status: ${report.status}\n- Score: ${report.score}/100\n- Detected language: ${languageLabel(report.language)}\n- Rule pack: ${languageLabel(report.rulePack)}\n\n## Measured metrics\n${metrics}\n\n## Flagged diagnostics\n${violations}\n\n## Original text\n${text}`;
+  return `# Targeted prose revision\n\nRewrite only the sentences cited below in ${languageLabel(report.language)}. Preserve facts, names, numbers, quotations, and the original language. Treat rhythm metrics as diagnostics, not rigid targets. Re-run humanizer-lint after the smallest supported edit.\n\n## Analyzer report\n- Status: ${report.status}\n- Score: ${report.score}/100\n- Detected language: ${languageLabel(report.language)}\n- Rule pack: ${languageLabel(report.rulePack)}\n\n## Measured metrics\n${metrics}\n\n## Delivery Gate\n${JSON.stringify(report.deliveryGate, null, 2)}\n\n## Flagged diagnostics\n${violations}\n\n## Original text\n${text}`;
 }

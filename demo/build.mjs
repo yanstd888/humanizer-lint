@@ -105,6 +105,7 @@ await Promise.all([
   copy('scripts/utils/sanitizer.mjs', 'scripts/utils/sanitizer.mjs'),
   copy('scripts/utils/tokenizer.mjs', 'scripts/utils/tokenizer.mjs'),
   copy('scripts/utils/metrics-core.mjs', 'scripts/utils/metrics-core.mjs'),
+  copy('scripts/utils/domain-linters.mjs', 'scripts/utils/domain-linters.mjs'),
   copy('rules', 'rules'),
   copy('profiles', 'profiles'),
 ]);
