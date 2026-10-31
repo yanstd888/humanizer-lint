@@ -1,6 +1,6 @@
 # humanizer-lint
 
-> Version 1.2.2 — deterministic, zero-dependency multilingual AI text humanizer, anti-slop prose linter, and closed-loop stylometric validator.
+> Version 1.2.3 — deterministic, zero-dependency multilingual AI text humanizer, anti-slop prose linter, and closed-loop stylometric validator.
 
 ## Executive summary
 

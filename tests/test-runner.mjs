@@ -386,7 +386,7 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
   }
 });
 
-test('package, skill, README, static demo, and skills.sh config match the v1.2.2 discovery contract', async () => {
+test('package, skill, README, static demo, and skills.sh config match the v1.2.3 discovery contract', async () => {
   const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
   const packageJson = JSON.parse(packageSource);
   const skillsConfig = JSON.parse(await sourceFile('skills.sh.json'));
@@ -409,7 +409,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.2
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '1.2.2');
+  assert.equal(packageJson.version, '1.2.3');
   assert.equal(skillsConfig.$schema, 'https://skills.sh/schemas/skills.sh.schema.json');
   assert.equal(skillsConfig.notGrouped, 'bottom');
   assert.deepEqual(skillsConfig.groupings, [{
@@ -435,7 +435,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.2
 
   assert.match(skill, /^---\nname: humanizer-lint\n/);
   assert.match(skill, /description: Make AI-generated text read like human writing — deterministic humanizer and anti-slop prose linter/);
-  assert.match(skill, /version: 1\.2\.2/);
+  assert.match(skill, /version: 1\.2\.3/);
   assert.match(skill, /summary: Deterministic closed-loop AI text humanizer/);
   assert.match(skill, /topic: agent-workflows/);
   assert.match(skill, /  - marketing/);
@@ -444,7 +444,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.2
   assert.match(skill, /8 deep anti-slop lexical & morphological rule packs/);
   assert.match(skill, /## Supported Languages \(Two-Tier Multilingual Architecture\)/);
   assert.match(skill, /## Agent-SEO Trigger Intents & Search Keywords/);
-  assert.match(skill, /metadata:\n  version: "1\.2\.2"\n  author: "yanstd888"/);
+  assert.match(skill, /metadata:\n  version: "1\.2\.3"\n  author: "yanstd888"/);
 
   assert.match(readme, /### Humanize AI-generated text with a deterministic local AI humanizer and anti-slop prose linter/);
   assert.match(readme, /\[!\[skills\.sh\]\(https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint\)\]\(https:\/\/www\.skills\.sh\/yanstd888\/humanizer-lint\/humanizer-lint\)/);
@@ -475,10 +475,10 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.2
   for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
   assert.match(build, /ruleCodes = \['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'\]/);
   assert.match(build, /'llms-full\.txt'/);
-  assert.match(llms, /Version 1\.2\.2/);
+  assert.match(llms, /Version 1\.2\.3/);
   assert.match(llms, /## Executive summary/);
   assert.match(llms, /Eliminates robotic LLM writing patterns/);
-  assert.match(fullReference, /Version 1\.2\.2/);
+  assert.match(fullReference, /Version 1\.2\.3/);
   assert.match(fullReference, /## Executive summary/);
   assert.match(fullReference, /Eliminates robotic LLM writing patterns/);
   assert.match(llms, /Intl\.Segmenter/);

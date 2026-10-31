@@ -1,6 +1,6 @@
 # humanizer-lint — Full Technical Reference
 
-> Version 1.2.2. This document is generated into `/llms-full.txt` with the current checked-in rule catalogs during the static demo build.
+> Version 1.2.3. This document is generated into `/llms-full.txt` with the current checked-in rule catalogs during the static demo build.
 
 ## Executive summary
 

@@ -14,12 +14,12 @@ tags:
   - stylometry
   - burstiness
   - multilingual
-version: 1.2.2
+version: 1.2.3
 license: MIT
 compatibility: Node.js >= 18.3.0 (zero external dependencies)
 allowed-tools: Bash(node:*) Read Write
 metadata:
-  version: "1.2.2"
+  version: "1.2.3"
   author: "yanstd888"
   domain: "writing"
 ---
