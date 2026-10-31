@@ -5,9 +5,27 @@
   --line: #d9dfda;
   --paper: #fafbf9;
   --panel: #ffffff;
+  --field: #fcfdfc;
   --accent: #126a4a;
-  --accent-soft: #e9f5ee;
-  --danger: #ae3b35;
+  --accent-contrast: #ffffff;
+  --focus: #277a58;
+  --danger: #a72f2f;
+  --disabled: #68736c;
+}
+
+:root.theme-dark {
+  color-scheme: dark;
+  --ink: #edf3ee;
+  --muted: #afbbb3;
+  --line: #39463e;
+  --paper: #121814;
+  --panel: #1b241e;
+  --field: #151d18;
+  --accent: #66c99b;
+  --accent-contrast: #10251a;
+  --focus: #a9e7c8;
+  --danger: #ff9f96;
+  --disabled: #87938b;
 }
 
 * { box-sizing: border-box; }
@@ -22,8 +40,19 @@ body {
 .shell { max-width: 1080px; margin: 0 auto; padding: 28px 20px 36px; }
 .masthead, footer, .result-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .masthead { border-bottom: 1px solid var(--line); padding-bottom: 18px; }
+.brand-lockup { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; }
 .brand { color: var(--ink); font-weight: 750; letter-spacing: -0.03em; text-decoration: none; }
-.masthead p, .intro > p, footer p { color: var(--muted); margin: 0; }
+.brand-lockup p, .intro > p, footer p { color: var(--muted); margin: 0; }
+.controls, .language-toggle { align-items: center; display: flex; gap: 8px; }
+.language-toggle { color: var(--muted); font-size: 0.82rem; }
+.language-button, .icon-button { background: transparent; border: 1px solid transparent; color: var(--muted); cursor: pointer; font: inherit; min-height: 34px; padding: 6px 8px; }
+.language-button { font-size: 0.78rem; font-weight: 750; letter-spacing: 0.06em; }
+.language-button.is-active { border-color: var(--line); color: var(--ink); }
+.icon-button { display: grid; place-items: center; width: 34px; }
+.theme-icon { fill: none; height: 18px; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; width: 18px; }
+.theme-icon-dark { display: none; }
+.theme-dark .theme-icon-light { display: none; }
+.theme-dark .theme-icon-dark { display: block; }
 .intro { max-width: 720px; padding: 54px 0 32px; }
 .eyebrow { color: var(--accent); font-size: 0.74rem; font-weight: 750; letter-spacing: 0.08em; margin: 0 0 8px; text-transform: uppercase; }
 h1 { font-size: clamp(2.2rem, 5vw, 4.6rem); letter-spacing: -0.055em; line-height: 0.98; margin: 0 0 20px; }
@@ -31,10 +60,10 @@ h2 { font-size: 1rem; margin: 24px 0 12px; }
 .workspace { display: grid; gap: 20px; grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr); }
 .input-panel, .result-panel { background: var(--panel); border: 1px solid var(--line); padding: 20px; }
 label { display: block; font-weight: 700; margin-bottom: 10px; }
-textarea { background: #fcfdfc; border: 1px solid #bec8c1; color: var(--ink); font: inherit; min-height: 260px; padding: 14px; resize: vertical; width: 100%; }
-textarea:focus, button:focus-visible, a:focus-visible { outline: 3px solid #9bd4b5; outline-offset: 3px; }
-button { background: var(--accent); border: 0; color: white; cursor: pointer; font: inherit; font-weight: 700; margin-top: 14px; padding: 11px 16px; }
-button:disabled { background: #9aa69e; cursor: wait; }
+textarea { background: var(--field); border: 1px solid var(--line); color: var(--ink); font: inherit; min-height: 260px; padding: 14px; resize: vertical; width: 100%; }
+textarea:focus, button:focus-visible, a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+#analyze { background: var(--accent); border: 0; color: var(--accent-contrast); cursor: pointer; font: inherit; font-weight: 700; margin-top: 14px; padding: 11px 16px; }
+#analyze:disabled { background: var(--disabled); color: var(--panel); cursor: wait; }
 .error { color: var(--danger); font-weight: 650; margin: 10px 0 0; }
 .score { font-size: 4rem; font-weight: 800; letter-spacing: -0.07em; line-height: 0.9; margin: 0; }
 .score small { color: var(--muted); font-size: 1rem; font-weight: 600; letter-spacing: 0; margin-left: 6px; }
@@ -56,5 +85,6 @@ a { color: var(--accent); }
   .intro { padding: 40px 0 26px; }
   .workspace { grid-template-columns: 1fr; }
   .masthead, footer { align-items: flex-start; flex-direction: column; }
+  .masthead { gap: 14px; }
   .result-head { align-items: flex-start; }
 }

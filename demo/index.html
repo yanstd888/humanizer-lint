@@ -1,55 +1,71 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Coba humanizer-lint langsung di browser. Teks tidak dikirim ke server.">
-  <title>humanizer-lint demo</title>
+  <meta name="description" content="">
+  <meta property="og:url" content="https://humanizer.aiclub.ai.id">
+  <link rel="canonical" href="https://humanizer.aiclub.ai.id">
+  <title></title>
+  <script>(function(){try{var saved=localStorage.getItem('humanizer-lint.theme');var theme=saved==='light'||saved==='dark'?saved:(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.classList.toggle('theme-dark',theme==='dark')}catch(error){if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('theme-dark')}}())</script>
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
   <main class="shell">
     <header class="masthead">
-      <a class="brand" href="https://github.com/yanstd888/humanizer-lint">humanizer-lint</a>
-      <p>Demo lokal di browser</p>
+      <div class="brand-lockup">
+        <a class="brand" href="https://humanizer.aiclub.ai.id">humanizer-lint</a>
+        <p data-i18n="brandTagline"></p>
+      </div>
+      <div class="controls">
+        <div class="language-toggle" role="group" data-i18n-aria-label="languageToggle">
+          <button class="language-button" type="button" data-language="en" data-i18n="languageEn"></button>
+          <span aria-hidden="true">/</span>
+          <button class="language-button" type="button" data-language="id" data-i18n="languageId"></button>
+        </div>
+        <button id="theme-toggle" class="icon-button" type="button">
+          <svg class="theme-icon theme-icon-light" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+          <svg class="theme-icon theme-icon-dark" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 15.4A8.5 8.5 0 0 1 8.6 3.6 8.5 8.5 0 1 0 20.4 15.4Z"></path></svg>
+        </button>
+      </div>
     </header>
 
     <section class="intro" aria-labelledby="title">
-      <p class="eyebrow">Prose style linter</p>
-      <h1 id="title">Periksa pola tulisan, tanpa mengirim teks ke server.</h1>
-      <p>Tempel prose Indonesia atau Inggris. Analisis berjalan seluruhnya di browser menggunakan engine yang sama dengan CLI.</p>
+      <p class="eyebrow" data-i18n="eyebrow"></p>
+      <h1 id="title" data-i18n="heading"></h1>
+      <p data-i18n="intro"></p>
     </section>
 
-    <section class="workspace" aria-label="Analyzer demo">
+    <section class="workspace" data-i18n-aria-label="workspaceLabel">
       <div class="input-panel">
-        <label for="text">Teks</label>
-        <textarea id="text" rows="13" placeholder="Tempel teks di sini. Tidak ada data yang dikirim ke server."></textarea>
+        <label for="text" data-i18n="inputLabel"></label>
+        <textarea id="text" rows="13" data-i18n-placeholder="placeholder"></textarea>
         <p id="error" class="error" role="alert" hidden></p>
-        <button id="analyze" type="button" disabled>Memuat engine…</button>
+        <button id="analyze" type="button" disabled></button>
       </div>
 
       <section id="result" class="result-panel" aria-live="polite" hidden>
         <div class="result-head">
           <div>
-            <p class="eyebrow">Hasil</p>
+            <p class="eyebrow" data-i18n="results"></p>
             <p class="score"><span id="score">—</span><small>/100</small></p>
           </div>
           <dl class="meta">
-            <div><dt>Status</dt><dd id="status">—</dd></div>
-            <div><dt>Bahasa</dt><dd id="language">—</dd></div>
+            <div><dt data-i18n="status"></dt><dd id="status">—</dd></div>
+            <div><dt data-i18n="language"></dt><dd id="language">—</dd></div>
           </dl>
         </div>
-        <h2>Temuan</h2>
+        <h2 data-i18n="findings"></h2>
         <ul id="findings"></ul>
       </section>
     </section>
 
     <footer>
       <div>
-        <p class="eyebrow">CLI</p>
+        <p class="eyebrow" data-i18n="cli"></p>
         <code>npx humanizer-lint --file tulisan.md --lang id</code>
       </div>
-      <nav aria-label="Project links">
+      <nav data-i18n-aria-label="projectLinks">
         <a href="https://www.npmjs.com/package/humanizer-lint">npm</a>
         <a href="https://skills.sh/yanstd888/humanizer-lint">skills.sh</a>
         <a href="https://github.com/yanstd888/humanizer-lint">GitHub</a>

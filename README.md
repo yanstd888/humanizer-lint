@@ -14,13 +14,17 @@ Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, an
 [![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)](https://skills.sh/yanstd888/humanizer-lint)
 [![GitHub Stars](https://img.shields.io/github/stars/yanstd888/humanizer-lint?style=flat-square)](https://github.com/yanstd888/humanizer-lint/stargazers)
 
-[What it does](#what-it-does) | [Install](#install) | [Quick start](#quick-start) | [CLI reference](#cli-reference) | [Detectors](#detectors-and-violation-types) | [Agent skill](#use-as-an-agent-skill) | [FAQ](#frequently-asked-questions)
+[What it does](#what-it-does) | [Try in your browser](#try-in-your-browser) | [Install](#install) | [Quick start](#quick-start) | [CLI reference](#cli-reference) | [Detectors](#detectors-and-violation-types) | [Agent skill](#use-as-an-agent-skill) | [FAQ](#frequently-asked-questions)
 
 </div>
 
 **humanizer-lint is an open-source natural-text and Markdown prose linter that deterministically identifies style patterns often associated with AI-generated writing in Indonesian and English; it is a style validator, not an authorship detector.**
 
-Try the static browser demo: [humanizer-lint.pages.dev](https://humanizer-lint.pages.dev).
+## Try in your browser
+
+Use the official demo: [humanizer.aiclub.ai.id](https://humanizer.aiclub.ai.id).
+
+[humanizer-lint.pages.dev](https://humanizer-lint.pages.dev) remains available as a mirror.
 
 It works locally with zero runtime dependencies. Instead of rewriting text through another language model, it reports paragraph- and sentence-level violations with specific correction instructions. Use it to lint LLM-generated documentation, remove robotic AI phrasing from Markdown, check burstiness and lexical diversity, or add a deterministic prose gate to an agent workflow.
 
