@@ -1,0 +1,26 @@
+# humanizer-lint
+
+> Deterministic, zero-dependency stylometric prose linter and closed-loop AI text humanizer for English and Indonesian. Built for skills.sh agents and client-side browser analysis.
+
+`humanizer-lint` measures the finished draft instead of trusting a prompt alone. It reports configured lexical, rhythm, vocabulary, structural, and morphology diagnostics so a writer or agent can revise the exact text and verify it locally.
+
+## Quick Install & Usage
+
+- Agent skill install: `npx skills add yanstd888/humanizer-lint`
+- Standalone CLI: `npx humanizer-lint --file draft.md --lang auto --json`
+- Stdin pipe: `cat draft.md | npx humanizer-lint --stdin --json`
+- Web playground: [https://humanizer.aiclub.ai.id/](https://humanizer.aiclub.ai.id/)
+
+## Core Mathematical Metrics
+
+- **Global Burstiness (CV):** Coefficient of variation (`standard deviation / mean`) over sentence lengths. Default long-text target: `CV >= 0.45`; on 8+ sentence text, also require at least `15%` short sentences (6 words or fewer) and `10%` long sentences (26 words or more).
+- **Adjacent Rhythm Delta:** Mean absolute word-count difference between neighboring sentences. Default target: `>= 4`.
+- **Adaptive MATTR:** Moving-average type-token ratio using an adaptive window up to 50 words. Default targets: `>= 0.72` for Indonesian and `>= 0.74` for English.
+- **Morphological & lexical rules:** Detects configured English clichés and Indonesian translationese, nominalization, and passive-density patterns.
+
+## Links
+
+- [Full technical specification and generated rule catalog](https://humanizer.aiclub.ai.id/llms-full.txt)
+- [skills.sh registry page](https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint)
+- [GitHub repository](https://github.com/yanstd888/humanizer-lint)
+- [npm package](https://www.npmjs.com/package/humanizer-lint)

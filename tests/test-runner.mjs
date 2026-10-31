@@ -303,7 +303,7 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
   }
 });
 
-test('package metadata and rule catalogs match the public contract', async () => {
+test('package, skill, README, CI, and static-demo metadata match the v1.1 contract', async () => {
   const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
   const packageJson = JSON.parse(packageSource);
   const idRules = JSON.parse(await readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8'));
@@ -311,31 +311,63 @@ test('package metadata and rule catalogs match the public contract', async () =>
   const skill = await readFile(path.join(root, 'SKILL.md'), 'utf8');
   const readme = await readFile(path.join(root, 'README.md'), 'utf8');
   const workflow = await readFile(path.join(root, '.github', 'workflows', 'ci.yml'), 'utf8');
+  const index = await readFile(path.join(root, 'demo', 'index.html'), 'utf8');
+  const build = await readFile(path.join(root, 'demo', 'build.mjs'), 'utf8');
+  const app = await readFile(path.join(root, 'demo', 'app.mjs'), 'utf8');
+  const llms = await readFile(path.join(root, 'demo', 'public', 'llms.txt'), 'utf8');
+  const fullReference = await readFile(path.join(root, 'demo', 'public', 'llms-full.md'), 'utf8');
   const license = await readFile(path.join(root, 'LICENSE'), 'utf8');
+
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '0.2.4');
+  assert.equal(packageJson.version, '1.1.0');
+  assert.equal(packageJson.homepage, 'https://humanizer.aiclub.ai.id');
+  assert.equal(packageJson.repository, 'https://github.com/yanstd888/humanizer-lint');
+  assert.deepEqual(packageJson.keywords, ['skills-sh', 'agent-skill', 'ai-humanizer', 'anti-slop', 'prose-linter', 'stylometry', 'burstiness', 'mattr', 'indonesian-nlp', 'claude-code', 'cursor-skill', 'windsurf', 'codex', 'gemini-cli']);
+  assert.equal(packageJson.dependencies, undefined);
   assert.equal(packageJson.bin['humanizer-lint'], './scripts/analyze.mjs');
   assert.equal(packageJson.bin['humanizer-fingerprint'], './scripts/fingerprint.mjs');
   assert.equal((packageSource.match(/"files"\s*:/g) ?? []).length, 1);
   assert.ok(idRules.patterns.length >= 40);
   assert.ok(enRules.patterns.length >= 40);
+
   assert.match(skill, /^---\nname: humanizer-lint\n/);
+  assert.match(skill, /version: 1\.1\.0/);
+  assert.match(skill, /Deterministic AI text humanizer, anti-slop prose linter/);
+  assert.match(skill, /## Trigger Intents & Search Keywords/);
+  for (const intent of ['humanize AI text', 'remove AI slop and clichés', 'bypass robotic writing patterns', 'increase sentence burstiness and perplexity', 'lint markdown documentation prose', 'humanizer bahasa Indonesia', 'perbaiki tulisan AI yang kaku', 'match author voice profile']) assert.match(skill, new RegExp(intent));
   assert.match(skill, /compatibility: Node\.js >= 18\.3\.0/);
-  assert.match(skill, /allowed-tools: Bash\(node:\*\) Read Write/);
-  assert.match(skill, /metadata:\n  version: "0\.2\.4"\n  author: "yanstd888"/);
-  assert.match(skill, /Mandatory deterministic verification|Run deterministic verification/i);
-  assert.match(readme, /\[!\[npm\]\(https:\/\/img\.shields\.io\/npm\/v\/humanizer-lint\)\]\(https:\/\/www\.npmjs\.com\/package\/humanizer-lint\)/);
-  assert.match(readme, /\[!\[skills\.sh\]\(https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint\)\]\(https:\/\/skills\.sh\/yanstd888\/humanizer-lint\)/);
-  assert.doesNotMatch(readme, /skills\.sh\/yanstd888\/humanizer-lint\/humanizer-lint/);
-  assert.match(readme, /npx humanizer-lint --file tulisan\.md --lang id/);
-  assert.match(readme, /npm install -g humanizer-lint/);
-  assert.doesNotMatch(readme, /not currently published to npm/i);
-  assert.match(readme, /humanizer-lint --file draft\.md --lang auto/);
+  assert.match(skill, /metadata:\n  version: "1\.1\.0"\n  author: "yanstd888"/);
+
+  assert.match(readme, /npx skills add yanstd888\/humanizer-lint/);
+  assert.match(readme, /Static `SKILL\.md` Humanizers vs\. `humanizer-lint`/);
+  assert.match(readme, /https:\/\/humanizer\.aiclub\.ai\.id\/\?sample=ai-id/);
+  assert.match(readme, /https:\/\/humanizer\.aiclub\.ai\.id\/\?sample=human-en/);
+  assert.match(readme, /Snyk: Pass/);
+  assert.match(readme, /Socket: Pass/);
+  assert.match(readme, /Zero Dependencies/);
+  assert.doesNotMatch(readme, /97\.8%/);
   assert.doesNotMatch(readme, /\p{Extended_Pictographic}/u);
+
+  assert.match(workflow, /node: \["18", "20", "22"\]/);
   assert.match(workflow, /npm test/);
   assert.match(workflow, /npm pack --dry-run/);
+
+  assert.match(index, /application\/ld\+json/);
+  assert.match(index, /https:\/\/humanizer\.aiclub\.ai\.id\/og-image\.svg/);
+  assert.match(index, /security\/snyk/);
+  assert.match(index, /security\/socket/);
+  assert.match(index, /security\/agent-trust-hub/);
+  assert.match(index, /data-sample="ai-id"/);
+  assert.match(app, /parseDemoQuery/);
+  assert.doesNotMatch(app, /fetch\(['"]https?:\/\//);
+  for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) {
+    await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
+  }
+  assert.match(build, /'llms-full\.txt'/);
+  assert.match(llms, /https:\/\/humanizer\.aiclub\.ai\.id\/llms-full\.txt/);
+  assert.match(fullReference, /\{\{idRules\}\}/);
   assert.match(license, /MIT License/);
 
   const rootMarkdown = (await readdir(root)).filter((name) => name.toLowerCase().endsWith('.md')).sort();

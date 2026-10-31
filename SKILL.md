@@ -1,11 +1,12 @@
 ---
 name: humanizer-lint
-description: Closed-loop stylometric linter and anti-AI-slop validator for Indonesian and English prose. Use when writing, editing, humanizing, or auditing articles, essays, documentation, and copy.
+description: Deterministic AI text humanizer, anti-slop prose linter, and stylometric analyzer (EN/ID). Fixes uniform sentence rhythm, low burstiness (CV), MATTR vocabulary repetition, and LLM clichés using a local zero-dependency Node.js CLI validator.
+version: 1.1.0
 license: MIT
 compatibility: Node.js >= 18.3.0 (zero external dependencies)
 allowed-tools: Bash(node:*) Read Write
 metadata:
-  version: "0.2.4"
+  version: "1.1.0"
   author: "yanstd888"
   domain: "writing"
 ---
@@ -22,6 +23,21 @@ Use this skill when writing or revising Indonesian or English prose that must av
 - Verify edited prose before returning it.
 
 Do not use it to alter code, commands, structured data, quotations, legal language, or factual identifiers. The sanitizer excludes common Markdown structures, but the agent must still preserve meaning and supported facts.
+
+## Trigger Intents & Search Keywords
+
+Use this skill for requests such as:
+
+- "humanize AI text"
+- "remove AI slop and clichés"
+- "bypass robotic writing patterns"
+- "increase sentence burstiness and perplexity"
+- "lint markdown documentation prose"
+- "humanizer bahasa Indonesia"
+- "perbaiki tulisan AI yang kaku"
+- "match author voice profile"
+
+These intents apply across Claude Code, Cursor, Windsurf, Cline, Codex, and Gemini CLI when the request needs deterministic EN/ID prose validation rather than an unmeasured rewrite.
 
 ## Prerequisites
 
