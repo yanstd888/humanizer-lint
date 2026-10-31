@@ -1,19 +1,37 @@
 ---
 name: humanizer-lint
-description: Deterministic multilingual AI text humanizer, anti-slop prose linter, copywriting/blog/docs editor, and stylometric analyzer (EN, ID, ES, MS, FR, DE, PT, ZH + 100+ languages via Intl.Segmenter). Fixes robotic LLM tone, uniform sentence rhythm, low burstiness (CV), MATTR vocabulary repetition, and translationese clichés using a local zero-dependency Node.js CLI validator.
-version: 1.2.1
+description: Deterministic multilingual AI text humanizer, anti-slop prose linter, and stylometric analyzer (EN, ID, ES, MS, FR, DE, PT, ZH + 100+ languages via Intl.Segmenter). Fixes uniform sentence rhythm, low burstiness (CV), MATTR vocabulary repetition, and LLM clichés using a local zero-dependency Node.js CLI validator.
+summary: Deterministic closed-loop AI text humanizer and stylometric prose linter that enforces natural sentence burstiness, vocabulary diversity, and zero LLM clichés across 100+ languages.
+topic: agent-workflows
+tags:
+  - agent-workflows
+  - marketing
+  - copywriting
+  - seo
+  - ai-humanizer
+  - anti-slop
+  - prose-linter
+  - stylometry
+  - burstiness
+  - multilingual
+version: 1.2.2
 license: MIT
 compatibility: Node.js >= 18.3.0 (zero external dependencies)
 allowed-tools: Bash(node:*) Read Write
 metadata:
-  version: "1.2.1"
+  version: "1.2.2"
   author: "yanstd888"
   domain: "writing"
 ---
 
 # Humanizer Lint
 
-Use this skill when writing, editing, translating, or humanizing prose, blog posts, SEO articles, copywriting, or technical documentation across **8 deep language rule packs (English, Indonesian, Spanish, Malay, French, German, Portuguese, Mandarin Chinese)** and **100+ languages in Universal Stylometric Mode (`Intl.Segmenter`)**. The local deterministic CLI analyzer is mandatory, uses only Node.js built-ins, and sends zero text over the network.
+**Audit, lint, and humanize AI-generated prose across 100+ languages using deterministic local stylometric math before returning text to the user.**
+
+- Eliminates robotic LLM writing patterns when users ask to "humanize text", "remove AI slop", "fix uniform sentence rhythm", or "write natural blog, SEO, and documentation prose"
+- Provides mandatory `node <skill_dir>/scripts/analyze.mjs --stdin --json` verification and `npx humanizer-lint` CLI to enforce Burstiness (`CV >= 0.45`), Adjacent Rhythm Delta, and Adaptive `MATTR` vocabulary diversity
+- Ships with **8 deep anti-slop lexical & morphological rule packs** (`en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh`) plus **Universal Stylometric Mode** (`Intl.Segmenter`) for 100+ languages with zero external dependencies
+- Supports personal author voice cloning via `node <skill_dir>/scripts/fingerprint.mjs` and passes all 3 `skills.sh` security audits (Gen Agent Trust Hub, Socket, Snyk) with zero network calls
 
 ## When to use
 

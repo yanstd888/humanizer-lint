@@ -1,6 +1,6 @@
 {
   "name": "humanizer-lint",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Multilingual closed-loop AI text humanizer, anti-slop prose linter, and stylometric burstiness (CV) & MATTR validator (EN, ID, ES, MS, FR, DE, PT, ZH + 100+ universal languages via Intl.Segmenter). Zero dependencies.",
   "type": "module",
   "engines": {

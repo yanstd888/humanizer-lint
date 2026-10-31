@@ -23,7 +23,12 @@ Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, an
 
 </div>
 
-**humanizer-lint is an open-source natural-text and Markdown prose linter. Native `Intl.Segmenter` provides local sentence and word boundaries; eight bundled anti-slop packs cover English, Indonesian, Spanish, Malay, French, German, Portuguese, and Mandarin. Other ISO 639-1 inputs use universal stylometric checks. It is a style validator, not an authorship detector.**
+**Summary**
+
+- Eliminates robotic LLM writing patterns when users ask to "humanize text", "remove AI slop", "fix uniform sentence rhythm", or "write natural blog, SEO, and documentation prose"
+- Provides mandatory `node <skill_dir>/scripts/analyze.mjs --stdin --json` verification and `npx humanizer-lint` CLI to enforce Burstiness (`CV >= 0.45`), Adjacent Rhythm Delta, and Adaptive `MATTR` vocabulary diversity
+- Ships with **8 deep anti-slop lexical & morphological rule packs** (`en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh`) plus **Universal Stylometric Mode** (`Intl.Segmenter`) for 100+ languages with zero external dependencies
+- Supports personal author voice cloning via `node <skill_dir>/scripts/fingerprint.mjs` and passes all 3 `skills.sh` security audits (Gen Agent Trust Hub, Socket, Snyk) with zero network calls
 
 ```sh
 npx skills add yanstd888/humanizer-lint

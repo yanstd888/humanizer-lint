@@ -366,9 +366,10 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
   }
 });
 
-test('package, skill, README, and static demo match the v1.2.1 multilingual SEO contract', async () => {
+test('package, skill, README, static demo, and skills.sh config match the v1.2.2 discovery contract', async () => {
   const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
   const packageJson = JSON.parse(packageSource);
+  const skillsConfig = JSON.parse(await sourceFile('skills.sh.json'));
   const languageCodes = ['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'];
   const rulePacks = await Promise.all(languageCodes.map(async (code) => JSON.parse(await readFile(path.join(root, 'rules', `${code}-slop.json`), 'utf8'))));
   const gitignore = await sourceFile('.gitignore');
@@ -388,7 +389,14 @@ test('package, skill, README, and static demo match the v1.2.1 multilingual SEO 
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '1.2.1');
+  assert.equal(packageJson.version, '1.2.2');
+  assert.equal(skillsConfig.$schema, 'https://skills.sh/schemas/skills.sh.schema.json');
+  assert.equal(skillsConfig.notGrouped, 'bottom');
+  assert.deepEqual(skillsConfig.groupings, [{
+    title: 'Multilingual Prose Linting & AI Humanizer',
+    description: 'Deterministic closed-loop stylometric linter, burstiness (CV) & MATTR analyzer, and anti-slop humanizer for 8 languages (EN, ID, ES, MS, FR, DE, PT, ZH) + 100+ universal languages.',
+    skills: ['humanizer-lint']
+  }]);
   assert.match(packageJson.description, /100\+ universal languages via Intl\.Segmenter/);
   assert.equal(packageJson.homepage, 'https://humanizer.aiclub.ai.id');
   assert.deepEqual(packageJson.files, ['SKILL.md', 'README.md', 'LICENSE', 'scripts/', 'rules/', 'profiles/']);
@@ -405,12 +413,20 @@ test('package, skill, README, and static demo match the v1.2.1 multilingual SEO 
   }
 
   assert.match(skill, /^---\nname: humanizer-lint\n/);
-  assert.match(skill, /version: 1\.2\.1/);
-  assert.match(skill, /8 deep language rule packs/);
+  assert.match(skill, /version: 1\.2\.2/);
+  assert.match(skill, /summary: Deterministic closed-loop AI text humanizer/);
+  assert.match(skill, /topic: agent-workflows/);
+  assert.match(skill, /  - marketing/);
+  assert.match(skill, /\*\*Audit, lint, and humanize AI-generated prose across 100\+ languages/);
+  assert.match(skill, /`node <skill_dir>\/scripts\/analyze\.mjs --stdin --json`/);
+  assert.match(skill, /8 deep anti-slop lexical & morphological rule packs/);
   assert.match(skill, /## Supported Languages \(Two-Tier Multilingual Architecture\)/);
   assert.match(skill, /## Agent-SEO Trigger Intents & Search Keywords/);
-  assert.match(skill, /metadata:\n  version: "1\.2\.1"\n  author: "yanstd888"/);
+  assert.match(skill, /metadata:\n  version: "1\.2\.2"\n  author: "yanstd888"/);
 
+  assert.match(readme, /\[!\[skills\.sh\]\(https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint\)\]\(https:\/\/www\.skills\.sh\/yanstd888\/humanizer-lint\/humanizer-lint\)/);
+  assert.match(readme, /\*\*Summary\*\*/);
+  assert.match(readme, /Eliminates robotic LLM writing patterns/);
   assert.match(readme, /## Language support/);
   assert.match(readme, /Tier 1 — rule packs/);
   assert.match(readme, /Tier 2 — universal/);
@@ -436,6 +452,12 @@ test('package, skill, README, and static demo match the v1.2.1 multilingual SEO 
   for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
   assert.match(build, /ruleCodes = \['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'\]/);
   assert.match(build, /'llms-full\.txt'/);
+  assert.match(llms, /Version 1\.2\.2/);
+  assert.match(llms, /## Executive summary/);
+  assert.match(llms, /Eliminates robotic LLM writing patterns/);
+  assert.match(fullReference, /Version 1\.2\.2/);
+  assert.match(fullReference, /## Executive summary/);
+  assert.match(fullReference, /Eliminates robotic LLM writing patterns/);
   assert.match(llms, /Intl\.Segmenter/);
   assert.match(fullReference, /\{\{ruleCatalog\}\}/);
   assert.match(license, /MIT License/);

@@ -1,6 +1,13 @@
 # humanizer-lint
 
-> Version 1.2.1 — deterministic, zero-dependency multilingual AI text humanizer, anti-slop prose linter, and closed-loop stylometric validator.
+> Version 1.2.2 — deterministic, zero-dependency multilingual AI text humanizer, anti-slop prose linter, and closed-loop stylometric validator.
+
+## Executive summary
+
+- Eliminates robotic LLM writing patterns when users ask to "humanize text", "remove AI slop", "fix uniform sentence rhythm", or "write natural blog, SEO, and documentation prose"
+- Provides mandatory `node <skill_dir>/scripts/analyze.mjs --stdin --json` verification and `npx humanizer-lint` CLI to enforce Burstiness (`CV >= 0.45`), Adjacent Rhythm Delta, and Adaptive `MATTR` vocabulary diversity
+- Ships with **8 deep anti-slop lexical & morphological rule packs** (`en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh`) plus **Universal Stylometric Mode** (`Intl.Segmenter`) for 100+ languages with zero external dependencies
+- Supports personal author voice cloning via `node <skill_dir>/scripts/fingerprint.mjs` and passes all 3 `skills.sh` security audits (Gen Agent Trust Hub, Socket, Snyk) with zero network calls
 
 `humanizer-lint` measures the finished draft locally instead of trusting a prompt alone. It sends zero text to a network service.
 
