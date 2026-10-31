@@ -5,4 +5,4 @@
 - [x] Add static SEO/GEO assets and crawlable technical content.
 - [x] Update skill, package, README, and CI metadata.
 - [x] Run full verification and primary-agent review (external reviewer was unavailable).
-- [ ] Push branch and open one PR; wait for owner merge before release.
+- [ ] Open one PR after GitHub authorization is available; branch is pushed, owner merge/release remains gated.
