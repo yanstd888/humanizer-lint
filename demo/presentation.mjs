@@ -1,8 +1,8 @@
 const projectRoot = '..';
 const { tokenizeText } = await import(new URL([projectRoot, 'scripts', 'utils', 'tokenizer.mjs'].join('/'), import.meta.url));
 
-const SAMPLE_IDS = new Set(['ai-id', 'human-id', 'ai-en', 'human-en', 'ai-es', 'ai-ms', 'ai-fr', 'ai-de', 'ai-pt', 'ai-zh']);
-const UI_LANGUAGES = new Set(['en', 'id']);
+const SAMPLE_IDS = new Set(['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh'].flatMap((code) => [`ai-${code}`, `human-${code}`]));
+const UI_LANGUAGES = new Set(['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh']);
 const TARGET_LANGUAGES = new Set(['auto', 'en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh', 'universal']);
 
 const LANGUAGE_LABELS = {

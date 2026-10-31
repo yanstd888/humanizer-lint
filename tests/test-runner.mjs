@@ -248,22 +248,25 @@ test('browser analyzer matches CLI results', { skip: !browserParityAvailable }, 
   }
 });
 
-test('demo chrome has complete EN/ID copy and official domain metadata', async () => {
+test('demo chrome has complete eight-language copy and official domain metadata', async () => {
   const index = await readFile(path.join(root, 'demo', 'index.html'), 'utf8');
   const app = await readFile(path.join(root, 'demo', 'app.mjs'), 'utf8');
-  for (const language of ['en', 'id']) {
+  const languageCodes = ['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh'];
+  const requiredKeys = Object.keys(I18N.en);
+  for (const language of languageCodes) {
+    assert.ok(I18N[language], language);
+    for (const key of requiredKeys) assert.ok(I18N[language][key], `${language}.${key}`);
     assert.ok(I18N[language].pageTitle);
     assert.ok(I18N[language].description);
     assert.ok(I18N[language].analyze);
     assert.ok(I18N[language].themeToDark);
-    assert.match(I18N[language].description, /100\+ languages|100\+ bahasa/);
     assert.doesNotMatch(I18N[language].pageTitle, /\p{Extended_Pictographic}/u);
+    assert.match(index, new RegExp(`data-language="${language}"`));
+    assert.match(index, new RegExp(`hreflang="${language}"`));
   }
   assert.match(index, /<html lang="en">/);
   assert.match(index, /https:\/\/humanizer\.aiclub\.ai\.id/);
-  assert.match(index, /data-language="en"[\s\S]*data-i18n="languageEn"/);
-  assert.match(index, /data-language="id"[\s\S]*data-i18n="languageId"/);
-  assert.match(app, /navigator\.language.*startsWith\('id'\)/);
+  assert.match(app, /UI_LANGUAGE_CODES/);
   assert.match(app, /humanizer-lint\.language/);
   assert.match(app, /humanizer-lint\.theme/);
 });
@@ -271,18 +274,10 @@ test('demo chrome has complete EN/ID copy and official domain metadata', async (
 test('demo samples preserve verified multilingual outcomes and shareable state', async () => {
   const { DEMO_SAMPLES } = await import(projectModule('demo', 'samples.mjs'));
   const { buildAutoFixPrompt, diagnosticExcerpt, languageLabel, parseDemoQuery } = await import(projectModule('demo', 'presentation.mjs'));
-  const expected = {
-    'ai-id': { language: 'id', status: 'FAIL', maxScore: 67 },
-    'human-id': { language: 'id', status: 'PASS', minScore: 88 },
-    'ai-en': { language: 'en', status: 'FAIL', maxScore: 67 },
-    'human-en': { language: 'en', status: 'PASS', minScore: 88 },
-    'ai-es': { language: 'es', status: 'FAIL', maxScore: 67 },
-    'ai-ms': { language: 'ms', status: 'FAIL', maxScore: 67 },
-    'ai-fr': { language: 'fr', status: 'FAIL', maxScore: 67 },
-    'ai-de': { language: 'de', status: 'FAIL', maxScore: 67 },
-    'ai-pt': { language: 'pt', status: 'FAIL', maxScore: 67 },
-    'ai-zh': { language: 'zh', status: 'FAIL', maxScore: 67 },
-  };
+  const expected = Object.fromEntries(['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh'].flatMap((language) => [
+    [`ai-${language}`, { language, status: 'FAIL', maxScore: 67 }],
+    [`human-${language}`, { language, status: 'PASS', minScore: 85 }],
+  ]));
 
   for (const [id, expectation] of Object.entries(expected)) {
     const sample = DEMO_SAMPLES[id];
@@ -302,7 +297,7 @@ test('demo samples preserve verified multilingual outcomes and shareable state',
   }
 
   assert.deepEqual(parseDemoQuery('?sample=ai-es&lang=en&targetLang=es'), { sample: 'ai-es', language: 'en', targetLang: 'es' });
-  assert.deepEqual(parseDemoQuery('?sample=unknown&lang=fr&targetLang=bad'), { sample: null, language: null, targetLang: null });
+  assert.deepEqual(parseDemoQuery('?sample=unknown&lang=fr&targetLang=bad'), { sample: null, language: 'fr', targetLang: null });
   assert.equal(languageLabel('zh'), '中文 / Mandarin (Tier 1 Pack)');
   assert.equal(languageLabel('universal'), 'Universal Stylometry (Tier 2)');
 
@@ -386,7 +381,7 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
   }
 });
 
-test('package, skill, README, static demo, and skills.sh config match the v1.2.3 discovery contract', async () => {
+test('package, skill, README, static demo, and skills.sh config match the v1.3.0 discovery contract', async () => {
   const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
   const packageJson = JSON.parse(packageSource);
   const skillsConfig = JSON.parse(await sourceFile('skills.sh.json'));
@@ -409,7 +404,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.3
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '1.2.3');
+  assert.equal(packageJson.version, '1.3.0');
   assert.equal(skillsConfig.$schema, 'https://skills.sh/schemas/skills.sh.schema.json');
   assert.equal(skillsConfig.notGrouped, 'bottom');
   assert.deepEqual(skillsConfig.groupings, [{
@@ -417,8 +412,8 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.3
     description: 'Deterministic closed-loop stylometric linter, burstiness (CV) & MATTR analyzer, and anti-slop humanizer for 8 languages (EN, ID, ES, MS, FR, DE, PT, ZH) + 100+ universal languages.',
     skills: ['humanizer-lint']
   }]);
-  assert.match(packageJson.description, /^Make AI-generated text read like human writing — deterministic humanizer and anti-slop prose linter/);
-  assert.match(packageJson.description, /100\+ languages\. Local zero-dependency Node\.js CLI, no network\./);
+  assert.match(packageJson.description, /^Deterministic multilingual AI text humanizer, anti-slop prose linter/);
+  assert.match(packageJson.description, /100\+ universal languages\. Local zero-dependency Node\.js CLI, no network\./);
   assert.equal(packageJson.homepage, 'https://humanizer.aiclub.ai.id');
   assert.deepEqual(packageJson.files, ['SKILL.md', 'README.md', 'LICENSE', 'scripts/', 'rules/', 'profiles/']);
   assert.deepEqual(packageJson.keywords, ['skills-sh', 'agent-skill', 'ai-humanizer', 'humanizer', 'anti-slop', 'prose-linter', 'stylometry', 'burstiness', 'mattr', 'multilingual-nlp', 'indonesian-nlp', 'copywriting', 'markdown-linter', 'claude-code', 'cursor-skill', 'windsurf', 'codex', 'gemini-cli']);
@@ -434,8 +429,8 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.3
   }
 
   assert.match(skill, /^---\nname: humanizer-lint\n/);
-  assert.match(skill, /description: Make AI-generated text read like human writing — deterministic humanizer and anti-slop prose linter/);
-  assert.match(skill, /version: 1\.2\.3/);
+  assert.match(skill, /description: Deterministic multilingual AI text humanizer, anti-slop prose linter/);
+  assert.match(skill, /version: 1\.3\.0/);
   assert.match(skill, /summary: Deterministic closed-loop AI text humanizer/);
   assert.match(skill, /topic: agent-workflows/);
   assert.match(skill, /  - marketing/);
@@ -444,7 +439,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.3
   assert.match(skill, /8 deep anti-slop lexical & morphological rule packs/);
   assert.match(skill, /## Supported Languages \(Two-Tier Multilingual Architecture\)/);
   assert.match(skill, /## Agent-SEO Trigger Intents & Search Keywords/);
-  assert.match(skill, /metadata:\n  version: "1\.2\.3"\n  author: "yanstd888"/);
+  assert.match(skill, /metadata:\n  version: "1\.3\.0"\n  author: "yanstd888"/);
 
   assert.match(readme, /### Humanize AI-generated text with a deterministic local AI humanizer and anti-slop prose linter/);
   assert.match(readme, /\[!\[skills\.sh\]\(https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint\)\]\(https:\/\/www\.skills\.sh\/yanstd888\/humanizer-lint\/humanizer-lint\)/);
@@ -462,23 +457,23 @@ test('package, skill, README, static demo, and skills.sh config match the v1.2.3
   assert.match(workflow, /npm pack --dry-run/);
 
   assert.match(index, /application\/ld\+json/);
-  assert.match(index, /Multilingual AI Text Humanizer/);
+  assert.match(index, /{{pageTitle}}/);
   assert.match(index, /humanizer bahasa indonesia/);
   assert.match(index, /Eight anti-slop packs, plus universal stylometry/);
   assert.match(index, /hreflang="x-default"/);
   assert.match(index, /id="analysis-language"/);
   for (const code of ['auto', ...languageCodes, 'universal']) assert.match(index, new RegExp(`value="${code}"`));
-  for (const id of ['ai-en', 'human-en', 'ai-id', 'human-id', 'ai-es', 'ai-ms', 'ai-fr', 'ai-de', 'ai-pt', 'ai-zh']) assert.ok(samples.DEMO_SAMPLES[id], id);
+  for (const code of languageCodes) for (const kind of ['ai', 'human']) assert.ok(samples.DEMO_SAMPLES[`${kind}-${code}`], `${kind}-${code}`);
   assert.match(app, /targetLang/);
   assert.match(app, /Object\.fromEntries\(ruleEntries\)/);
   assert.doesNotMatch(app, /fetch\(['"]https?:\/\//);
   for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
   assert.match(build, /ruleCodes = \['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'\]/);
   assert.match(build, /'llms-full\.txt'/);
-  assert.match(llms, /Version 1\.2\.3/);
+  assert.match(llms, /Version 1\.3\.0/);
   assert.match(llms, /## Executive summary/);
   assert.match(llms, /Eliminates robotic LLM writing patterns/);
-  assert.match(fullReference, /Version 1\.2\.3/);
+  assert.match(fullReference, /Version 1\.3\.0/);
   assert.match(fullReference, /## Executive summary/);
   assert.match(fullReference, /Eliminates robotic LLM writing patterns/);
   assert.match(llms, /Intl\.Segmenter/);

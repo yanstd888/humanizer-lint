@@ -1,3 +1,5 @@
+[![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)](https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint)
+
 <div align="center">
 
 # humanizer-lint
@@ -16,7 +18,6 @@ Detect repetitive LLM phrasing, uniform sentence rhythm, structural clichés, an
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-humanizer.aiclub.ai.id-126a4a?style=flat-square)](https://humanizer.aiclub.ai.id/)
 [![License](https://img.shields.io/github/license/yanstd888/humanizer-lint?style=flat-square)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18.3-339933?style=flat-square&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)](https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint)
 [![GitHub Stars](https://img.shields.io/github/stars/yanstd888/humanizer-lint?style=flat-square)](https://github.com/yanstd888/humanizer-lint/stargazers)
 
 [What it does](#what-it-does) | [Try in your browser](#try-in-your-browser) | [Install](#install) | [Quick start](#quick-start) | [CLI reference](#cli-reference) | [Detectors](#detectors-and-violation-types) | [Agent skill](#use-as-an-agent-skill) | [FAQ](#frequently-asked-questions)
@@ -36,6 +37,8 @@ npx skills add yanstd888/humanizer-lint
 
 Use the command above to install the agent skill. For one-off local linting, run the published `humanizer-lint` CLI below.
 
+**8-language summary:** EN — local AI text humanizer and prose linter. ID — humanizer bahasa Indonesia dan cek tulisan AI. ES — humanizador de texto IA y corrector de ritmo. MS — humanizer teks AI dan semak ayat. FR — humaniseur de texte IA et analyseur stylométrique. DE — KI-Text humanisieren und KI-Floskeln entfernen. PT — humanizador de texto IA e corretor de burstiness. ZH — AI文章人性化与句式节奏分析.
+
 ## Try in your browser
 
 Use the official demo: [humanizer.aiclub.ai.id](https://humanizer.aiclub.ai.id).
@@ -44,20 +47,18 @@ Use the official demo: [humanizer.aiclub.ai.id](https://humanizer.aiclub.ai.id).
 
 Open a deterministic sample view directly:
 
-| Sample | URL | Expected result |
+| Language | AI Sample (FAIL) | Human Sample (PASS) |
 |---|---|---|
-| AI sample (ID) | [open](https://humanizer.aiclub.ai.id/?sample=ai-id) | `FAIL`, score `< 65` |
-| Human sample (ID) | [open](https://humanizer.aiclub.ai.id/?sample=human-id) | `PASS`, score `>= 88` |
-| AI sample (EN) | [open](https://humanizer.aiclub.ai.id/?sample=ai-en) | `FAIL`, score `< 65` |
-| Human sample (EN) | [open](https://humanizer.aiclub.ai.id/?sample=human-en) | `PASS`, score `>= 88` |
-| AI sample (ES) | [open](https://humanizer.aiclub.ai.id/?sample=ai-es) | `FAIL`, score `< 68` |
-| AI sample (MS) | [open](https://humanizer.aiclub.ai.id/?sample=ai-ms) | `FAIL`, score `< 68` |
-| AI sample (FR) | [open](https://humanizer.aiclub.ai.id/?sample=ai-fr) | `FAIL`, score `< 68` |
-| AI sample (DE) | [open](https://humanizer.aiclub.ai.id/?sample=ai-de) | `FAIL`, score `< 68` |
-| AI sample (PT) | [open](https://humanizer.aiclub.ai.id/?sample=ai-pt) | `FAIL`, score `< 68` |
-| AI sample (ZH) | [open](https://humanizer.aiclub.ai.id/?sample=ai-zh) | `FAIL`, score `< 68` |
+| EN | [open](https://humanizer.aiclub.ai.id/?lang=en&sample=ai-en) | [open](https://humanizer.aiclub.ai.id/?lang=en&sample=human-en) |
+| ID | [open](https://humanizer.aiclub.ai.id/?lang=id&sample=ai-id) | [open](https://humanizer.aiclub.ai.id/?lang=id&sample=human-id) |
+| ES | [open](https://humanizer.aiclub.ai.id/?lang=es&sample=ai-es) | [open](https://humanizer.aiclub.ai.id/?lang=es&sample=human-es) |
+| MS | [open](https://humanizer.aiclub.ai.id/?lang=ms&sample=ai-ms) | [open](https://humanizer.aiclub.ai.id/?lang=ms&sample=human-ms) |
+| FR | [open](https://humanizer.aiclub.ai.id/?lang=fr&sample=ai-fr) | [open](https://humanizer.aiclub.ai.id/?lang=fr&sample=human-fr) |
+| DE | [open](https://humanizer.aiclub.ai.id/?lang=de&sample=ai-de) | [open](https://humanizer.aiclub.ai.id/?lang=de&sample=human-de) |
+| PT | [open](https://humanizer.aiclub.ai.id/?lang=pt&sample=ai-pt) | [open](https://humanizer.aiclub.ai.id/?lang=pt&sample=human-pt) |
+| ZH | [open](https://humanizer.aiclub.ai.id/?lang=zh&sample=ai-zh) | [open](https://humanizer.aiclub.ai.id/?lang=zh&sample=human-zh) |
 
-Use `?lang=en` or `?lang=id` to open the playground chrome in a chosen language for that visit; it does not overwrite a saved browser preference.
+Use `?lang=en`, `?lang=id`, `?lang=es`, `?lang=ms`, `?lang=fr`, `?lang=de`, `?lang=pt`, or `?lang=zh` to set the playground chrome only for that visit; it does not overwrite a saved browser preference.
 
 It works locally with zero runtime dependencies. Instead of rewriting text through another language model, it reports paragraph- and sentence-level violations with specific correction instructions. Use it to lint LLM-generated documentation, remove robotic AI phrasing from Markdown, check burstiness and lexical diversity, or add a deterministic prose gate to an agent workflow.
 

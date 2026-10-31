@@ -1,6 +1,6 @@
 ---
 name: humanizer-lint
-description: Make AI-generated text read like human writing — deterministic humanizer and anti-slop prose linter that detects and fixes robotic LLM patterns (uniform sentence rhythm, low burstiness, MATTR repetition, AI cliches) in English, Indonesian, Spanish, French, German, Portuguese, Malay, Chinese and 100+ languages. Local zero-dependency Node.js CLI, no network.
+description: Deterministic multilingual AI text humanizer, anti-slop prose linter, copywriting/blog/SEO editor, and stylometric analyzer (EN, ID, ES, MS, FR, DE, PT, ZH + 100+ languages via Intl.Segmenter). Fixes robotic LLM tone, uniform sentence rhythm, low burstiness (CV), MATTR vocabulary repetition, and translationese clichés using a local zero-dependency Node.js CLI validator.
 summary: Deterministic closed-loop AI text humanizer and stylometric prose linter that enforces natural sentence burstiness, vocabulary diversity, and zero LLM clichés across 100+ languages.
 topic: agent-workflows
 tags:
@@ -8,18 +8,19 @@ tags:
   - marketing
   - copywriting
   - seo
+  - writing
   - ai-humanizer
   - anti-slop
   - prose-linter
   - stylometry
   - burstiness
   - multilingual
-version: 1.2.3
+version: 1.3.0
 license: MIT
 compatibility: Node.js >= 18.3.0 (zero external dependencies)
 allowed-tools: Bash(node:*) Read Write
 metadata:
-  version: "1.2.3"
+  version: "1.3.0"
   author: "yanstd888"
   domain: "writing"
 ---
@@ -28,7 +29,7 @@ metadata:
 
 **Audit, lint, and humanize AI-generated prose across 100+ languages using deterministic local stylometric math before returning text to the user.**
 
-- Eliminates robotic LLM writing patterns when users ask to "humanize text", "remove AI slop", "fix uniform sentence rhythm", or "write natural blog, SEO, and documentation prose"
+- Eliminates robotic LLM writing patterns when users ask to "humanize text", "remove AI slop", "fix uniform sentence rhythm", or "write natural blog, copywriting, SEO, and documentation prose"
 - Provides mandatory `node <skill_dir>/scripts/analyze.mjs --stdin --json` verification and `npx humanizer-lint` CLI to enforce Burstiness (`CV >= 0.45`), Adjacent Rhythm Delta, and Adaptive `MATTR` vocabulary diversity
 - Ships with **8 deep anti-slop lexical & morphological rule packs** (`en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh`) plus **Universal Stylometric Mode** (`Intl.Segmenter`) for 100+ languages with zero external dependencies
 - Supports personal author voice cloning via `node <skill_dir>/scripts/fingerprint.mjs` and passes all 3 `skills.sh` security audits (Gen Agent Trust Hub, Socket, Snyk) with zero network calls
@@ -146,3 +147,11 @@ Before returning revised prose:
 - [ ] No source fact, identifier, number, quotation, or citation changed unintentionally.
 - [ ] Only flagged prose was revised after the first analyzer pass.
 - [ ] No network service or external package was used.
+
+## Multilingual Agent-SEO Keyword Matrix
+
+- **Core:** `ai humanizer`, `ai text humanizer`, `prose linter`, `anti-slop skill`, `stylometric analyzer`, `burstiness checker`, `perplexity and burstiness optimizer`, `humanizer-lint`, `skills.sh humanizer`, `markdown prose linter`.
+- **Technical:** `sentence length variation`, `coefficient of variation (CV >= 0.45)`, `adjacent sentence rhythm delta`, `moving-average type-token ratio (MATTR)`, `zlib compression entropy`, `remove LLM clichés and stock phrases`, `fix robotic AI writing tone`, `bypass statistical AI writing patterns`, `author voice fingerprinting`, `deterministic local CLI text validator`.
+- **Workflows:** `writing assistant skill`, `copywriting linter`, `blog post humanizer`, `seo article editor`, `technical documentation linter`, `academic prose polisher`, `translationese remover`, `proofreading and editing workflow`, `claude code writing skill`, `cursor anti-slop rules`, `windsurf prose skill`, `codex writing skill`, `gemini cli humanizer`.
+- **ID / MS:** `humanizer bahasa indonesia`, `cek tulisan ai gratis`, `cara agar tulisan ai tidak terdeteksi`, `ubah tulisan chatgpt jadi natural manusia`, `perbaiki tulisan ai yang kaku`, `hilangkan kata klise ai`, `alat parafrase anti-ai`, `cek skor burstiness tulisan`, `humanizer artikel seo dan skripsi`, `semak ayat ai bahasa melayu`, `humanizer teks bahasa melayu`, `cara elak dikesan ai`.
+- **ES / FR / DE / PT / ZH:** `humanizador de texto ia gratis`, `quitar clichés de chatgpt`, `detector y corrector de ritmo de escritura ia`, `mejorar burstiness de textos`; `humaniseur de texte ia`, `corriger le style robotique chatgpt`, `analyseur stylométrique de prose`, `supprimer le jargon ia`; `ki-text humanisieren kostenlos`, `chatgpt texte menschlicher machen`, `stilometrische textanalyse`, `ki-floskeln entfernen`; `humanizador de texto ia gratuito`, `deixar texto do chatgpt mais humano`, `corretor de estilo e burstiness`, `remover clichês de ia`; `AI文章人性化`, `消除AI写作痕迹`, `去除AI味工具`, `ChatGPT文本润色与句式节奏分析`, `降低AI率`.

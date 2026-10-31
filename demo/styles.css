@@ -51,10 +51,10 @@ button { border-radius: 0; }
 .brand { color: var(--ink); font-weight: 800; letter-spacing: -0.03em; text-decoration: none; }
 .brand-lockup p, .intro > p, footer p { color: var(--muted); margin: 0; }
 .controls, .language-toggle { align-items: center; display: flex; gap: 8px; }
-.language-toggle { color: var(--muted); font-size: 0.82rem; }
+.language-toggle { color: var(--muted); flex-wrap: wrap; font-size: 0.82rem; justify-content: flex-end; }
 .language-button, .icon-button, .command-tab, .sample-list button, .copy-button, .finding-button { background: transparent; border: 1px solid var(--line); color: var(--ink); cursor: pointer; }
 .language-button, .icon-button { border-color: transparent; color: var(--muted); min-height: 34px; padding: 6px 8px; }
-.language-button { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.06em; }
+.language-button { border-color: var(--line); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em; min-width: 34px; }
 .language-button.is-active, .command-tab.is-active { border-color: var(--ink); color: var(--ink); }
 .icon-button { display: grid; place-items: center; width: 34px; }
 .theme-icon, .copy-icon { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.8; }
@@ -161,6 +161,8 @@ a { color: var(--accent); }
   .workspace { grid-template-columns: 1fr; }
   .masthead, footer { align-items: flex-start; flex-direction: column; }
   .masthead { gap: 14px; }
+  .controls { align-items: flex-start; width: 100%; }
+  .language-toggle { justify-content: flex-start; }
   .result-head { align-items: flex-start; }
   .how-grid, .coverage-grid, .use-case-grid { grid-template-columns: 1fr; }
   .how-grid article:last-child { grid-column: auto; }

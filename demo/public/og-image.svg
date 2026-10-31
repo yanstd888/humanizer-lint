@@ -6,7 +6,7 @@
   <path d="M118 132h18M118 150h48M1064 132h18" fill="none" stroke="#77d9a9" stroke-width="4" stroke-linecap="square"/>
   <text x="118" y="220" fill="#edf3ee" font-family="ui-sans-serif, system-ui, sans-serif" font-size="76" font-weight="800" letter-spacing="-3">humanizer-lint</text>
   <text x="118" y="266" fill="#afbbb3" font-family="ui-sans-serif, system-ui, sans-serif" font-size="24">Multilingual Stylometric &amp; Anti-Slop Prose Linter</text>
-  <text x="118" y="300" fill="#afbbb3" font-family="ui-sans-serif, system-ui, sans-serif" font-size="21">EN • ID • ES • MS • FR • DE • PT • ZH + 100+ Universal</text>
+  <text x="118" y="300" fill="#afbbb3" font-family="ui-sans-serif, system-ui, sans-serif" font-size="21">v1.3.0 • EN • ID • ES • MS • FR • DE • PT • ZH + 100+ Universal</text>
   <rect x="118" y="326" width="964" height="78" fill="#121814" stroke="#39463e" stroke-width="2"/>
   <text x="146" y="375" fill="#77d9a9" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="28">$ npx skills add yanstd888/humanizer-lint</text>
   <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="20" font-weight="700">

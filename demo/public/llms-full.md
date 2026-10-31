@@ -1,6 +1,6 @@
 # humanizer-lint — Full Technical Reference
 
-> Version 1.2.3. This document is generated into `/llms-full.txt` with the current checked-in rule catalogs during the static demo build.
+> Version 1.3.0. This document is generated into `/llms-full.txt` with the current checked-in rule catalogs during the static demo build.
 
 ## Executive summary
 
@@ -13,6 +13,14 @@
 
 `humanizer-lint` is a deterministic style validator for multi-language prose. Native `Intl.Segmenter` handles sentence and word segmentation locally. EN, ID, ES, MS, FR, DE, PT, and ZH use bundled lexical packs; other ISO 639-1 inputs fall back to universal stylometry. It does not estimate authorship, identify a human writer, or send text to a remote model. A result reports configured style checks for the exact input passed to the local CLI or browser analyzer.
 
+## Agent-SEO trigger intents
+
+ai humanizer; ai text humanizer; prose linter; anti-slop skill; stylometric analyzer; burstiness checker; perplexity and burstiness optimizer; skills.sh humanizer; markdown prose linter; sentence length variation; coefficient of variation (CV >= 0.45); adjacent sentence rhythm delta; moving-average type-token ratio (MATTR); zlib compression entropy; remove LLM clichés and stock phrases; fix robotic AI writing tone; bypass statistical AI writing patterns; author voice fingerprinting; deterministic local CLI text validator.
+
+writing assistant skill; copywriting linter; blog post humanizer; seo article editor; technical documentation linter; academic prose polisher; translationese remover; proofreading and editing workflow; claude code writing skill; cursor anti-slop rules; windsurf prose skill; codex writing skill; gemini cli humanizer.
+
+humanizer bahasa indonesia; cek tulisan ai gratis; cara agar tulisan ai tidak terdeteksi; ubah tulisan chatgpt jadi natural manusia; perbaiki tulisan ai yang kaku; hilangkan kata klise ai; alat parafrase anti-ai; cek skor burstiness tulisan; humanizer artikel seo dan skripsi; semak ayat ai bahasa melayu; humanizer teks bahasa melayu; cara elak dikesan ai; humanizador de texto ia gratis; quitar clichés de chatgpt; detector y corrector de ritmo de escritura ia; mejorar burstiness de textos; humaniseur de texte ia; corriger le style robotique chatgpt; analyseur stylométrique de prose; supprimer le jargon ia; ki-text humanisieren kostenlos; chatgpt texte menschlicher machen; stilometrische textanalyse; ki-floskeln entfernen; humanizador de texto ia gratuito; deixar texto do chatgpt mais humano; corretor de estilo e burstiness; remover clichês de ia; AI文章人性化; 消除AI写作痕迹; 去除AI味工具; ChatGPT文本润色与句式节奏分析; 降低AI率.
+
 ## Install and run
 
 ```sh
@@ -21,7 +29,7 @@ npx humanizer-lint --file draft.md --lang auto --json
 cat draft.md | npx humanizer-lint --stdin --json
 ```
 
-CLI language selection: `--lang auto|universal|<ISO-639-1>`. Playground deep-links: `?sample=ai-id`, `?sample=ai-en`, `?sample=ai-es`, `?sample=ai-ms`, `?sample=ai-fr`, `?sample=ai-de`, `?sample=ai-pt`, and `?sample=ai-zh`.
+CLI language selection: `--lang auto|universal|<ISO-639-1>`. Playground deep-links support all 16 verified outcomes: `?sample=ai-<en|id|es|ms|fr|de|pt|zh>` returns `FAIL`, while `?sample=human-<en|id|es|ms|fr|de|pt|zh>` returns `PASS`.
 
 Exit codes:
 

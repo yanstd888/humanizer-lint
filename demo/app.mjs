@@ -1,5 +1,5 @@
 import { createBrowserAnalyzer } from './analyzer-browser.mjs';
-import { I18N } from './i18n.mjs';
+import { I18N, UI_LANGUAGE_CODES, UI_LANGUAGE_NAMES } from './i18n.mjs';
 import { buildAutoFixPrompt, diagnosticExcerpt, languageLabel, parseDemoQuery } from './presentation.mjs';
 import { DEMO_SAMPLES } from './samples.mjs';
 
@@ -7,7 +7,7 @@ const LANGUAGE_KEY = 'humanizer-lint.language';
 const THEME_KEY = 'humanizer-lint.theme';
 const COMMANDS = {
   skill: 'npx skills add yanstd888/humanizer-lint',
-  cli: 'npx humanizer-lint --file draft.md --lang id',
+  cli: 'npx humanizer-lint --file draft.md --lang auto',
 };
 const text = document.querySelector('#text');
 const analyze = document.querySelector('#analyze');
@@ -23,7 +23,7 @@ const diagnosticText = document.querySelector('#diagnostic-text');
 const themeToggle = document.querySelector('#theme-toggle');
 const languageButtons = [...document.querySelectorAll('[data-language]')];
 const commandButtons = [...document.querySelectorAll('[data-command]')];
-const sampleButtons = [...document.querySelectorAll('[data-sample]')];
+const sampleList = document.querySelector('#sample-list');
 const installCommand = document.querySelector('#install-command');
 const copyInstall = document.querySelector('#copy-install');
 const copyAutoFix = document.querySelector('#copy-autofix');
@@ -62,8 +62,9 @@ function save(key, value) {
 
 function initialLanguage() {
   const saved = stored(LANGUAGE_KEY);
-  if (saved === 'en' || saved === 'id') return saved;
-  return navigator.language?.toLowerCase().startsWith('id') ? 'id' : 'en';
+  if (UI_LANGUAGE_CODES.includes(saved)) return saved;
+  const browserCode = navigator.language?.toLowerCase().split('-')[0];
+  return UI_LANGUAGE_CODES.includes(browserCode) ? browserCode : 'en';
 }
 
 function initialTheme() {
@@ -76,20 +77,40 @@ function copy() {
   return I18N[currentLanguage];
 }
 
+function sampleLabel(id) {
+  const [kind, code] = id.split('-');
+  return `${copy()[kind === 'ai' ? 'sampleAi' : 'sampleHuman']} (${UI_LANGUAGE_NAMES[code]}) — ${kind === 'ai' ? 'FAIL' : 'PASS'}`;
+}
+
+function renderSampleButtons() {
+  sampleList.replaceChildren();
+  for (const code of UI_LANGUAGE_CODES) {
+    for (const kind of ['ai', 'human']) {
+      const id = `${kind}-${code}`;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.dataset.sample = id;
+      button.textContent = sampleLabel(id);
+      button.addEventListener('click', () => loadSample(id));
+      sampleList.append(button);
+    }
+  }
+}
+
 function setError(message = '') {
   error.textContent = message;
   error.hidden = !message;
 }
 
 function formatNumber(value, fractionDigits = 2) {
-  return new Intl.NumberFormat(currentLanguage === 'id' ? 'id-ID' : 'en-US', {
+  return new Intl.NumberFormat(currentLanguage === 'zh' ? 'zh-CN' : `${currentLanguage}-${currentLanguage === 'en' ? 'US' : currentLanguage.toUpperCase()}`, {
     maximumFractionDigits: fractionDigits,
     minimumFractionDigits: fractionDigits,
   }).format(value);
 }
 
 function formatPercent(value) {
-  return new Intl.NumberFormat(currentLanguage === 'id' ? 'id-ID' : 'en-US', {
+  return new Intl.NumberFormat(currentLanguage === 'zh' ? 'zh-CN' : `${currentLanguage}-${currentLanguage === 'en' ? 'US' : currentLanguage.toUpperCase()}`, {
     maximumFractionDigits: 1,
     style: 'percent',
   }).format(value);
@@ -236,6 +257,7 @@ function applyLanguage(nextLanguage, persist = false) {
     button.setAttribute('aria-pressed', String(active));
   });
   analyze.textContent = ready ? strings.analyze : strings.loading;
+  renderSampleButtons();
   updateThemeButton();
   updateCommand();
   if (lastResult) render(lastResult);
@@ -348,7 +370,7 @@ commandButtons.forEach((button) => button.addEventListener('click', () => {
   currentCommand = button.dataset.command;
   updateCommand();
 }));
-sampleButtons.forEach((button) => button.addEventListener('click', () => loadSample(button.dataset.sample)));
+
 copyInstall.addEventListener('click', () => copyText(COMMANDS[currentCommand], copyInstall));
 copyAutoFix.addEventListener('click', () => {
   if (lastResult) copyText(buildAutoFixPrompt({ text: lastText, report: lastResult }), copyAutoFix);
