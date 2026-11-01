@@ -22,6 +22,7 @@ const { I18N } = await import(projectModule('demo', 'i18n.mjs'));
 const { fingerprintSamples, runFingerprintCli } = await import(projectModule('scripts', 'fingerprint.mjs'));
 const { lintCopywriting, lintCodeComments, lintUiAndAccessibility } = await import(projectModule('scripts', 'utils', 'domain-linters.mjs'));
 const { runBenchmark } = await import(projectModule('scripts', 'benchmark.mjs'));
+await import(projectModule('tests', 'rhythm-gate-test.mjs'));
 
 let rootPath = decodeURIComponent(projectModule().pathname);
 if (/^\/[A-Za-z]:/.test(rootPath)) rootPath = rootPath.slice(1);
@@ -131,8 +132,8 @@ test('built-in rule packs detect Spanish, Malay, and Mandarin while universal fa
   const monotoneTurkish = analyzeText('Ekip sabah raporu dikkatle inceledi. Grup öğleden sonra kayıtları dikkatle doğruladı. Kurul akşam aynı notları dikkatle karşılaştırdı. Yönetici gece sonuçları dikkatle arşivledi.', { language: 'tr' });
   assert.equal(monotoneTurkish.language, 'tr');
   assert.equal(monotoneTurkish.rulePack, 'universal');
-  assert.equal(monotoneTurkish.status, 'FAIL');
-  assert.ok(monotoneTurkish.violations.some((violation) => violation.type === 'MONOTONOUS_RHYTHM'));
+  assert.match(monotoneTurkish.deliveryGate.rhythmAndStylometry.status, /^SKIP/);
+  assert.equal(monotoneTurkish.violations.some((violation) => violation.type === 'MONOTONOUS_RHYTHM'), false);
 
   const variedTurkish = analyzeText('Dur. Ekip, depodaki eski kayıtları tek tek karşılaştırdı ve iki yanlış tarihi düzeltti. Sonraki denetim için hukuk, satış, destek ve finans ekiplerinin kullandığı farklı kaynaklardan gelen belgeleri bir araya getirerek ayrıntılı bir kontrol listesi hazırladılar.', { language: 'universal' });
   assert.equal(variedTurkish.rulePack, 'universal');
@@ -184,10 +185,10 @@ test('custom voice profile creates a capped profile penalty when mean sentence l
 
 test('translationese openings trigger only when consecutive within one paragraph', () => {
   const sameParagraph = analyzeText('Dengan menggunakan data baru, tim memperbaiki jadwal kerja. Guna memastikan hasilnya stabil, operator memeriksa setiap catatan sebelum rapat dimulai. Mereka lalu mengirim laporan yang jauh lebih panjang kepada pemilik layanan.', { language: 'id' });
-  assert.ok(sameParagraph.violations.some((violation) => violation.type === 'PASSIVE_BLOATING' && /consecutive sentences/i.test(violation.match)));
+  assert.ok(sameParagraph.violations.some((violation) => violation.type === 'PASSIVE_BLOATING' && /consecutive sentences/i.test(violation.detail ?? violation.match)));
 
   const separateParagraphs = analyzeText('Dengan menggunakan data baru, tim memperbaiki jadwal kerja.\n\nGuna memastikan hasilnya stabil, operator memeriksa setiap catatan sebelum rapat dimulai. Kalimat terakhir dibuat jauh lebih panjang agar pemeriksaan statistik tetap berjalan tanpa mengubah tujuan pengujian ini.', { language: 'id' });
-  assert.equal(separateParagraphs.violations.some((violation) => violation.type === 'PASSIVE_BLOATING' && /consecutive sentences/i.test(violation.match)), false);
+  assert.equal(separateParagraphs.violations.some((violation) => violation.type === 'PASSIVE_BLOATING' && /consecutive sentences/i.test(violation.detail ?? violation.match)), false);
 });
 
 test('statistical gate failures always include actionable diagnostics', () => {
@@ -221,10 +222,12 @@ test('required rule edge cases are detected', () => {
 
 test('v1.4 rhythm, repetition, rhetoric, and surgical hints are deterministic', () => {
   const flatParagraph = analyzeText('Tim memeriksa catatan pagi dengan teliti. Tim meninjau angka siang dengan cermat. Tim membaca laporan sore dengan hati-hati. Tim mengecek hasil malam dengan saksama.', { language: 'id' });
-  assert.ok(flatParagraph.violations.some((item) => item.type === 'FLAT_PARAGRAPH_RHYTHM'));
+  assert.match(flatParagraph.deliveryGate.rhythmAndStylometry.status, /^SKIP/);
+  assert.equal(flatParagraph.violations.some((item) => item.type === 'FLAT_PARAGRAPH_RHYTHM'), false);
 
   const clauses = analyzeText('Rina membuka laporan, memeriksa angka, lalu mencatat hasil. Dimas membaca log, menandai anomali, lalu mengirim catatan. Sari menguji cache, mengukur latency, lalu menyimpan data. Bima memeriksa deployment, membaca status, lalu menutup tiket.', { language: 'id' });
-  assert.ok(clauses.violations.some((item) => item.type === 'UNIFORM_CLAUSE_STRUCTURE'));
+  assert.match(clauses.deliveryGate.rhythmAndStylometry.status, /^SKIP/);
+  assert.equal(clauses.violations.some((item) => item.type === 'UNIFORM_CLAUSE_STRUCTURE'), false);
 
   const repeated = Array.from({ length: 8 }, (_, index) => `Tim ${index} memeriksa catatan rilis harian sebelum rapat dan catatan rilis harian tetap dipakai untuk menilai hasil.`).join(' ');
   assert.ok(analyzeText(repeated, { language: 'id' }).violations.some((item) => item.type === 'REPETITIVE_NGRAM'));
@@ -277,145 +280,6 @@ test('human fixtures pass at 85 or above', async () => {
     assert.equal(result.status, 'PASS', `${name}: ${JSON.stringify(result, null, 2)}`);
     assert.ok(result.score >= 85, `${name}: ${result.score}`);
   }
-});
-
-test('browser analyzer matches CLI results', { skip: !browserParityAvailable }, async () => {
-  const [idRules, enRules, defaultProfile] = await Promise.all([
-    readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8').then(JSON.parse),
-    readFile(path.join(root, 'rules', 'en-slop.json'), 'utf8').then(JSON.parse),
-    readFile(path.join(root, 'profiles', 'default-human.json'), 'utf8').then(JSON.parse),
-  ]);
-  const browser = createBrowserAnalyzer({ rules: { id: idRules, en: enRules }, defaultProfile });
-  for (const [name, language] of [['ai-sample-id.txt', 'id'], ['ai-sample-en.txt', 'en'], ['human-sample-id.txt', 'id'], ['human-sample-en.txt', 'en']]) {
-    const text = await fixture(name);
-    assert.deepEqual(await browser.analyzeTextAsync(text, { language }), analyzeText(text, { language }));
-  }
-});
-
-test('demo chrome has complete eight-language copy and official domain metadata', async () => {
-  const index = await readFile(path.join(root, 'demo', 'index.html'), 'utf8');
-  const app = await readFile(path.join(root, 'demo', 'app.mjs'), 'utf8');
-  const languageCodes = ['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh'];
-  const requiredKeys = Object.keys(I18N.en);
-  for (const language of languageCodes) {
-    assert.ok(I18N[language], language);
-    for (const key of requiredKeys) assert.ok(I18N[language][key], `${language}.${key}`);
-    assert.ok(I18N[language].pageTitle);
-    assert.ok(I18N[language].description);
-    assert.ok(I18N[language].analyze);
-    assert.ok(I18N[language].themeToDark);
-    assert.doesNotMatch(I18N[language].pageTitle, /\p{Extended_Pictographic}/u);
-    assert.match(index, new RegExp(`<option value="${language}" data-language="${language}">`));
-    assert.match(index, new RegExp(`hreflang="${language}"`));
-  }
-  assert.match(index, /<html lang="en">/);
-  assert.match(index, /https:\/\/humanizer\.aiclub\.ai\.id/);
-  assert.match(app, /UI_LANGUAGE_CODES/);
-  assert.match(app, /humanizer-lint\.language/);
-  assert.match(app, /humanizer-lint\.theme/);
-  assert.match(index, /id="interface-language"/);
-  assert.doesNotMatch(index, /class="language-button"/);
-  assert.match(index, /href="https:\/\/aiclub\.ai\.id" target="_blank" rel="noopener noreferrer">Website/);
-  assert.match(index, /href="https:\/\/t\.me\/aiclub_id" target="_blank" rel="noopener noreferrer">Telegram/);
-});
-
-test('Pages build prevents the full technical SEO, security, and accessibility audit set from regressing', async () => {
-  const dist = path.join(root, '.pages-dist');
-  const index = await readFile(path.join(dist, 'index.html'), 'utf8');
-  const headers = await readFile(path.join(dist, '_headers'), 'utf8');
-  const robots = (await readFile(path.join(dist, 'robots.txt'), 'utf8')).replaceAll(String.fromCharCode(13), '');
-  const missing = await readFile(path.join(dist, '404.html'), 'utf8');
-  const favicon = await readFile(path.join(dist, 'favicon.ico'));
-  for (const asset of ['404.html', '_headers', 'favicon.ico', 'favicon.svg', 'robots.txt', 'sitemap.xml']) {
-    await readFile(path.join(dist, asset));
-  }
-  await assert.rejects(readFile(path.join(dist, '_redirects')));
-
-  assert.match(missing, /<meta name="robots" content="noindex">/);
-  assert.match(missing, /404 — Page Not Found/);
-  assert.match(missing, /https:\/\/humanizer\.aiclub\.ai\.id\//);
-  assert.deepEqual([...favicon.subarray(0, 6)], [0, 0, 1, 0, 1, 0]);
-  assert.match(index, /<link rel="icon" href="\/favicon\.ico" sizes="any">/);
-  assert.match(index, /<link rel="icon" href="\/favicon\.svg" type="image\/svg\+xml">/);
-  assert.match(index, /<link rel="apple-touch-icon" href="\/favicon\.svg">/);
-  assert.match(index, /max-image-preview:large/);
-
-  const schemaMatch = index.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
-  assert.ok(schemaMatch);
-  const schema = JSON.parse(schemaMatch[1]);
-  const graph = new Map(schema['@graph'].map((node) => [node['@type'], node]));
-  assert.equal(graph.get('WebSite').publisher['@id'], 'https://humanizer.aiclub.ai.id/#organization');
-  assert.equal(graph.get('Organization').name, 'AI Club Indonesia (aiclub.ai.id)');
-  assert.ok(graph.has('SoftwareApplication'));
-  assert.ok(graph.has('FAQPage'));
-
-  for (const header of [
-    'Strict-Transport-Security: max-age=31536000; includeSubDomains; preload',
-    "Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'",
-    'X-Frame-Options: DENY',
-    'X-Content-Type-Options: nosniff',
-    'Referrer-Policy: strict-origin-when-cross-origin',
-    'Permissions-Policy: accelerometer=()',
-    'Last-Modified: Sat, 31 Oct 2026 00:00:00 GMT',
-    'ETag: W/"humanizer-lint-1.4.1-seo-audit"',
-    'Cache-Control: public, max-age=0, must-revalidate',
-  ]) assert.match(headers, new RegExp(header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-  for (const crawler of ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Googlebot', 'Bingbot', 'Applebot', 'Applebot-Extended', 'Amazonbot', 'YouBot', 'DuckAssistBot', 'Bytespider', 'CCBot']) {
-    assert.ok(robots.includes(`User-agent: ${crawler}\nAllow: /`), crawler);
-  }
-  assert.match(robots, /^Sitemap: https:\/\/humanizer\.aiclub\.ai\.id\/sitemap\.xml$/m);
-
-  for (const [, tag, attributes, body] of index.matchAll(/<(button|a)\b([^>]*)>([\s\S]*?)<\/\1>/g)) {
-    assert.ok(/\baria-label=/.test(attributes) || body.replace(/<[^>]+>/g, '').trim(), `${tag} is missing an accessible name`);
-  }
-  assert.match(index, /<select id="interface-language" aria-label="Interface language"/);
-  assert.match(index, /<select id="analysis-language" aria-label="Analysis language">/);
-  assert.match(index, /<label for="text"/);
-  assert.match(await sourceFile('demo', 'app.mjs'), /button\.textContent = sampleLabel\(id\)/);
-  assert.match(await sourceFile('demo', 'app.mjs'), /button\.append\(type, location, instruction, replacement, split\)/);
-  assert.match(index, /id="gate-rhythm"/);
-  assert.match(index, /id="gate-verdict"/);
-});
-
-test('demo samples preserve verified multilingual outcomes and shareable state', async () => {
-  const { DEMO_SAMPLES } = await import(projectModule('demo', 'samples.mjs'));
-  const { buildAutoFixPrompt, diagnosticExcerpt, languageLabel, parseDemoQuery } = await import(projectModule('demo', 'presentation.mjs'));
-  const expected = Object.fromEntries(['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh'].flatMap((language) => [
-    [`ai-${language}`, { language, status: 'FAIL', maxScore: 67 }],
-    [`human-${language}`, { language, status: 'PASS', minScore: 85 }],
-  ]));
-
-  for (const [id, expectation] of Object.entries(expected)) {
-    const sample = DEMO_SAMPLES[id];
-    assert.equal(sample.language, expectation.language, id);
-    const report = analyzeText(sample.text, { language: expectation.language });
-    assert.equal(report.status, expectation.status, id);
-    if (expectation.maxScore != null) assert.ok(report.score < 68, `${id}: ${report.score}`);
-    if (expectation.minScore != null) assert.ok(report.score >= expectation.minScore, `${id}: ${report.score}`);
-    if (id.startsWith('ai-')) {
-      const types = new Set(report.violations.map((violation) => violation.type));
-      assert.ok(types.has('SLOP_PHRASE'), id);
-      assert.ok(types.has('MONOTONOUS_RHYTHM'), id);
-      assert.ok(types.has('LOW_BURSTINESS'), id);
-    } else {
-      assert.equal(report.violations.length, 0, id);
-    }
-  }
-
-  assert.deepEqual(parseDemoQuery('?sample=ai-es&lang=en&targetLang=es'), { sample: 'ai-es', language: 'en', targetLang: 'es' });
-  assert.deepEqual(parseDemoQuery('?sample=unknown&lang=fr&targetLang=bad'), { sample: null, language: 'fr', targetLang: null });
-  assert.equal(languageLabel('zh'), '中文 / Mandarin (Tier 1 Pack)');
-  assert.equal(languageLabel('universal'), 'Universal Stylometry (Tier 2)');
-
-  const source = DEMO_SAMPLES['ai-id'].text;
-  const report = analyzeText(source, { language: 'id' });
-  const first = report.violations[0];
-  assert.match(diagnosticExcerpt(source, first), /Di era digital/);
-  const prompt = buildAutoFixPrompt({ text: source, report });
-  assert.match(prompt, /Bahasa Indonesia \(Tier 1 Pack\)/);
-  assert.match(prompt, /LOW_BURSTINESS/);
-  assert.match(prompt, /burstinessCV/);
-  assert.match(prompt, /Di era digital/);
 });
 
 test('CLI runners cover PASS, SKIP, FAIL, stdin, and invalid arguments', async () => {
@@ -488,11 +352,19 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
 
     const aliasOutput = path.join(dir, 'alias-profile.json');
     assert.equal(await runFingerprintCli(
-      ['--dir', dir, '--out', aliasOutput, '--lang', 'auto'],
+      ['--dir', dir, '--out', aliasOutput],
       { stdout: () => {}, stderr: () => {} },
     ), 0);
     assert.equal(JSON.parse(await readFile(aliasOutput, 'utf8')).sampleCount, 2);
 
+    const original = await readFile(first, 'utf8');
+    await assert.rejects(() => fingerprintSamples([first], { output: first }), /output.*sample/i);
+    assert.equal(await readFile(first, 'utf8'), original);
+    const protectedOutput = path.join(dir, 'protected.json');
+    const collision = `${protectedOutput}.tmp-${process.pid}`;
+    await writeFile(collision, 'do not overwrite');
+    await assert.rejects(() => fingerprintSamples([first], { output: protectedOutput }), /EEXIST/);
+    assert.equal(await readFile(collision, 'utf8'), 'do not overwrite');
     const singleProfile = await fingerprintSamples([first]);
     const selfAnalysis = analyzeText(await readFile(first, 'utf8'), { language: 'id', profile: singleProfile });
     assert.equal(selfAnalysis.metrics.voiceProfileDeviation, 0);
@@ -501,16 +373,27 @@ test('fingerprint aggregates one to five samples and writes a loadable profile',
   }
 });
 
-test('benchmark is reproducible across all 16 multilingual fixtures', () => {
+test('README terminal example matches current short-text diagnostics', async () => {
+  const readme = await sourceFile('README.md');
+  const demo = readme.match(/## Terminal demo[\s\S]*?```text\n([^\n]+)\n```/u);
+  assert.ok(demo);
+  const report = analyzeText(demo[1], { language: 'en' });
+  assert.equal(report.status, 'FAIL');
+  assert.equal(report.metrics.sentenceCount, 3);
+  assert.match(report.deliveryGate.rhythmAndStylometry.status, /^SKIP/);
+  assert.ok(readme.includes(`Score: ${report.score}`));
+});
+
+test('benchmark is reproducible across multilingual and domain fixtures', () => {
   const report = runBenchmark(2);
-  assert.equal(report.fixtures, 16);
-  assert.equal(report.accuracy, 1);
+  assert.equal(report.fixtures, 20);
+  assert.equal(report.syntheticFixturePassRate, 1);
   assert.equal(report.deterministic, true);
   assert.ok(report.meanScoreSeparation > 0);
   assert.ok(report.meanMsPerAnalysis >= 0);
 });
 
-test('package, skill, README, static demo, and skills.sh config match the v1.4.1 discovery contract', async () => {
+test('package, skill, README, static demo, and skills.sh config match the v1.5.0 discovery contract', async () => {
   const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
   const packageJson = JSON.parse(packageSource);
   const skillsConfig = JSON.parse(await sourceFile('skills.sh.json'));
@@ -533,7 +416,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.1
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '1.4.1');
+  assert.equal(packageJson.version, '1.5.0');
   assert.ok(packageJson.files.includes('demo/samples.mjs'));
   assert.equal(skillsConfig.$schema, 'https://skills.sh/schemas/skills.sh.schema.json');
   assert.equal(skillsConfig.notGrouped, 'bottom');
@@ -545,7 +428,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.1
   assert.match(packageJson.description, /^Deterministic prose linter and stylometric rhythm analyzer/);
   assert.match(packageJson.description, /100\+ languages\. Local zero-dependency Node\.js CLI, no network\./);
   assert.equal(packageJson.homepage, 'https://humanizer.aiclub.ai.id');
-  assert.deepEqual(packageJson.files, ['SKILL.md', 'README.md', 'LICENSE', 'scripts/', 'rules/', 'profiles/', 'demo/samples.mjs']);
+  assert.deepEqual(packageJson.files, ['SKILL.md', 'README.md', 'LICENSE', 'scripts/', 'rules/', 'profiles/', 'demo/samples.mjs', 'tests/corpus/']);
   assert.deepEqual(packageJson.keywords, ['skills-sh', 'agent-skill', 'ai-humanizer', 'humanizer', 'anti-slop', 'prose-linter', 'stylometry', 'burstiness', 'mattr', 'multilingual-nlp', 'indonesian-nlp', 'copywriting', 'markdown-linter', 'claude-code', 'cursor-skill', 'windsurf', 'codex', 'gemini-cli']);
   assert.equal(packageJson.dependencies, undefined);
   assert.deepEqual(packageJson.bin, { 'humanizer-lint': 'scripts/analyze.mjs', 'humanizer-fingerprint': 'scripts/fingerprint.mjs' });
@@ -559,9 +442,9 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.1
   }
 
   assert.match(skill, /^---\nname: humanizer-lint\n/);
-  assert.match(skill, /description: Deterministic prose linter, AI writing style editor/);
+  assert.match(skill, /description: Deterministic local prose, copywriting, UI\/accessibility markup and code-comment linter/);
   assert.equal((skill.match(/^version:/gm) ?? []).length, 1);
-  assert.match(skill, /version: 1\.4\.1/);
+  assert.match(skill, /version: 1\.5\.0/);
   assert.match(skill, /summary: Local deterministic prose/);
   assert.match(skill, /topic: agent-workflows/);
   assert.match(skill, /allowed-tools: Bash\(node:\*\)/);
@@ -570,7 +453,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.1
   assert.match(skill, /## Workflow A — Drafting New Prose/);
   assert.match(skill, /## Workflow B — Auditing and Revising Existing Text/);
   assert.match(skill, /## Metrics Are Diagnostics, Not Rigid Targets/);
-  assert.match(skill, /## Search Intents & Editorial Keywords[\s\S]*$/);
+  assert.doesNotMatch(skill, /## Search Intents & Editorial Keywords/);
   assert.doesNotMatch(skill, /\b(?:bypass|skripsi|perplexity)\b|cara agar tulisan ai tidak terdeteksi|降低AI率/iu);
 
   assert.match(readme, /### Edit stiff AI-shaped prose with a deterministic local prose and rhythm linter/);
@@ -608,16 +491,16 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.1
   for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
   assert.match(build, /ruleCodes = \['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'\]/);
   assert.match(build, /'llms-full\.txt'/);
-  assert.match(llms, /Version 1\.4\.1/);
+  assert.match(llms, /Version 1\.5\.0/);
   assert.match(llms, /## Verified benchmark/);
-  assert.match(fullReference, /Version 1\.4\.1/);
+  assert.match(fullReference, /Version 1\.5\.0/);
   assert.match(fullReference, /## v1\.4 detectors/);
   assert.match(llms, /Intl\.Segmenter/);
   assert.match(fullReference, /\{\{ruleCatalog\}\}/);
   assert.match(license, /MIT License/);
 
   const rootMarkdown = (await readdir(root)).filter((name) => name.toLowerCase().endsWith('.md')).sort();
-  assert.deepEqual(rootMarkdown, ['README.md', 'SKILL.md']);
+  assert.deepEqual(rootMarkdown, ['CHANGELOG.md', 'README.md', 'SKILL.md']);
 });
 
 test('production scripts use only approved built-ins and forbidden APIs are absent', async () => {

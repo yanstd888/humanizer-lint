@@ -1,6 +1,6 @@
 {
   "name": "humanizer-lint",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Deterministic prose linter and stylometric rhythm analyzer with 8 language-specific anti-cliche packs plus universal Intl.Segmenter diagnostics for 100+ languages. Local zero-dependency Node.js CLI, no network.",
   "type": "module",
   "engines": {
@@ -17,10 +17,13 @@
     "scripts/",
     "rules/",
     "profiles/",
-    "demo/samples.mjs"
+    "demo/samples.mjs",
+    "tests/corpus/"
   ],
   "scripts": {
-    "test": "node demo/build.mjs && node --test tests/test-runner.mjs",
+    "test:core": "node --test tests/test-runner.mjs",
+    "test:demo": "node demo/build.mjs && node --test tests/demo-test.mjs",
+    "test": "npm run test:core && npm run test:demo",
     "build:demo": "node demo/build.mjs",
     "benchmark": "node scripts/benchmark.mjs"
   },

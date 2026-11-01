@@ -22,7 +22,7 @@ function jsonLd(version) {
         '@type': 'WebSite',
         '@id': 'https://humanizer.aiclub.ai.id/#website',
         name: 'Humanizer-Lint',
-        alternateName: ['humanizer-lint', 'AI Club Humanizer Lint'],
+        alternateName: ['humanizer-lint', 'AICLUB Humanizer Lint'],
         url: siteUrl,
         inLanguage: ['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh'],
         publisher: { '@id': 'https://humanizer.aiclub.ai.id/#organization' },
@@ -30,7 +30,7 @@ function jsonLd(version) {
       {
         '@type': 'Organization',
         '@id': 'https://humanizer.aiclub.ai.id/#organization',
-        name: 'AI Club Indonesia (aiclub.ai.id)',
+        name: 'AICLUB.ai.id',
         url: 'https://aiclub.ai.id/',
         logo: { '@type': 'ImageObject', url: 'https://humanizer.aiclub.ai.id/favicon.svg' },
         sameAs: [
@@ -95,6 +95,7 @@ await Promise.all([
   copy('demo/styles.css', 'styles.css'),
   copy('demo/public/404.html', '404.html'),
   copy('demo/public/_headers', '_headers'),
+  copy('demo/public/fonts', 'fonts'),
   copy('demo/public/favicon.ico', 'favicon.ico'),
   copy('demo/public/favicon.svg', 'favicon.svg'),
   copy('demo/public/og-image.svg', 'og-image.svg'),
@@ -103,6 +104,7 @@ await Promise.all([
   copy('demo/public/llms.txt', 'llms.txt'),
   copy('scripts/core', 'scripts/core'),
   copy('scripts/utils/sanitizer.mjs', 'scripts/utils/sanitizer.mjs'),
+  copy('scripts/utils/sanitizer-mapped.mjs', 'scripts/utils/sanitizer-mapped.mjs'),
   copy('scripts/utils/tokenizer.mjs', 'scripts/utils/tokenizer.mjs'),
   copy('scripts/utils/metrics-core.mjs', 'scripts/utils/metrics-core.mjs'),
   copy('scripts/utils/domain-linters.mjs', 'scripts/utils/domain-linters.mjs'),

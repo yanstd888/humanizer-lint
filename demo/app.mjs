@@ -1,6 +1,6 @@
 import { createBrowserAnalyzer } from './analyzer-browser.mjs';
 import { I18N, UI_LANGUAGE_CODES, UI_LANGUAGE_NAMES } from './i18n.mjs';
-import { buildAutoFixPrompt, diagnosticExcerpt, languageLabel, parseDemoQuery } from './presentation.mjs';
+import { buildAutoFixPrompt, diagnosticExcerpt, diagnosticSelection, languageLabel, parseDemoQuery, rhythmGateSkipped } from './presentation.mjs';
 import { DEMO_SAMPLES } from './samples.mjs';
 
 const LANGUAGE_KEY = 'humanizer-lint.language';
@@ -16,18 +16,27 @@ const result = document.querySelector('#result');
 const score = document.querySelector('#score');
 const status = document.querySelector('#status');
 const language = document.querySelector('#language');
-const analysisLanguage = document.querySelector('#analysis-language');
 const findings = document.querySelector('#findings');
 const diagnostic = document.querySelector('#diagnostic');
 const diagnosticText = document.querySelector('#diagnostic-text');
 const themeToggle = document.querySelector('#theme-toggle');
-const interfaceLanguage = document.querySelector('#interface-language');
+const langPicker = document.querySelector('#lang-picker');
+const langValue = document.querySelector('#lang-picker .picker-value');
+const langOptions = [...document.querySelectorAll('#lang-picker .picker-option')];
 const commandButtons = [...document.querySelectorAll('[data-command]')];
+const analysisPicker = document.querySelector('#analysis-picker');
+const analysisValue = document.querySelector('#analysis-value');
+const analysisOptions = [...document.querySelectorAll('#analysis-picker .picker-option')];
+let analysisLang = 'auto';
 const sampleList = document.querySelector('#sample-list');
 const installCommand = document.querySelector('#install-command');
 const copyInstall = document.querySelector('#copy-install');
 const copyAutoFix = document.querySelector('#copy-autofix');
 const copyStatus = document.querySelector('#copy-status');
+const samplePicker = document.querySelector('#sample-picker');
+const sampleCurrent = document.querySelector('#sample-current');
+const gateSection = document.querySelector('.delivery-gate');
+const gateBlocks = [...document.querySelectorAll('.gate-block')];
 const gateElements = {
   rhythmAndStylometry: document.querySelector('#gate-rhythm'),
   lexicalAndMorphology: document.querySelector('#gate-lexical'),
@@ -40,6 +49,7 @@ const metricElements = {
   lexical: document.querySelector('#metric-lexical'),
   slop: document.querySelector('#metric-slop'),
 };
+document.documentElement.classList.add('js');
 const queryState = parseDemoQuery(window.location.search);
 let currentLanguage = 'en';
 let currentTheme = 'light';
@@ -48,6 +58,7 @@ let analyzer;
 let defaultProfile;
 let lastResult;
 let lastText = '';
+let lastSampleId = null;
 let ready = false;
 
 function stored(key) {
@@ -85,7 +96,7 @@ function copy() {
 
 function sampleLabel(id) {
   const [kind, code] = id.split('-');
-  return `${copy()[kind === 'ai' ? 'sampleAi' : 'sampleHuman']} (${UI_LANGUAGE_NAMES[code]}) — ${kind === 'ai' ? 'FAIL' : 'PASS'}`;
+  return `${copy()[kind === 'ai' ? 'sampleAi' : 'sampleHuman']} (${UI_LANGUAGE_NAMES[code]}) · ${kind === 'ai' ? 'FAIL' : 'PASS'}`;
 }
 
 function renderSampleButtons() {
@@ -96,11 +107,71 @@ function renderSampleButtons() {
       const button = document.createElement('button');
       button.type = 'button';
       button.dataset.sample = id;
+      button.dataset.status = kind === 'ai' ? 'fail' : 'pass';
       button.textContent = sampleLabel(id);
       button.addEventListener('click', () => loadSample(id));
       sampleList.append(button);
     }
   }
+}
+
+function setupReveal() {
+  const groups = document.querySelectorAll('[data-reveal-stagger]');
+  for (const group of groups) {
+    [...group.children].forEach((child, index) => {
+      child.setAttribute('data-reveal', '');
+      child.style.setProperty('--reveal-delay', `${Math.min(index * 60, 420)}ms`);
+    });
+  }
+  const targets = document.querySelectorAll('[data-reveal]');
+  if (!('IntersectionObserver' in window)) {
+    targets.forEach((element) => element.classList.add('is-visible'));
+    return;
+  }
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    }
+  }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+  targets.forEach((element) => observer.observe(element));
+}
+
+const prefersReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+function setAnalysisLanguage(value) {
+  analysisLang = value;
+  const selected = analysisOptions.find((option) => option.dataset.value === value);
+  analysisOptions.forEach((option) => option.classList.toggle('is-selected', option === selected));
+  if (selected) analysisValue.textContent = selected.textContent;
+}
+
+function getAnalysisLanguage() {
+  return analysisLang;
+}
+
+function updateGateToggle(block) {
+  const label = block.querySelector('[data-gate-toggle]');
+  if (label) label.textContent = copy()[block.open ? 'showLess' : 'showMore'];
+}
+
+function renderScore(value, animate = false) {
+  if (!animate || prefersReducedMotion.matches) {
+    score.textContent = String(value);
+    return;
+  }
+  const from = Number(score.textContent);
+  const start = Number.isFinite(from) && from >= 0 && from !== value ? performance.now() : 0;
+  const duration = 650;
+  const easeOut = (progress) => 1 - Math.pow(1 - progress, 3);
+  const frame = (now) => {
+    const progress = start ? Math.min(1, (now - start) / duration) : 1;
+    score.textContent = String(Math.round(start ? from + (value - from) * easeOut(progress) : value));
+    if (progress < 1) requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
 }
 
 function setError(message = '') {
@@ -128,32 +199,33 @@ function setMetric(element, value, detail, healthy) {
   primary.textContent = value;
   const secondary = document.createElement('span');
   secondary.textContent = detail;
-  element.dataset.status = healthy ? 'optimal' : 'low';
+  element.dataset.status = healthy == null ? 'skipped' : healthy ? 'optimal' : 'low';
   element.append(primary, secondary);
 }
 
 function renderMetrics(report) {
   const { metrics } = report;
   const thresholds = defaultProfile.thresholds;
-  const cvTarget = metrics.sentenceCount >= 8 ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
+  const skipped = rhythmGateSkipped(report);
+  const cvTarget = report.targets.cvMin;
   const cvHealthy = metrics.burstinessCV >= cvTarget;
   setMetric(
     metricElements.burstiness,
     formatNumber(metrics.burstinessCV),
-    `${cvHealthy ? copy().metricOptimal : copy().metricLow} · ${copy().metricTarget} ≥ ${formatNumber(cvTarget)}`,
-    cvHealthy,
+    skipped ? `SKIP · < ${report.targets.minSentencesForStats}` : `${cvHealthy ? copy().metricOptimal : copy().metricLow} · ${copy().metricTarget} ≥ ${formatNumber(cvTarget)}`,
+    skipped ? null : cvHealthy,
   );
 
-  const rhythmHealthy = metrics.adjacentDelta >= thresholds.adjacentDelta
+  const rhythmHealthy = metrics.adjacentDelta >= report.targets.rhythmDeltaMin
     && (metrics.sentenceCount < 8 || (metrics.shortSentenceRatio >= thresholds.shortSentenceRatio && metrics.longSentenceRatio >= thresholds.longSentenceRatio));
   setMetric(
     metricElements.rhythm,
     `Δ ${formatNumber(metrics.adjacentDelta)}`,
-    `${rhythmHealthy ? copy().metricOptimal : copy().metricLow} · ${copy().metricShort} ${formatPercent(metrics.shortSentenceRatio)} · ${copy().metricLong} ${formatPercent(metrics.longSentenceRatio)}`,
-    rhythmHealthy,
+    skipped ? `SKIP · < ${report.targets.minSentencesForStats}` : `${rhythmHealthy ? copy().metricOptimal : copy().metricLow} · ${copy().metricShort} ${formatPercent(metrics.shortSentenceRatio)} · ${copy().metricLong} ${formatPercent(metrics.longSentenceRatio)}`,
+    skipped ? null : rhythmHealthy,
   );
 
-  const mattrTarget = thresholds.mattr[report.language] ?? (['zh', 'ja', 'ko'].includes(report.language) ? 0.68 : 0.72);
+  const mattrTarget = report.targets.mattrMin;
   const lexicalHealthy = metrics.mattr >= mattrTarget;
   setMetric(
     metricElements.lexical,
@@ -177,10 +249,10 @@ function showDiagnostic(violation) {
   const excerpt = diagnosticExcerpt(lastText, violation);
   diagnosticText.textContent = excerpt;
   diagnostic.hidden = !excerpt;
-  const index = excerpt ? text.value.indexOf(excerpt) : -1;
-  if (index >= 0) {
+  const selection = diagnosticSelection(text.value, violation);
+  if (selection) {
     text.focus();
-    text.setSelectionRange(index, index + excerpt.length);
+    text.setSelectionRange(selection.start, selection.end);
   }
 }
 
@@ -200,7 +272,7 @@ function renderFindings(violations) {
     const type = document.createElement('strong');
     type.textContent = violation.type;
     const location = document.createElement('span');
-    location.textContent = ` — ${violation.location}`;
+    location.textContent = ` · ${violation.location}`;
     const instruction = document.createElement('span');
     instruction.textContent = `: ${violation.fixInstruction}`;
     const replacement = document.createElement('span');
@@ -216,14 +288,26 @@ function renderFindings(violations) {
   }
 }
 
-function render(report) {
+function render(report, animate = false) {
   result.hidden = false;
-  score.textContent = String(report.score);
+  gateSection.hidden = false;
+  renderScore(report.score, animate);
   status.textContent = report.status;
   status.dataset.status = report.status.toLowerCase();
   language.textContent = languageLabel(report.language);
   renderMetrics(report);
-  for (const [name, element] of Object.entries(gateElements)) element.textContent = JSON.stringify(report.deliveryGate[name], null, 2);
+  for (const [name, element] of Object.entries(gateElements)) {
+    const json = JSON.stringify(report.deliveryGate[name], null, 2);
+    element.textContent = json;
+    const statusHost = element.closest('.gate-block')?.querySelector('[data-gate-status]');
+    if (statusHost) {
+      let gateStatus = '';
+      try { gateStatus = String(JSON.parse(json).status ?? ''); } catch { gateStatus = ''; }
+      statusHost.textContent = gateStatus;
+      statusHost.hidden = !gateStatus;
+      statusHost.dataset.state = /^PASS|^\d+\//.test(gateStatus) ? 'pass' : /^SKIP/i.test(gateStatus) ? 'skip' : 'info';
+    }
+  }
   renderFindings(report.violations);
   copyAutoFix.hidden = !report.violations.length;
 }
@@ -262,9 +346,16 @@ function applyLanguage(nextLanguage, persist = false) {
   document.querySelectorAll('[data-i18n-title]').forEach((element) => {
     element.setAttribute('title', strings[element.dataset.i18nTitle]);
   });
-  interfaceLanguage.value = currentLanguage;
+  langOptions.forEach((option) => {
+    const selected = option.dataset.language === currentLanguage;
+    option.classList.toggle('is-selected', selected);
+    if (selected) langValue.textContent = option.textContent;
+  });
+  setAnalysisLanguage(analysisLang);
   analyze.textContent = ready ? strings.analyze : strings.loading;
   renderSampleButtons();
+  if (lastSampleId && sampleCurrent) sampleCurrent.textContent = sampleLabel(lastSampleId);
+  gateBlocks.forEach(updateGateToggle);
   updateThemeButton();
   updateCommand();
   if (lastResult) render(lastResult);
@@ -344,8 +435,8 @@ async function runAnalysis() {
   analyze.disabled = true;
   try {
     lastText = text.value;
-    lastResult = await analyzer.analyzeTextAsync(lastText, { language: analysisLanguage.value });
-    render(lastResult);
+    lastResult = await analyzer.analyzeTextAsync(lastText, { language: getAnalysisLanguage() });
+    render(lastResult, true);
   } catch {
     setError(copy().analysisFailed);
   } finally {
@@ -356,8 +447,11 @@ async function runAnalysis() {
 async function loadSample(sample, updateUrl = true) {
   const selected = DEMO_SAMPLES[sample];
   if (!selected) return;
+  lastSampleId = sample;
+  if (sampleCurrent) sampleCurrent.textContent = sampleLabel(sample);
+  if (samplePicker) samplePicker.open = false;
+  setAnalysisLanguage(selected.language);
   text.value = selected.text;
-  analysisLanguage.value = selected.language;
   if (updateUrl) {
     replaceSampleQuery(sample);
     replaceTargetLangQuery(selected.language);
@@ -367,11 +461,17 @@ async function loadSample(sample, updateUrl = true) {
 
 applyTheme(initialTheme());
 applyLanguage(queryState.language ?? initialLanguage());
-
-interfaceLanguage.addEventListener('change', () => {
-  applyLanguage(interfaceLanguage.value, true);
-  removeLanguageQuery();
+setupReveal();
+gateBlocks.forEach((block) => {
+  block.addEventListener('toggle', () => updateGateToggle(block));
+  updateGateToggle(block);
 });
+
+langOptions.forEach((option) => option.addEventListener('click', () => {
+  langPicker.open = false;
+  applyLanguage(option.dataset.language, true);
+  removeLanguageQuery();
+}));
 themeToggle.addEventListener('click', () => applyTheme(currentTheme === 'dark' ? 'light' : 'dark', true));
 commandButtons.forEach((button) => button.addEventListener('click', () => {
   currentCommand = button.dataset.command;
@@ -383,10 +483,12 @@ copyAutoFix.addEventListener('click', () => {
   if (lastResult) copyText(buildAutoFixPrompt({ text: lastText, report: lastResult }), copyAutoFix);
 });
 analyze.addEventListener('click', runAnalysis);
-analysisLanguage.addEventListener('change', async () => {
-  replaceTargetLangQuery(analysisLanguage.value);
+analysisOptions.forEach((option) => option.addEventListener('click', async () => {
+  setAnalysisLanguage(option.dataset.value);
+  analysisPicker.open = false;
+  replaceTargetLangQuery(option.dataset.value);
   if (text.value.trim()) await runAnalysis();
-});
+}));
 
 try {
   const [ruleEntries, profile] = await Promise.all([
@@ -398,11 +500,33 @@ try {
   ready = true;
   analyze.disabled = false;
   analyze.textContent = copy().analyze;
-  analysisLanguage.value = queryState.targetLang ?? DEMO_SAMPLES[queryState.sample]?.language ?? 'auto';
+  setAnalysisLanguage(queryState.targetLang ?? DEMO_SAMPLES[queryState.sample]?.language ?? 'auto');
   if (queryState.sample) {
+    lastSampleId = queryState.sample;
+    if (sampleCurrent) sampleCurrent.textContent = sampleLabel(lastSampleId);
     text.value = DEMO_SAMPLES[queryState.sample].text;
     await runAnalysis();
   }
 } catch {
   setError(copy().analysisFailed);
 }
+
+const mobileMenu = document.querySelector('.mobile-menu');
+mobileMenu?.addEventListener('click', (event) => {
+  if (event.target.closest('a')) mobileMenu.open = false;
+});
+const dismissiblePickers = [mobileMenu, samplePicker, langPicker, analysisPicker].filter(Boolean);
+document.addEventListener('pointerdown', (event) => {
+  for (const element of dismissiblePickers) {
+    if (element.open && !element.contains(event.target)) element.open = false;
+  }
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  for (const element of dismissiblePickers) {
+    if (element.open) {
+      element.open = false;
+      element.querySelector('summary').focus();
+    }
+  }
+});

@@ -1,0 +1,28 @@
+Along with computing machines a whole new technology is growing.
+Universities and colleges—even high schools—are teaching courses in
+computers. And the computer itself is getting into the teaching business
+too. The “teaching machine” is one of the most challenging computer
+developments to come along so far. These mechanical professors range
+from simple “programmed” notebooks, such as the Book of Knowledge and
+Encyclopedia Britannica are experimenting with, to complex computerized
+systems such as that developed by U.S. Industries, Inc., for the Air
+Force and others.
+
+The computer as a teaching machine immediately raises the question of
+intelligence, and whether or not the computer has any. Debate waxes hot
+on this subject; but perhaps one authority was only half joking when he
+said that the computer designer’s competition was a unit about the size
+of a grapefruit, using only a tenth of a volt of electricity, with a
+memory 10,000 times as extensive as any existing electronic computer.
+This is a brief description of the human brain, of course.
+
+When the first computers appeared, those like ENIAC and BINAC, fiction
+writers and even some science writers had a field day turning the
+machines into diabolical “brains.” Whether or not the computer really
+thinks remains a controversial question. Some top scientists claim that
+the computer will eventually be far smarter than its human builder;
+equally reputable authorities are just as sure that no computer will
+ever have an original thought in its head. Perhaps a safe middle road is
+expressed with the title of this book; namely that the machine is simply
+an extension of the human brain. A high-speed abacus or slide rule, if
+you will; accurate and foolproof, but a moron nonetheless.

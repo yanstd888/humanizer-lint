@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFile, readFileSync, realpathSync } from 'node:fs';
+import { readFile, readFileSync, realpathSync, promises as fs } from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 
@@ -21,6 +21,7 @@ export { analyzeText };
 function formatHuman(result, includeDeliveryGate = false) {
   const lines = [`Status: ${result.status}`, `Score: ${result.score}`, `Language: ${result.language}`, `Rule pack: ${result.rulePack}`];
   if (result.warning) lines.push(`Warning: ${result.warning}`);
+  if (result.ignoreWarning) lines.push(`Warning: ${result.ignoreWarning}`);
   lines.push('', 'Metrics:');
   for (const [name, value] of Object.entries(result.metrics)) lines.push(`  ${name}: ${value}`);
   if (result.violations.length) lines.push('', 'Violations:');
@@ -38,37 +39,85 @@ async function readStdin() {
   return Buffer.concat(chunks.map((chunk) => Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))).toString('utf8');
 }
 
+async function expandFilePattern(pattern) {
+  if (!/[*?]/u.test(pattern)) return [pattern];
+  const absolute = path.resolve(pattern);
+  const root = path.parse(absolute).root;
+  const parts = absolute.slice(root.length).split(path.sep);
+  const matches = [];
+  async function visit(dir, index) {
+    if (index === parts.length) {
+      try { if ((await fs.stat(dir)).isFile()) matches.push(dir); } catch (error) { if (error.code !== 'ENOENT' && error.code !== 'ENOTDIR') throw error; }
+      return;
+    }
+    const part = parts[index];
+    if (part === '**') {
+      await visit(dir, index + 1);
+      let entries;
+      try { entries = await fs.readdir(dir, { withFileTypes: true }); } catch (error) { if (error.code === 'ENOENT' || error.code === 'ENOTDIR') return; throw error; }
+      for (const entry of entries) if (entry.isDirectory()) await visit(path.join(dir, entry.name), index);
+      return;
+    }
+    if (!/[*?]/u.test(part)) { await visit(path.join(dir, part), index + 1); return; }
+    const expression = new RegExp(`^${part.replace(/[.+^${}()|[\]\\]/gu, '\\$&').replaceAll('*', '.*').replaceAll('?', '.')}$`, 'u');
+    let entries;
+    try { entries = await fs.readdir(dir, { withFileTypes: true }); } catch (error) { if (error.code === 'ENOENT' || error.code === 'ENOTDIR') return; throw error; }
+    for (const entry of entries) {
+      if (expression.test(entry.name) && (index === parts.length - 1 ? entry.isFile() : entry.isDirectory())) await visit(path.join(dir, entry.name), index + 1);
+    }
+  }
+  await visit(root, 0);
+  if (!matches.length) throw new Error(`No files match: ${pattern}`);
+  return matches.sort();
+}
+
 export async function runAnalyzeCli(argv, io = {}) {
   const stdout = io.stdout ?? ((value) => process.stdout.write(value));
   const stderr = io.stderr ?? ((value) => process.stderr.write(value));
   const stdin = io.stdin ?? readStdin;
   try {
-    const { values } = parseArgs({
+    const { values, positionals } = parseArgs({
       args: argv,
       options: {
         file: { type: 'string' },
         stdin: { type: 'boolean' },
         lang: { type: 'string', default: 'auto' },
         profile: { type: 'string' },
+        allow: { type: 'string' },
+        'min-score': { type: 'string' },
+        domain: { type: 'string', default: 'auto' },
+        'no-domain-lint': { type: 'boolean' },
         json: { type: 'boolean' },
         'delivery-gate': { type: 'boolean' },
         help: { type: 'boolean' },
       },
       strict: true,
-      allowPositionals: false,
+      allowPositionals: true,
     });
+    // Node 18.3 parseArgs does not apply option defaults.
+    values.lang ??= 'auto';
+    values.domain ??= 'auto';
     if (values.help) {
-      stdout('Usage: humanizer-lint (--file <path> | --stdin) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--json] [--delivery-gate]\n');
+      stdout('Usage: humanizer-lint (--file <path> | --stdin | <files...>) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--allow <phrases>] [--min-score <0-100>] [--domain auto|prose|copywriting|code|ui] [--no-domain-lint] [--json] [--delivery-gate]\n');
       return 0;
     }
-    if (Boolean(values.file) === Boolean(values.stdin)) throw new Error('Choose exactly one input: --file or --stdin');
+    if ((values.stdin && (values.file || positionals.length)) || (values.file && positionals.length) || (!values.stdin && !values.file && !positionals.length)) throw new Error('Choose exactly one input: --file, file paths, or --stdin');
     if (!/^(?:auto|universal|[a-z]{2})$/u.test(values.lang)) throw new Error('--lang must be auto, universal, or an ISO 639-1 code');
+    if (!['auto', 'prose', 'copywriting', 'code', 'ui'].includes(values.domain)) throw new Error('--domain must be auto, prose, copywriting, code, or ui');
     if (values.stdin && io.stdin == null && process.stdin.isTTY) throw new Error('--stdin requires piped input');
-    const text = values.file ? await new Promise((resolve, reject) => readFile(values.file, 'utf8', (error, data) => error ? reject(error) : resolve(data))) : await stdin();
+    const minimumScore = values['min-score'] == null ? null : Number(values['min-score']);
+    if (minimumScore !== null && (!/^(?:\d+(?:\.\d+)?)$/.test(values['min-score']) || minimumScore < 0 || minimumScore > 100)) throw new Error('--min-score must be a number from 0 to 100');
     const profile = values.profile ? JSON.parse(await new Promise((resolve, reject) => readFile(values.profile, 'utf8', (error, data) => error ? reject(error) : resolve(data)))) : undefined;
-    const result = analyzeText(text, { language: values.lang, profile, sourcePath: values.file });
-    stdout(values.json ? `${JSON.stringify(result, null, 2)}\n` : formatHuman(result, values['delivery-gate']));
-    return result.status === 'FAIL' ? 1 : 0;
+    const files = values.stdin ? [null] : [...new Set((await Promise.all((values.file ? [values.file] : positionals).map(expandFilePattern))).flat())];
+    const reports = [];
+    for (const file of files) {
+      const text = file ? await new Promise((resolve, reject) => readFile(file, 'utf8', (error, data) => error ? reject(error) : resolve(data))) : await stdin();
+      const result = analyzeText(text, { language: values.lang, profile, sourcePath: file, domain: values['no-domain-lint'] ? 'prose' : values.domain, allowlist: values.allow ? values.allow.split(',') : [] });
+      reports.push({ file, result });
+    }
+    const multi = reports.length > 1;
+    stdout(values.json ? `${JSON.stringify(multi ? reports : reports[0].result, null, 2)}\n` : reports.map(({ file, result }) => `${multi ? `File: ${file}\n` : ''}${formatHuman(result, values['delivery-gate'])}`).join('\n'));
+    return reports.some(({ result }) => result.status === 'FAIL' || (minimumScore !== null && result.score < minimumScore)) ? 1 : 0;
   } catch (error) {
     stderr(`ERROR: ${error.message}\n`);
     return 2;

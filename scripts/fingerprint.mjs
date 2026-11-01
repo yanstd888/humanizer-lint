@@ -54,9 +54,16 @@ export async function fingerprintSamples(files, options = {}) {
 
   if (options.output) {
     const output = path.resolve(options.output);
+    const existingOutput = await fs.realpath(output).catch((error) => {
+      if (error.code === 'ENOENT') return null;
+      throw error;
+    });
+    if (existingOutput && (await Promise.all(files.map((file) => fs.realpath(file)))).includes(existingOutput)) {
+      throw new Error('Output must not overwrite a sample file');
+    }
     await mkdir(path.dirname(output), { recursive: true });
     const temporary = `${output}.tmp-${process.pid}`;
-    await writeFile(temporary, `${JSON.stringify(profile, null, 2)}\n`, 'utf8');
+    await writeFile(temporary, `${JSON.stringify(profile, null, 2)}\n`, { encoding: 'utf8', flag: 'wx', mode: 0o600 });
     await rename(temporary, output);
   }
   return profile;
@@ -92,6 +99,8 @@ export async function runFingerprintCli(argv, io = {}) {
       strict: true,
       allowPositionals: false,
     });
+    // Node 18.3 parseArgs does not apply option defaults.
+    values.lang ??= 'auto';
     if (values.help) {
       stdout('Usage: humanizer-fingerprint (--input <file-or-dir> | --dir <samples-dir>) (--output <profile.json> | --out <profile.json>) [--name <name>] [--lang id|en|auto]\n');
       return 0;

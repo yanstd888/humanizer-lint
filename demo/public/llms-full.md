@@ -1,6 +1,6 @@
 # humanizer-lint — Full Technical Reference
 
-> Version 1.4.1. The static build renders this file as `/llms-full.txt` with the checked-in rule catalogs and default profile.
+> Version 1.5.0. The static build renders this file as `/llms-full.txt` with the checked-in rule catalogs and default profile.
 
 ## Purpose
 
@@ -48,7 +48,7 @@ Findings may include `suggestedReplacement` and `splitSuggestion` in addition to
 
 ## Reproducible benchmark
 
-The release benchmark covers 16 fixtures across all 8 language packs. The recorded run produced 100% deterministic PASS/FAIL accuracy, a mean AI-shaped fixture score of 26.00, a mean human fixture score of 100.00, and a 74.00-point separation. Runtime depends on hardware; run `npm run benchmark` locally.
+The benchmark covers 16 multilingual and 4 domain synthetic fixtures. Its fixture pass rate is not a measure of real-world accuracy; runtime varies by hardware. Run `npm run benchmark` locally for current results.
 
 ## Editorial search intents
 

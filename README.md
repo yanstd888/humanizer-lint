@@ -38,17 +38,13 @@ npx skills add yanstd888/humanizer-lint
 
 Use the command above to install the agent skill. For one-off local linting, run the published `humanizer-lint` CLI below.
 
-**8-language summary:** EN — local AI text humanizer and prose linter. ID — humanizer bahasa Indonesia dan cek tulisan AI. ES — humanizador de texto IA y corrector de ritmo. MS — humanizer teks AI dan semak ayat. FR — humaniseur de texte IA et analyseur stylométrique. DE — KI-Text humanisieren und KI-Floskeln entfernen. PT — humanizador de texto IA e corretor de burstiness. ZH — AI文章人性化与句式节奏分析.
+**8-language summary:** EN — local prose linter. ID — perbaiki prosa dan periksa ritme. ES — corrector de ritmo. MS — semak ayat. FR — analyseur stylométrique. DE — KI-Floskeln entfernen. PT — corretor de estilo. ZH — 句式节奏分析.
 
 ## Verified benchmark
 
-Run `npm run benchmark` to reproduce the current 16-fixture benchmark on the local machine.
+Run `npm run benchmark` to reproduce the 20 synthetic fixtures (16 multilingual and 4 domain checks) and exploratory source corpus on the local machine.
 
-| Fixtures | Accuracy | Mean AI score | Mean human score | Separation | Mean runtime |
-|---:|---:|---:|---:|---:|---:|
-| 16 (8 languages × AI/Human) | 100% | 26.00 | 100.00 | 74.00 points | ~0.40 ms / analysis |
-
-The benchmark measures deterministic fixture separation and runtime. It does not classify authorship.
+The benchmark runs synthetic multilingual and domain fixtures. Its fixture pass rate and runtime do not measure real-world accuracy or authorship. The source corpus is small and non-random; assumed-clean labels are not independently adjudicated.
 
 ## Try in your browser
 
@@ -80,7 +76,7 @@ It can serve as a CLI text humanizer guardrail, automated writing style linter, 
 | Tier | Languages | Checks |
 |---|---|---|
 | Tier 1 — rule packs | `en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh` | Universal stylometric metrics plus lexical, definitional-opening, and structural-cliché packs; Indonesian keeps its morphology rules. |
-| Tier 2 — universal | `universal` or another ISO 639-1 code such as `tr`, `ja`, or `ar` | Universal stylometry through native `Intl.Segmenter`: burstiness, adjacent rhythm delta, adaptive MATTR, paragraph symmetry, repeated starters, and compression ratio. |
+| Tier 2 — universal | `universal` or another ISO 639-1 code such as `tr`, `ja`, or `ar` | Experimental rhythm diagnostics through native `Intl.Segmenter`; lexical and MATTR thresholds are uncalibrated. |
 
 ## Use cases & agent integration
 
@@ -118,44 +114,16 @@ Run the analyzer:
 humanizer-lint --file draft.md --lang en
 ```
 
-The current CLI reports:
+The current CLI reports `FAIL` with lexical findings. The input has only three sentences, so the statistical rhythm gate is skipped even though rhythm metrics are displayed:
 
 ```text
 Status: FAIL
-Score: 39
+Score: 70
 Language: en
-
-Metrics:
-  wordCount: 29
-  sentenceCount: 3
-  meanSentenceLength: 9.6667
-  stdDev: 0.4714
-  burstinessCV: 0.0488
-  adjacentDelta: 0.5
-  shortSentenceRatio: 0
-  longSentenceRatio: 0
-  mattr: 1
-  compressionRatio: 0.6972
-  nominalizationRatio: 0
-  passiveRatio: 0
-  voiceProfileDeviation: 0.5319
-
-Violations:
-  SLOP_PHRASE | Paragraph 1, Sentence 1 | Name the exact action or subject instead.
-  SLOP_PHRASE | Paragraph 1, Sentence 2 | Describe the actual consequence without inflated significance.
-  SLOP_PHRASE | Paragraph 1, Sentence 2 | Name the concrete behavior or outcome.
-  SLOP_PHRASE | Paragraph 1, Sentence 1 | Name the field or conditions directly.
-  SLOP_PHRASE | Paragraph 1, Sentence 3 | Name what becomes possible and how.
-  SLOP_PHRASE | Paragraph 1, Sentence 2 | Connect the sentences by their actual relationship.
-  SLOP_PHRASE | Paragraph 1, Sentence 3 | End on the final concrete point.
-  SLOP_PHRASE | Paragraph 1, Sentence 1 | Name the current condition precisely.
-  SLOP_PHRASE | Paragraph 1, Sentence 2 | Describe the missing step, delay, or transition precisely.
-  SLOP_PHRASE | Paragraph 1, Sentence 1 | Name the failure mode or capacity the system handles.
-  SLOP_PHRASE | Paragraph 1, Sentence 3 | State the finding itself.
-  MONOTONOUS_RHYTHM | Paragraph 1, Sentences 1-3 | Sentence lengths are uniform (10, 10, 9 words). Split one sentence into a short statement or merge two into a longer clause.
-  LOW_BURSTINESS | Whole text | Vary sentence lengths by splitting one uniform sentence and merging another where the meaning supports it.
-  LOW_ADJACENT_DELTA | Whole text | Change neighboring sentence lengths by splitting or merging only where the content allows it.
+Rule pack: en
 ```
+
+The score and diagnostics depend on the rules and profile in use.
 
 A failed analysis exits with code `1`. A passing fixture returns:
 
@@ -276,44 +244,26 @@ Skor mengukur kecocokan dengan sinyal gaya yang diperiksa oleh linter: skor lebi
 Di era digital saat ini, penggunaan teknologi menjadi sangat penting bagi setiap bisnis. Tidak hanya itu, solusi ini juga memberikan manfaat yang sangat besar bagi semua pihak. Dengan demikian, organisasi dapat meningkatkan efisiensi secara signifikan dalam berbagai aspek. Pada akhirnya, pendekatan ini membuka peluang baru yang lebih optimal bagi masa depan.
 ```
 
-Output dari `tests/fixtures/ai-before-id.md`:
+Output can be reproduced with:
 
-```text
-Status: FAIL
-Score: 38
-Language: id
-
-Violations:
-  SLOP_PHRASE | Paragraph 1, Sentence 1 | Mulai langsung dari subjek atau fakta konkret.
-  SLOP_PHRASE | Paragraph 1, Sentence 3 | Sebutkan aspek yang relevan.
-  SLOP_PHRASE | Paragraph 1, Sentence 4 | Tutup langsung dengan akibat atau keputusan akhir.
-  MONOTONOUS_RHYTHM | Paragraph 1, Sentences 1-3 | Sentence lengths are uniform (13, 14, 11 words).
-  LOW_BURSTINESS | Whole text | Vary sentence lengths by splitting one uniform sentence and merging another where the meaning supports it.
-  LOW_ADJACENT_DELTA | Whole text | Change neighboring sentence lengths by splitting or merging only where the content allows it.
+```sh
+node scripts/analyze.mjs --file tests/fixtures/ai-before-id.md --lang id
 ```
 
 ### After
 
 ```text
-Pemilik toko memakai aplikasi stok untuk melihat barang yang habis pada hari yang sama. Semua melihat angka yang sama. Saat satu produk menipis, petugas memesan ulang sebelum rak kosong dan mencatat alasan setiap perubahan. Laporan harian menunjukkan barang mana yang laku, barang mana yang tertahan, dan kapan petugas harus menghubungi pemasok lagi agar toko tidak kehabisan barang yang dicari pelanggan. Pemilik toko kini membeli barang berdasarkan catatan, bukan tebakan.
+Di era digital saat ini, penggunaan teknologi sangat penting bagi setiap bisnis. Solusi ini juga memberikan manfaat yang sangat besar bagi semua pihak. Organisasi dapat meningkatkan efisiensi secara signifikan dalam berbagai aspek. Pendekatan ini membuka peluang baru yang lebih optimal bagi masa depan.
 ```
 
-Output dari `tests/fixtures/human-after-id.md`:
-
-```text
-Status: PASS
-Score: 100
-Language: id
-```
-
-Untuk contoh ini, skor naik dari **38** menjadi **100** setelah frasa template dihilangkan, subjek dibuat konkret, dan panjang kalimat divariasikan.
+The revision preserves the original claims without inventing a store, app, or numbers. It may still contain vague or repetitive claims because no supporting details were supplied; preserve meaning rather than manufacture specifics. Run the analyzer on `tests/fixtures/human-after-id.md` to inspect its current diagnostics.
 
 ## CLI reference
 
 ### Analyzer
 
 ```text
-humanizer-lint (--file <path> | --stdin) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--json]
+humanizer-lint (--file <path> | --stdin | <files...>) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--domain auto|prose|copywriting|code|ui] [--no-domain-lint] [--allow <phrases>] [--min-score <0-100>] [--json]
 ```
 
 | Option | Required | Description |
@@ -322,10 +272,22 @@ humanizer-lint (--file <path> | --stdin) [--lang auto|universal|<ISO-639-1>] [--
 | `--stdin` | One input required | Read the complete document from standard input. |
 | `--lang auto|universal|<ISO-639-1>` | No | Select auto-detection, a bundled Tier 1 pack, or universal stylometry. Default: `auto`. |
 | `--profile <path>` | No | Load a JSON voice profile. |
+| `--domain <mode>` | No | Choose `auto`, `prose`, `copywriting`, `code`, or `ui`. Without a filename, `auto` runs prose checks only; select a domain explicitly for stdin. With a filename, auto routes code comments by code extension, copy by non-code extension, and UI checks by markup extension. |
+| `--no-domain-lint` | No | Disable domain checks; lexical and prose analysis still run. |
+| `--allow <phrases>` | No | Comma-separated, case-insensitive exact matched phrases to exempt; profiles may also contain an `allowlist` array. |
+| `--min-score <0-100>` | No | Exit 1 if any analyzed file scores below this value or has status `FAIL`. |
 | `--json` | No | Print JSON only. Without it, print the terminal report. |
 | `--help` | No | Print command usage. |
 
-Exactly one of `--file` or `--stdin` is required.
+Choose exactly one input mode: `--file`, `--stdin`, or one or more positional paths. Positional paths support `*`, `?`, and `**` glob patterns; quote patterns when the shell should not expand them. Multi-file JSON output is an array of `{file, result}` objects; single-file output remains a single result object. An unmatched pattern is an error.
+
+Statistical rhythm gates are skipped below eight sentences regardless of word count; lexical and domain findings still run. Treat metrics as diagnostics rather than writing quotas. Preserve functional code, identifiers, commands, structured data, legal clauses, quotations, facts and numbers. If further edits would distort meaning or a required register, stop and explain the unresolved diagnostic.
+
+An ignore directive on a line by itself suppresses the next nonblank line: `<!-- humanizer-ignore -->`, `// humanizer-ignore`, or `/* humanizer-ignore */`. A standalone `<!-- humanizer-ignore-file -->` suppresses the file. Directives inside fenced examples are not active. Simple prose can end in `<!-- humanizer-ignore -->`; a comment-only `//` line can end in `// humanizer-ignore` or `/* humanizer-ignore */`. These same-line forms are conservative heuristics, not a language parser; use standalone directives for complex syntax.
+
+Offsets use JavaScript UTF-16 indices into the original input. `sourceScope: match` identifies a direct match; `sentence-range` and `document-excerpt` identify diagnostic context, not text to replace mechanically.
+
+For JavaScript/TypeScript input containing backticks, ignore directives are disabled conservatively; `ignoreWarning` (JSON) or a CLI warning reports this. This avoids mistaking template contents for directives without adding a parser dependency.
 
 ### Voice fingerprint
 

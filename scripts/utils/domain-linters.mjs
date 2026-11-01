@@ -1,14 +1,16 @@
-const finding = (type, match, fixInstruction, location = 'Whole input') => ({
+const finding = (type, match, fixInstruction, start, location = 'Whole input') => ({
   type,
+  ruleId: type,
   location,
   match,
+  charOffset: { start, end: start + match.length },
   fixInstruction,
 });
 
 function regexFindings(text, definitions) {
   const source = String(text ?? '');
   return definitions.flatMap(({ type, pattern, fixInstruction }) => [...source.matchAll(pattern)].map((match) => (
-    finding(type, match[0], fixInstruction)
+    finding(type, match[0], fixInstruction, match.index)
   )));
 }
 
@@ -31,17 +33,17 @@ export function lintCodeComments(text) {
   return regexFindings(text, [
     {
       type: 'TAUTOLOGICAL_CODE_COMMENT',
-      pattern: /^\s*\/\/\s*(?:import dependencies|function to\b.*)$/gimu,
+      pattern: /^[\t ]*\/\/[\t ]*(?:import dependencies|function to\b[^\r\n]*)$/gimu,
       fixInstruction: 'Delete the comment or explain a non-obvious constraint instead.',
     },
     {
       type: 'DECORATIVE_COMMENT_BANNER',
-      pattern: /^\s*\/\/\s*=+\s*[^=\n]+\s*=+\s*$/gmu,
+      pattern: /^[\t ]*\/\/[\t ]*=+[\t ]*[^=\r\n]+[\t ]*=+[\t ]*$/gmu,
       fixInstruction: 'Use a normal section comment only when the grouping adds navigation value.',
     },
     {
       type: 'LAZY_AI_PLACEHOLDER',
-      pattern: /^\s*\/\/\s*(?:\.\.\.\s*)?rest of code\b.*$/gimu,
+      pattern: /^[\t ]*\/\/[\t ]*(?:\.\.\.[\t ]*)?rest of code\b[^\r\n]*$/gimu,
       fixInstruction: 'Replace the placeholder with complete code or remove it.',
     },
   ]);
@@ -60,36 +62,45 @@ export function lintUiAndAccessibility(text, sourcePath = '') {
     const [, tag, attributes, body] = match;
     const visibleText = body.replace(/<[^>]+>/gu, '').trim();
     if (!visibleText && !/\b(?:aria-label|aria-labelledby|title)\s*=/iu.test(attributes)) {
-      findings.push(finding('MISSING_ACCESSIBLE_NAME', match[0], `Add visible text or an accessible name to this ${tag}.`));
+      findings.push(finding('MISSING_ACCESSIBLE_NAME', match[0], `Add visible text or an accessible name to this ${tag}.`, match.index));
     }
   }
 
   for (const match of source.matchAll(/<img\b([^>]*)>/giu)) {
-    if (!/\balt\s*=/iu.test(match[1])) findings.push(finding('MISSING_IMG_ALT', match[0], 'Add meaningful alt text, or alt="" for a decorative image.'));
+    if (!/\balt\s*=/iu.test(match[1])) findings.push(finding('MISSING_IMG_ALT', match[0], 'Add meaningful alt text, or alt="" for a decorative image.', match.index));
   }
 
-  const headings = [...source.matchAll(/<h([1-6])\b/giu)].map((match) => Number(match[1]));
+  const headings = [...source.matchAll(/<h([1-6])\b/giu)];
   for (let index = 1; index < headings.length; index += 1) {
-    if (headings[index] > headings[index - 1] + 1) {
-      findings.push(finding('HEADING_ORDER_SKIP', `h${headings[index - 1]} → h${headings[index]}`, 'Use the next heading level unless the document outline requires a separate region.'));
+    if (Number(headings[index][1]) > Number(headings[index - 1][1]) + 1) {
+      findings.push(finding('HEADING_ORDER_SKIP', headings[index][0], 'Use the next heading level unless the document outline requires a separate region.', headings[index].index));
       break;
     }
   }
 
-  if (/(?:bg-)?gradient-(?:to|from|via)|linear-gradient\s*\(/iu.test(source)) {
-    findings.push(finding('AI_GRADIENT_CLICHE', 'gradient styling', 'Use a restrained solid color or a gradient tied to the product visual system.'));
+  const gradient = /(?:bg-)?gradient-(?:to|from|via)|linear-gradient\s*\(/iu.exec(source);
+  if (gradient) {
+    findings.push(finding('AI_GRADIENT_CLICHE', gradient[0], 'Use a restrained solid color or a gradient tied to the product visual system.', gradient.index));
   }
-  if (/(?:width\s*:\s*|\bw-\[)(?:[6-9]\d{2}|\d{4,})px/iu.test(source)) {
-    findings.push(finding('NON_RESPONSIVE_FIXED_WIDTH', 'large fixed width', 'Use max-width and fluid sizing so the layout fits narrow viewports.'));
+  const fixedWidth = /(?:width\s*:\s*|\bw-\[)(?:[6-9]\d{2}|\d{4,})px/iu.exec(source);
+  if (fixedWidth) {
+    findings.push(finding('NON_RESPONSIVE_FIXED_WIDTH', fixedWidth[0], 'Use max-width and fluid sizing so the layout fits narrow viewports.', fixedWidth.index));
   }
 
   return findings;
 }
 
-export function lintDomainHygiene(text, sourcePath = '') {
+export function lintDomainHygiene(text, sourcePath = '', domain = 'auto') {
+  if (domain === 'prose') return [];
+  if (domain === 'copywriting') return lintCopywriting(text);
+  if (domain === 'code') return lintCodeComments(text);
+  if (domain === 'ui') return lintUiAndAccessibility(text);
+  if (domain !== 'auto') throw new RangeError(`Unknown domain: ${domain}`);
+  if (!sourcePath) return [];
+  const code = /\.(?:[cm]?[jt]sx?|vue|astro|css|scss|py|go|rs|java|c|h|cpp|cs)$/iu.test(sourcePath);
   return [
-    ...lintCopywriting(text),
-    ...lintCodeComments(text),
+    ...(!code ? lintCopywriting(text) : []),
+    ...(code ? lintCodeComments(text) : []),
     ...(markupExtension(sourcePath) ? lintUiAndAccessibility(text, sourcePath) : []),
   ];
 }

@@ -1,6 +1,6 @@
 # humanizer-lint
 
-> Version 1.4.1 — deterministic, zero-dependency prose linter with 8 language-specific lexical and morphological packs plus universal `Intl.Segmenter` rhythm diagnostics for 100+ languages.
+> Version 1.5.0 — deterministic, zero-dependency prose linter with 8 language-specific lexical and morphological packs plus universal `Intl.Segmenter` rhythm diagnostics for 100+ languages.
 
 ## Capabilities
 
@@ -22,12 +22,9 @@ Metrics are diagnostics, not rigid style targets. The tool does not classify aut
 
 ## Verified benchmark
 
-- 16 fixtures across 8 languages
-- Deterministic accuracy: 100%
-- Mean AI-shaped fixture score: 26.00
-- Mean human fixture score: 100.00
-- Mean separation: 74.00 points
-- Measured local runtime: approximately 0.40 ms per analysis in the recorded release runs
+- 16 multilingual fixtures and 4 domain fixtures
+- Synthetic fixture pass rate: run `npm run benchmark` for current results
+- Results and runtime are local fixture measurements, not real-world accuracy
 
 ## Verified 16-sample playground
 

@@ -22,6 +22,8 @@ export function languageLabel(language) {
   return LANGUAGE_LABELS[language] ?? LANGUAGE_LABELS.universal;
 }
 
+export const rhythmGateSkipped = (report) => report.metrics.sentenceCount < report.targets.minSentencesForStats;
+
 export function parseDemoQuery(search) {
   const query = new URLSearchParams(search);
   const sample = query.get('sample');
@@ -46,12 +48,21 @@ function sentenceAt(text, location) {
 }
 
 export function diagnosticExcerpt(text, violation) {
+  const selection = diagnosticSelection(text, violation);
+  if (selection) return text.slice(selection.start, selection.end);
   return sentenceAt(text, violation.location) || violation.match || violation.location || '';
+}
+
+export function diagnosticSelection(text, violation) {
+  const { start, end } = violation.charOffset ?? {};
+  if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end < start || end > text.length) return null;
+  if (text.slice(start, end) !== violation.match) return null;
+  return { start, end };
 }
 
 export function buildAutoFixPrompt({ text, report }) {
   const violations = report.violations.map((violation) => [
-    `- ${violation.type} — ${violation.location}`,
+    `- ${violation.type} · ${violation.location}`,
     `  Instruction: ${violation.fixInstruction}`,
     violation.suggestedReplacement ? `  Suggested replacement: ${violation.suggestedReplacement}` : null,
     violation.splitSuggestion ? `  Split suggestion: ${violation.splitSuggestion}` : null,
@@ -61,5 +72,6 @@ export function buildAutoFixPrompt({ text, report }) {
     .map(([key, value]) => `- ${key}: ${value}`)
     .join('\n');
 
-  return `# Targeted prose revision\n\nRewrite only the sentences cited below in ${languageLabel(report.language)}. Preserve facts, names, numbers, quotations, and the original language. Treat rhythm metrics as diagnostics, not rigid targets. Re-run humanizer-lint after the smallest supported edit.\n\n## Analyzer report\n- Status: ${report.status}\n- Score: ${report.score}/100\n- Detected language: ${languageLabel(report.language)}\n- Rule pack: ${languageLabel(report.rulePack)}\n\n## Measured metrics\n${metrics}\n\n## Delivery Gate\n${JSON.stringify(report.deliveryGate, null, 2)}\n\n## Flagged diagnostics\n${violations}\n\n## Original text\n${text}`;
+  const targets = Object.entries(report.targets ?? {}).map(([key, value]) => `- ${key}: ${value}`).join('\n');
+  return `# Targeted prose revision\n\nRewrite only the sentences cited below in ${languageLabel(report.language)}. Preserve facts, names, numbers, quotations, and the original language. Treat rhythm metrics as diagnostics, not rigid targets. Re-run humanizer-lint after the smallest supported edit.\n\n## Analyzer report\n- Status: ${report.status}\n- Score: ${report.score}/100\n- Detected language: ${languageLabel(report.language)}\n- Rule pack: ${languageLabel(report.rulePack)}\n\n## Measured metrics\n${metrics}\n\n## Diagnostic thresholds\n${targets}\n\n## Delivery Gate\n${JSON.stringify(report.deliveryGate, null, 2)}\n\n## Flagged diagnostics\n${violations}\n\n## Original text\n${text}`;
 }
