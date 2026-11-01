@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { access, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -574,6 +574,12 @@ test('package, skill, README, static demo, and skills.sh config match the v1.4.1
   assert.doesNotMatch(skill, /\b(?:bypass|skripsi|perplexity)\b|cara agar tulisan ai tidak terdeteksi|降低AI率/iu);
 
   assert.match(readme, /### Edit stiff AI-shaped prose with a deterministic local prose and rhythm linter/);
+  const heroIndex = readme.indexOf('<img src="assets/humanizer-lint-hero.jpg"');
+  const titleIndex = readme.indexOf('# humanizer-lint');
+  const skillsBadgeIndex = readme.indexOf('[![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)]');
+  assert.ok(heroIndex >= 0 && heroIndex < titleIndex, 'README hero must sit above the title');
+  assert.ok(skillsBadgeIndex > titleIndex, 'skills.sh badge must be in the centered badge group');
+  await access(path.join(root, 'assets', 'humanizer-lint-hero.jpg'));
   assert.match(readme, /\[!\[skills\.sh\]\(https:\/\/skills\.sh\/b\/yanstd888\/humanizer-lint\)\]\(https:\/\/www\.skills\.sh\/yanstd888\/humanizer-lint\/humanizer-lint\)/);
   assert.match(readme, /\*\*Summary\*\*/);
   assert.match(readme, /## Verified benchmark/);

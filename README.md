@@ -1,6 +1,6 @@
-[![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)](https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint)
-
 <div align="center">
+
+<img src="assets/humanizer-lint-hero.jpg" alt="humanizer-lint by yanstd888" width="920">
 
 # humanizer-lint
 
@@ -8,6 +8,7 @@
 
 Detect repetitive stock phrasing, uniform sentence rhythm, structural clichés, and voice-profile drift with **8 language-specific lexical and morphological packs plus universal `Intl.Segmenter` rhythm diagnostics for 100+ languages** without sending text to an external service.
 
+[![skills.sh](https://skills.sh/b/yanstd888/humanizer-lint)](https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint)
 [![GitHub Release](https://img.shields.io/github/v/release/yanstd888/humanizer-lint?style=flat-square&logo=github)](https://github.com/yanstd888/humanizer-lint/releases)
 [![npm](https://img.shields.io/npm/v/humanizer-lint)](https://www.npmjs.com/package/humanizer-lint)
 [![CI](https://img.shields.io/github/actions/workflow/status/yanstd888/humanizer-lint/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/yanstd888/humanizer-lint/actions/workflows/ci.yml)
