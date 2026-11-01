@@ -26,6 +26,8 @@ metadata:
 - Follow each finding's surgical `suggestedReplacement`, `splitSuggestion`, and `fixInstruction` without rewriting clean prose.
 - Build a local author voice profile with `node <skill_dir>/scripts/fingerprint.mjs`; samples never leave the machine.
 
+A local, zero-dependency prose and copywriting linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording, translationese) and tells you exactly what to revise. A deterministic style and rhythm checker, not an AI authorship detector. Experimental rhythm diagnostics (uncalibrated thresholds).
+
 ## Agent Tool Boundary
 
 Inside an agent workflow, execute only:

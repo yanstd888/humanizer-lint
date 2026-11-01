@@ -47,3 +47,5 @@ Metrics are diagnostics, not rigid style targets. The tool does not classify aut
 - skills.sh: https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint
 - GitHub: https://github.com/yanstd888/humanizer-lint
 - npm: https://www.npmjs.com/package/humanizer-lint
+
+A local, zero-dependency prose and copywriting linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording, translationese) and tells you exactly what to revise. A deterministic style and rhythm checker, not an AI authorship detector. Experimental rhythm diagnostics (uncalibrated thresholds).

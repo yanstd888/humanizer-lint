@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add canonical product positioning and version consistency checks across discovery surfaces.
+
 - Restore bilingual skill discovery intents and document negative triggers in skill metadata.
 
 ## 1.5.0

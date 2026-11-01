@@ -22,7 +22,7 @@
   ],
   "scripts": {
     "test:core": "node --test tests/test-runner.mjs",
-    "test:demo": "node demo/build.mjs && node --test tests/demo-test.mjs",
+    "test:demo": "node demo/build.mjs && node --test tests/demo-test.mjs tests/consistency-test.mjs",
     "test": "npm run test:core && npm run test:demo",
     "build:demo": "node demo/build.mjs",
     "benchmark": "node scripts/benchmark.mjs"

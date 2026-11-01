@@ -65,3 +65,5 @@ The benchmark covers 16 multilingual and 4 domain synthetic fixtures. Its fixtur
 ```json
 {{defaultProfile}}
 ```
+
+A local, zero-dependency prose and copywriting linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording, translationese) and tells you exactly what to revise. A deterministic style and rhythm checker, not an AI authorship detector. Experimental rhythm diagnostics (uncalibrated thresholds).
