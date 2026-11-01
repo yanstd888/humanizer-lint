@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Restore bilingual skill discovery intents and document negative triggers in skill metadata.
+
 ## 1.5.0
 
 - Require eight prose sentences before applying rhythm statistics; continue lexical and selected domain checks on short inputs.

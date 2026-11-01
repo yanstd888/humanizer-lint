@@ -1,10 +1,20 @@
 ---
 name: humanizer-lint
-description: Deterministic local prose, copywriting, UI/accessibility markup and code-comment linter. Includes eight language-specific lexical packs and experimental universal rhythm diagnostics via Intl.Segmenter.
-summary: Local deterministic prose, copywriting, and code-comment linter with 8 lexical anti-cliché packs and universal stylometric rhythm analysis across 100+ languages.
-topic: agent-workflows
+description: >-
+  Lint and humanize robotic or stiff prose using a deterministic local Node.js
+  analyzer. Eight lexical packs (EN, ID, ES, MS, FR, DE, PT, ZH) and experimental
+  uncalibrated Intl.Segmenter rhythm diagnostics support local voice fingerprinting,
+  copywriting, UI text, and code-comment checks. Use for a draft, blog post, SEO
+  article, README, documentation or landing page: humanize this text, remove AI
+  slop, perbaiki tulisan AI yang kaku, ubah teks jadi lebih natural, cek ritme
+  kalimat dan kata klise. Not for changing executable logic, legal contracts or
+  direct quotations; not a full accessibility scanner or authorship detector.
 allowed-tools: Bash(node:*)
-version: 1.5.0
+metadata:
+  version: 1.5.0
+  topic: agent-workflows
+  summary: Local deterministic prose, copywriting, and code-comment linter with 8 lexical anti-cliché packs and experimental universal rhythm diagnostics.
+  tags: [agent-workflows, marketing, copywriting, seo, writing, ai-humanizer, anti-slop, prose-linter, stylometry, burstiness, multilingual]
 ---
 
 # Humanizer Lint

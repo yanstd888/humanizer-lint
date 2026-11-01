@@ -442,13 +442,16 @@ test('package, skill, README, static demo, and skills.sh config match the v1.5.0
   }
 
   assert.match(skill, /^---\nname: humanizer-lint\n/);
-  assert.match(skill, /description: Deterministic local prose, copywriting, UI\/accessibility markup and code-comment linter/);
-  assert.equal((skill.match(/^version:/gm) ?? []).length, 1);
-  assert.match(skill, /version: 1\.5\.0/);
-  assert.match(skill, /summary: Local deterministic prose/);
+  const description = skill.match(/^description: >-\n((?:  .+\n)+)/m)?.[1].trim().replace(/\s+/g, ' ');
+  assert.ok(description && description.length <= 1024);
+  for (const phrase of ['humanize', 'robotic', 'blog post', 'perbaiki tulisan AI yang kaku', 'ritme kalimat', 'legal contracts', 'direct quotations', 'authorship']) assert.ok(description.includes(phrase), phrase);
+  assert.match(skill, /^metadata:\n  version: 1\.5\.0\n/m);
+  assert.match(skill, /  summary: Local deterministic prose/);
   assert.match(skill, /topic: agent-workflows/);
   assert.match(skill, /allowed-tools: Bash\(node:\*\)/);
   assert.match(skill, /\*\*Audit prose locally, revise only measured problems/);
+  const summaryBlock = skill.split('# Humanizer Lint\n')[1].split('\n## ')[0];
+  assert.equal((summaryBlock.match(/^- .*`.+`/gm) ?? []).length, 4);
   assert.match(skill, /`node <skill_dir>\/scripts\/analyze\.mjs --stdin --json`/);
   assert.match(skill, /## Workflow A — Drafting New Prose/);
   assert.match(skill, /## Workflow B — Auditing and Revising Existing Text/);
