@@ -4,7 +4,7 @@
   "groupings": [
     {
       "title": "Multilingual Prose & Rhythm Linting",
-      "description": "Deterministic local prose linter with 8 language-specific anti-cliche packs and universal Intl.Segmenter rhythm diagnostics for 100+ languages.",
+      "description": "A local, zero-dependency prose linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording) and tells you what to revise. A style checker, not an AI detector.",
       "skills": [
         "humanizer-lint"
       ]

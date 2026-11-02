@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://humanizer.aiclub.ai.id/schemas/report.schema.json",
+  "title": "humanizer-lint report",
+  "type": "object",
+  "required": ["schemaVersion", "status", "score", "language", "rulePack", "targets", "metrics", "violations", "suppressed", "allowlistApplied", "ignoreWarnings", "deliveryGate"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "status": { "enum": ["PASS", "FAIL", "SKIP"] },
+    "score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "language": { "type": "string" },
+    "rulePack": { "type": "string" },
+    "targets": { "type": "object" },
+    "metrics": { "type": "object" },
+    "violations": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "suppressed": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "allowlistApplied": { "type": "array", "items": { "type": "string" } },
+    "ignoreWarnings": { "type": "array", "items": { "type": "string" } },
+    "deliveryGate": { "type": "object" }
+  },
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "required": ["type", "ruleId", "match", "charOffset", "line", "column", "endLine", "endColumn"],
+      "properties": {
+        "type": { "type": "string" },
+        "ruleId": { "type": "string" },
+        "match": { "type": "string" },
+        "line": { "type": "integer", "minimum": 1 },
+        "column": { "type": "integer", "minimum": 1 },
+        "endLine": { "type": "integer", "minimum": 1 },
+        "endColumn": { "type": "integer", "minimum": 1 },
+        "charOffset": { "type": "object", "required": ["start", "end"], "properties": { "start": { "type": "integer", "minimum": 0 }, "end": { "type": "integer", "minimum": 0 } } }
+      }
+    }
+  }
+}

@@ -23,6 +23,7 @@
     "因此"
   ],
   "patterns": [
+    {"id":"ZH028","type":"NOT_X_BUT_Y","pattern":"不仅是[^。！？]{1,40}，?更是","fixInstruction":"Review this phrase in context and state supported facts directly."},
     {
       "id": "ZH001",
       "type": "SLOP_PHRASE",

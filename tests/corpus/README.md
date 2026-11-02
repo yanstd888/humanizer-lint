@@ -1,6 +1,6 @@
 # Evaluation corpus provenance
 
-These files are evaluation inputs, not a representative population. A false-positive rate from this small, non-random collection cannot be generalized.
+These files are evaluation inputs, not a representative population. A false-positive rate from this small, non-random collection cannot be generalized. Provenance records were reviewed on `2026-11-02` (`verifiedDate`); online re-verification of every source was not completed. Original retrieval dates are `unknown (pre-v1.5.0)` (`originalRetrievalDate`). Commit and revision identifiers are retained where available.
 
 ## en-pre-llm-essay.txt
 
@@ -21,7 +21,7 @@ These files are evaluation inputs, not a representative population. A false-posi
 
 - Sastrawi project, Indonesian/mixed README and English companion README at commit `09db1bda7756fae740767ed7eb8de1b01ae859d5`.
 - Sources: https://github.com/sastrawi/sastrawi/blob/09db1bda7756fae740767ed7eb8de1b01ae859d5/README.md and https://github.com/sastrawi/sastrawi/blob/09db1bda7756fae740767ed7eb8de1b01ae859d5/README.en.md
-- Both files are exact byte-for-byte copies. The project uses the MIT license, reproduced in `SASTRAWI-LICENSE.txt` with its original copyright notice. The English file is the project's companion documentation; translation quality has not been independently certified.
+- Both are copies of the source documents; the Indonesian file removes two trailing spaces from one Markdown fence line. The project uses the MIT license, reproduced in `SASTRAWI-LICENSE.txt` with its original copyright notice. The English file is the project's companion documentation; translation quality has not been independently certified.
 
 ## clean-ui-component.tsx
 

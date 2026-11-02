@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ["18", "20", "22"]
+        node: ["18.3.0", "20", "22"]
 
     steps:
       - name: Checkout
@@ -29,5 +29,27 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Run benchmark
+        run: npm run benchmark
+
+      - name: Verify documentation snapshot
+        run: node scripts/docs-snapshot.mjs --check
+
       - name: Verify package contents
         run: npm pack --dry-run
+
+      - name: Verify index excludes local artifacts
+        run: test -z "$(git ls-files tasks .wrangler .pages-dist)"
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: project path with spaces
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Run tests on Windows paths and CRLF
+        working-directory: project path with spaces
+        run: npm test

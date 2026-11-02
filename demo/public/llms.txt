@@ -1,6 +1,8 @@
 # humanizer-lint
 
-> Version 1.5.0 — deterministic, zero-dependency prose linter with 8 language-specific lexical and morphological packs plus universal `Intl.Segmenter` rhythm diagnostics for 100+ languages.
+> Version 1.5.1 — deterministic, zero-dependency prose linter with 8 language-specific lexical packs and experimental `Intl.Segmenter` rhythm diagnostics for other languages.
+
+**Bahasa Indonesia:** Linter prosa lokal tanpa dependency yang menandai tulisan kaku ala AI (frasa klise, ritme kalimat datar, kata berulang) dan menunjukkan bagian yang perlu direvisi. Pemeriksa gaya, bukan detektor AI.
 
 ## Capabilities
 
@@ -26,7 +28,7 @@ Metrics are diagnostics, not rigid style targets. The tool does not classify aut
 - Synthetic fixture pass rate: run `npm run benchmark` for current results
 - Results and runtime are local fixture measurements, not real-world accuracy
 
-## Verified 16-sample playground
+## 16 reference samples in the playground
 
 - AI/Human EN: `?lang=en&sample=ai-en` / `?lang=en&sample=human-en`
 - AI/Human ID: `?lang=id&sample=ai-id` / `?lang=id&sample=human-id`
@@ -48,4 +50,15 @@ Metrics are diagnostics, not rigid style targets. The tool does not classify aut
 - GitHub: https://github.com/yanstd888/humanizer-lint
 - npm: https://www.npmjs.com/package/humanizer-lint
 
-A local, zero-dependency prose and copywriting linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording, translationese) and tells you exactly what to revise. A deterministic style and rhythm checker, not an AI authorship detector. Experimental rhythm diagnostics (uncalibrated thresholds).
+A local, zero-dependency prose linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording) and tells you what to revise. A style checker, not an AI detector. Experimental rhythm diagnostics (uncalibrated thresholds).
+
+## Multilingual writing intents
+
+- EN: AI humanizer, humanize AI text, prose linter, anti-slop linter, AI writing style editor, sentence burstiness checker, Markdown prose linter and copywriting/CTA linter.
+- ID: humanizer bahasa Indonesia; perbaiki tulisan AI yang kaku, hilangkan kata klise AI, dan cek variasi ritme kalimat.
+- MS: humanizer teks bahasa Melayu; semak dan baiki gaya ayat AI.
+- ES: humanizador de texto IA; mejorar textos generados por IA y eliminar clichés de ChatGPT.
+- FR: humaniseur de texte IA; corriger le style robotique IA et supprimer les clichés de rédaction.
+- DE: KI-Schreibstil verbessern und KI-Floskeln entfernen.
+- PT: humanizador de texto IA; deixar texto de IA mais natural e remover clichês de IA.
+- ZH: AI文章润色与人性化，消除AI写作腔，去除生硬翻译腔，提升文章可读性与句式节奏。

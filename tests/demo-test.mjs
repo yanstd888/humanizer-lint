@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { access, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { runInNewContext } from 'node:vm';
 
 const projectRoot = '..';
 const projectModule = (...segments) => new URL([projectRoot, ...segments].join('/'), import.meta.url);
@@ -40,13 +41,32 @@ async function sourceMjsFiles(directory = root) {
   }
   return files;
 }
-const browserParityAvailable = (() => {
-  try {
-    return typeof CompressionStream === 'function' && Boolean(new CompressionStream('deflate-raw'));
-  } catch {
-    return false;
+
+test('theme storage read failure is reported without losing the theme fallback', async () => {
+  for (const page of [['demo', 'index.html'], ['demo', 'public', '404.html']]) {
+    const html = await sourceFile(...page);
+    const script = html.match(/<script>(\(function\(\).*?)<\/script>/s)?.[1];
+    assert.ok(script);
+    const warning = { hidden: true };
+    const root = { dataset: {}, classList: { add: (name) => { root.theme = name; }, toggle() {} } };
+    const errors = [];
+    runInNewContext(script, { document: { documentElement: root, addEventListener: (_event, callback) => callback(), querySelector: () => warning }, localStorage: { getItem() { throw new Error('denied'); } }, matchMedia: () => ({ matches: true }), console: { error: (...args) => errors.push(args) } });
+    assert.equal(root.theme, 'theme-dark');
+    assert.equal(root.dataset.storageReadFailed, 'true');
+    assert.match(errors[0][0], /storage/i);
+    if (page.includes('404.html')) assert.equal(warning.hidden, false);
   }
-})();
+});
+
+test('all interface languages share keys and reject prototype sample names', async () => {
+  const { I18N } = await import(projectModule('demo', 'i18n.mjs'));
+  const { parseDemoQuery } = await import(projectModule('demo', 'presentation.mjs'));
+  const keys = Object.keys(I18N.en).sort();
+  for (const code of ['id', 'es', 'ms', 'fr', 'de', 'pt', 'zh']) assert.deepEqual(Object.keys(I18N[code]).sort(), keys, code);
+  for (const sample of ['__proto__', 'constructor', 'toString']) assert.equal(parseDemoQuery(`?sample=${sample}`).sample, null);
+  const app = await sourceFile('demo', 'app.mjs');
+  assert.match(app, /Object\.hasOwn\(DEMO_SAMPLES, sample\)/);
+});
 
 test('diagnostic selection honors exact offsets for repeated phrases', async () => {
   const { diagnosticSelection } = await import(projectModule('demo', 'presentation.mjs'));
@@ -62,6 +82,33 @@ test('short inputs present rhythm gate as skipped rather than healthy or low', a
   assert.equal(rhythmGateSkipped({ metrics: { sentenceCount: 8 }, targets: { minSentencesForStats: 8 } }), false);
 });
 
+test('narrow headers reserve the full brand width and allow the language picker to shrink', async () => {
+  const css = await sourceFile('demo', 'styles.css');
+  const mobile = css.split('@media(max-width:600px)')[1].split('@media(max-width:380px)')[0];
+  assert.match(mobile, /\.masthead-top\{[^}]*grid-template-columns:auto minmax\(0,1fr\)/);
+  assert.match(mobile, /\.controls\{[^}]*min-width:0/);
+  assert.match(mobile, /\.lang-picker\{[^}]*min-width:0/);
+  assert.match(css, /\.hero-layout\{grid-template-columns:minmax\(0,1fr\)/);
+  assert.match(css, /h1,h2\{[^}]*overflow-wrap:anywhere/);
+});
+
+test('security badges disclose the dated audit snapshot and Socket commit', async () => {
+  const html = await sourceFile('.pages-dist', 'index.html');
+  assert.match(html, /data-i18n="securityAuditSnapshot"/);
+  for (const lang of ['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh']) {
+    assert.match(I18N[lang].securityAuditSnapshot, /2026-11-02/);
+    assert.match(I18N[lang].securityAuditSnapshot, /9517b10/);
+    const page = await sourceFile('.pages-dist', lang, 'index.html');
+    assert.ok(page.includes(I18N[lang].securityAuditSnapshot), `${lang}: snapshot not rendered`);
+    if (lang !== 'en') assert.notEqual(I18N[lang].securityAuditSnapshot, I18N.en.securityAuditSnapshot);
+  }
+});
+
+test('sample labels describe references in every interface language', () => {
+  const labels = { en: 'Reference samples', id: 'Sampel referensi', es: 'Muestras de referencia', ms: 'Sampel rujukan', fr: 'Exemples de référence', de: 'Referenzbeispiele', pt: 'Amostras de referência', zh: '参考示例' };
+  for (const [language, label] of Object.entries(labels)) assert.equal(I18N[language].samplesLabel, label);
+});
+
 test('method steps are localized in every non-English interface', () => {
   const keys = ['howLexicalTitle', 'howLexicalText', 'howRhythmTitle', 'howRhythmText', 'howDiversityTitle', 'howDiversityText', 'howStructureTitle', 'howStructureText', 'howVerifyTitle', 'howVerifyText'];
   for (const lang of ['id', 'es', 'ms', 'fr', 'de', 'pt', 'zh']) {
@@ -71,7 +118,7 @@ test('method steps are localized in every non-English interface', () => {
 
 test('result labels are localized rather than silently falling back to English', () => {
   for (const lang of ['id', 'es', 'ms', 'fr', 'de', 'pt', 'zh']) {
-    for (const key of ['gateRhythm', 'gateLexical', 'gateDomain', 'gateVerdict', 'metricRhythmHelp', 'metricLexicalHelp', 'metricLow', 'metricShort', 'metricLong', 'metricPhrases']) {
+    for (const key of ['gateRhythm', 'gateLexical', 'gateDomain', 'gateVerdict', 'metricRhythmHelp', 'metricLexicalHelp', 'metricLow', 'metricShort', 'metricLong', 'metricPhrases', 'storageUnavailable', 'storageReadUnavailable']) {
       assert.notEqual(I18N[lang][key], I18N.en[key], `${lang}.${key}`);
     }
   }
@@ -89,7 +136,44 @@ test('static sample buttons and language examples remain discoverable', async ()
   assert.match(index, /Experimental rhythm diagnostics via/);
 });
 
-test('browser analyzer matches CLI results', { skip: !browserParityAvailable }, async () => {
+test('self-hosted fonts ship their license notices in the built site', async () => {
+  const license = await sourceFile('demo', 'public', 'fonts', 'OFL.txt');
+  for (const name of ['The Inter Project Authors', 'The Fraunces Project Authors', 'The JetBrains Mono Project Authors']) assert.ok(license.includes(name), name);
+  assert.equal((license.match(/SIL OPEN FONT LICENSE Version 1\.1/gu) ?? []).length, 3);
+  assert.equal(await sourceFile('.pages-dist', 'fonts', 'OFL.txt'), license);
+});
+
+test('lexical card health follows analyzer gate findings', async () => {
+  const { lexicalHealth } = await import(projectModule('demo', 'presentation.mjs'));
+  assert.equal(lexicalHealth({ deliveryGate: { lexicalAndMorphology: { morphology: [] } } }), true);
+  assert.equal(lexicalHealth({ deliveryGate: { lexicalAndMorphology: { morphology: [{ type: 'COPULA_AVOIDANCE', severity: 'error' }] } } }), false);
+  assert.equal(lexicalHealth({ deliveryGate: { lexicalAndMorphology: { morphology: [{ type: 'SLOP_PHRASE', severity: 'warn' }] } } }), true);
+});
+
+test('rule packs load lazily, cache successes and isolate failures', async () => {
+  const { createRuleLoader } = await import(projectModule('demo', 'rules-loader.mjs'));
+  const requests = [];
+  const loader = createRuleLoader(async (code) => {
+    requests.push(code);
+    if (code === 'fr') throw new Error('missing');
+    return { language: code, patterns: [] };
+  });
+  assert.deepEqual(requests, []);
+  assert.deepEqual((await loader.load('en')).missing, []);
+  await loader.load('en');
+  assert.deepEqual(requests, ['en']);
+  const failed = await loader.load('fr');
+  assert.deepEqual(failed.missing, ['fr']);
+  assert.deepEqual(Object.keys(failed.rules), []);
+  const universal = await loader.load('universal');
+  assert.deepEqual(universal, { rules: {}, missing: [] });
+  const auto = await loader.load('auto');
+  assert.deepEqual(auto.missing, ['fr']);
+  assert.equal(Object.keys(auto.rules).length, 7);
+  assert.equal(requests.filter((code) => code === 'en').length, 1);
+});
+
+test('browser analyzer matches CLI results', async () => {
   const [idRules, enRules, defaultProfile] = await Promise.all([
     readFile(path.join(root, 'rules', 'id-slop.json'), 'utf8').then(JSON.parse),
     readFile(path.join(root, 'rules', 'en-slop.json'), 'utf8').then(JSON.parse),
@@ -121,6 +205,12 @@ test('demo chrome has complete eight-language copy and official domain metadata'
   assert.match(index, /<html lang="en">/);
   assert.match(index, /https:\/\/humanizer\.aiclub\.ai\.id/);
   assert.match(app, /UI_LANGUAGE_CODES/);
+  assert.doesNotMatch(app, /JSON\.parse\(json\)/, 'gate status must come directly from the report');
+  assert.match(app, /report\.deliveryGate\[name\]\?\.status/);
+  assert.match(app, /console\.error\('Clipboard copy failed',\s*error\)/);
+  assert.match(app, /finally\s*\{\s*fallback\.remove\(\)/);
+  assert.match(app, /console\.error\('Preference storage unavailable',\s*error\)/);
+  assert.match(app, /setError\(copy\(\)\.storageUnavailable\)/);
   for (const key of ['cvMin', 'rhythmDeltaMin', 'mattrMin']) assert.ok(app.includes(`report.targets.${key}`), key);
   assert.match(app, /humanizer-lint\.language/);
   assert.match(app, /humanizer-lint\.theme/);
@@ -154,7 +244,7 @@ test('Pages build prevents the full technical SEO, security, and accessibility a
   const schemaMatch = index.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
   assert.ok(schemaMatch);
   const schema = JSON.parse(schemaMatch[1]);
-  const graph = new Map(schema['@graph'].map((node) => [node['@type'], node]));
+  const graph = new Map(schema['@graph'].flatMap((node) => [node['@type']].flat().map((type) => [type, node])));
   assert.equal(graph.get('WebSite').publisher['@id'], 'https://humanizer.aiclub.ai.id/#organization');
   assert.equal(graph.get('Organization').name, 'AICLUB.ai.id');
   assert.ok(graph.has('SoftwareApplication'));
@@ -168,7 +258,7 @@ test('Pages build prevents the full technical SEO, security, and accessibility a
     'Referrer-Policy: strict-origin-when-cross-origin',
     'Permissions-Policy: accelerometer=()',
     'Last-Modified: Sat, 31 Oct 2026 00:00:00 GMT',
-    'ETag: W/"humanizer-lint-1.5.0-seo-audit"',
+    'ETag: W/"humanizer-lint-1.5.1-seo-audit"',
     'Cache-Control: public, max-age=0, must-revalidate',
   ]) assert.match(headers, new RegExp(header.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   for (const crawler of ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'anthropic-ai', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Googlebot', 'Bingbot', 'Applebot', 'Applebot-Extended', 'Amazonbot', 'YouBot', 'DuckAssistBot', 'Bytespider', 'CCBot']) {

@@ -1,7 +1,7 @@
 {
   "name": "humanizer-lint",
-  "version": "1.5.0",
-  "description": "Deterministic prose linter and stylometric rhythm analyzer with 8 language-specific anti-cliche packs plus universal Intl.Segmenter diagnostics for 100+ languages. Local zero-dependency Node.js CLI, no network.",
+  "version": "1.5.1",
+  "description": "A local, zero-dependency prose linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording) and tells you what to revise. A style checker, not an AI detector.",
   "type": "module",
   "engines": {
     "node": ">=18.3.0"
@@ -14,18 +14,23 @@
     "SKILL.md",
     "README.md",
     "LICENSE",
+    "index.mjs",
+    "index.d.ts",
     "scripts/",
+    "!scripts/docs-snapshot.mjs",
     "rules/",
     "profiles/",
-    "demo/samples.mjs",
-    "tests/corpus/"
+    "references/",
+    "benchmark/",
+    "schemas/"
   ],
   "scripts": {
-    "test:core": "node --test tests/test-runner.mjs",
-    "test:demo": "node demo/build.mjs && node --test tests/demo-test.mjs tests/consistency-test.mjs",
-    "test": "npm run test:core && npm run test:demo",
+    "test:core": "node tests/test-runner.mjs",
+    "test:demo": "node demo/build.mjs && node tests/demo-test.mjs && node tests/consistency-test.mjs && node tests/locales-test.mjs",
+    "test": "npm run test:core && npm run test:demo && node scripts/docs-snapshot.mjs --check",
     "build:demo": "node demo/build.mjs",
-    "benchmark": "node scripts/benchmark.mjs"
+    "benchmark": "node scripts/benchmark.mjs --table",
+    "mine-patterns": "node scripts/mine-patterns.mjs"
   },
   "homepage": "https://humanizer.aiclub.ai.id",
   "repository": {
@@ -52,5 +57,18 @@
     "codex",
     "gemini-cli"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "main": "./index.mjs",
+  "types": "./index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./index.mjs",
+      "default": "./index.mjs"
+    }
+  },
+  "author": "Muhammad Dian (yanstd888)",
+  "bugs": {
+    "url": "https://github.com/yanstd888/humanizer-lint/issues"
+  }
 }

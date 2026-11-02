@@ -1,0 +1,32 @@
+{
+  "positive": [
+    "humanize this draft",
+    "remove AI slop",
+    "fix robotic or stiff prose",
+    "polish this blog post",
+    "tighten this README",
+    "audit landing page copy and CTAs",
+    "clean tautological AI code comments",
+    "perbaiki tulisan AI yang kaku",
+    "ubah teks jadi lebih natural",
+    "cek ritme kalimat dan kata klise",
+    "humanizador de texto IA",
+    "消除AI写作腔"
+  ],
+  "negative": [
+    "tulis unit test jest",
+    "perbaiki query SQL",
+    "deploy aplikasi ke server",
+    "hitung biaya cloud",
+    "buat diagram jaringan",
+    "terjemahkan kutipan hukum tanpa mengubahnya",
+    "ganti algoritme pengurutan",
+    "perbaiki error compiler",
+    "buktikan siapa penulis teks ini",
+    "scan seluruh kepatuhan WCAG",
+    "perbaiki regex ini",
+    "terjemahkan ke Prancis",
+    "audit aksesibilitas situs",
+    "ringkas PDF ini"
+  ]
+}

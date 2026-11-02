@@ -2,6 +2,7 @@ import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { I18N } from './i18n.mjs';
+import { SEO_FAQ } from './seo-copy.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = path.join(root, 'demo');
@@ -14,7 +15,7 @@ const copy = async (from, to = from) => {
   await cp(path.join(root, from), destination, { recursive: true });
 };
 
-function jsonLd(version) {
+function jsonLd(version, language = 'en') {
   return JSON.stringify({
     '@context': 'https://schema.org',
     '@graph': [
@@ -40,8 +41,10 @@ function jsonLd(version) {
         ],
       },
       {
-        '@type': 'SoftwareApplication',
+        '@type': ['SoftwareApplication', 'SoftwareSourceCode'],
+        license: 'https://spdx.org/licenses/MIT.html',
         name: 'humanizer-lint',
+        description: language === 'en' || language === 'id' ? I18N[language].canonicalPosition : I18N[language].description,
         url: siteUrl,
         applicationCategory: 'DeveloperApplication',
         operatingSystem: 'Cross-platform (Node.js >= 18.3, Web Browser)',
@@ -51,25 +54,20 @@ function jsonLd(version) {
           'Burstiness coefficient of variation (CV)',
           'Adjacent Rhythm Delta',
           'Adaptive MATTR lexical diversity',
-          'Zlib compression entropy',
+          'Deterministic fixed-Huffman DEFLATE ratio',
           'Author voice fingerprinting',
           'Eight multilingual anti-slop rule packs',
-          'Universal Intl.Segmenter stylometry for 100+ languages',
+          'Experimental Intl.Segmenter rhythm diagnostics for other languages',
         ],
         author: { '@type': 'Person', name: 'Muhammad Dian (yanstd888)', url: 'https://github.com/yanstd888' },
         codeRepository: 'https://github.com/yanstd888/humanizer-lint',
+        keywords: ['ai humanizer', 'prose linter', 'anti-slop linter', 'sentence burstiness checker', 'markdown prose linter', 'humanizer bahasa indonesia', 'humanizador de texto IA', 'humaniseur de texte IA', 'KI-Floskeln entfernen', '消除AI写作腔'],
         installUrl: 'https://www.skills.sh/yanstd888/humanizer-lint/humanizer-lint',
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
       },
       {
         '@type': 'FAQPage',
-        mainEntity: [
-          ['How do I humanize AI text without sending it to another service?', 'Paste the draft into the client-side tool or run the local CLI, revise only flagged prose, and verify the exact revision again.'],
-          ['Bagaimana burstiness bekerja?', 'Burstiness adalah koefisien variasi panjang kalimat. Nilai yang sehat menunjukkan ritme tidak terlalu seragam.'],
-          ['Which languages are supported?', 'Eight Tier 1 packs cover EN, ID, ES, MS, FR, DE, PT, and ZH. Universal stylometry supports 100+ languages through Intl.Segmenter.'],
-          ['Is my text private?', 'Yes. Browser analysis runs client-side and the Node.js CLI has no runtime network dependency.'],
-          ['How do I install the agent skill?', 'Run npx skills add yanstd888/humanizer-lint.'],
-        ].map(([name, text]) => ({ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text } })),
+        mainEntity: SEO_FAQ[language].map(([name, text]) => ({ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text } })),
       },
     ],
   }).replaceAll('<', '\\u003c');
@@ -82,16 +80,26 @@ function renderTemplate(template, values) {
   });
 }
 
-function renderIndex(template, version) {
-  return renderTemplate(template, { ...I18N.en, jsonLd: jsonLd(version) });
+function renderIndex(template, version, language = 'en', canonicalPath = '') {
+  const escapeHtml = (value) => value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
+  const values = I18N[language];
+  let html = renderTemplate(template, { ...Object.fromEntries(Object.entries(values).map(([key, value]) => [key, escapeHtml(value)])), jsonLd: jsonLd(version, language) });
+  html = html.replace('<html lang="en">', `<html lang="${language}">`);
+  html = html.replace(/(<([a-z][a-z0-9]*)\b[^>]*\bdata-i18n="([A-Za-z0-9]+)"[^>]*>)([^<]*)(<\/\2>)/gi,
+    (match, open, tag, key, text, close) => typeof values[key] === 'string' ? `${open}${escapeHtml(values[key])}${close}` : match);
+  html = html.replace('rel="canonical" href="https://humanizer.aiclub.ai.id/"', `rel="canonical" href="${siteUrl}${canonicalPath}"`);
+  html = html.replace('property="og:url" content="https://humanizer.aiclub.ai.id/"', `property="og:url" content="${siteUrl}${canonicalPath}"`);
+  return html;
 }
 
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 await Promise.all([
   copy('demo/app.mjs', 'app.mjs'),
+  copy('demo/rules-loader.mjs', 'rules-loader.mjs'),
   copy('demo/i18n.mjs', 'i18n.mjs'),
-  copy('demo/samples.mjs', 'samples.mjs'),
+  copy('demo/seo-copy.mjs', 'seo-copy.mjs'),
+  copy('benchmark/fixtures.mjs', 'benchmark/fixtures.mjs'),
   copy('demo/styles.css', 'styles.css'),
   copy('demo/public/404.html', '404.html'),
   copy('demo/public/_headers', '_headers'),
@@ -99,6 +107,7 @@ await Promise.all([
   copy('demo/public/favicon.ico', 'favicon.ico'),
   copy('demo/public/favicon.svg', 'favicon.svg'),
   copy('demo/public/og-image.svg', 'og-image.svg'),
+  copy('demo/public/og-image.png', 'og-image.png'),
   copy('demo/public/robots.txt', 'robots.txt'),
   copy('demo/public/sitemap.xml', 'sitemap.xml'),
   copy('demo/public/llms.txt', 'llms.txt'),
@@ -129,7 +138,13 @@ await Promise.all([
   }), 'utf8'),
 ]);
 
-for (const name of ['analyzer-browser.mjs', 'presentation.mjs']) {
+for (const language of ruleCodes) {
+  const directory = path.join(output, language);
+  await mkdir(directory, { recursive: true });
+  await writeFile(path.join(directory, 'index.html'), renderIndex(indexTemplate, packageJson.version, language, `${language}/`), 'utf8');
+}
+
+for (const name of ['analyzer-browser.mjs', 'presentation.mjs', 'samples.mjs']) {
   const browserModule = await readFile(path.join(source, name), 'utf8');
   await writeFile(path.join(output, name), browserModule.replace("const projectRoot = '..';", "const projectRoot = '.';"), 'utf8');
 }

@@ -23,7 +23,7 @@ export function lintCopywriting(text) {
     },
     {
       type: 'HYPERBOLIC_CLAIM',
-      pattern: /\b(?:supercharge your workflow|solusi terlengkap dan terbaik)\b/giu,
+      pattern: /\b(?:supercharge your workflow|solusi terlengkap dan terbaik|(?:is|are) guaranteed to change your life forever)\b/giu,
       fixInstruction: 'Replace the superlative claim with a concrete capability or supported result.',
     },
   ]);

@@ -1,7 +1,8 @@
 import { createBrowserAnalyzer } from './analyzer-browser.mjs';
 import { I18N, UI_LANGUAGE_CODES, UI_LANGUAGE_NAMES } from './i18n.mjs';
-import { buildAutoFixPrompt, diagnosticExcerpt, diagnosticSelection, languageLabel, parseDemoQuery, rhythmGateSkipped } from './presentation.mjs';
+import { buildAutoFixPrompt, diagnosticExcerpt, diagnosticSelection, languageLabel, lexicalHealth, parseDemoQuery, rhythmGateSkipped } from './presentation.mjs';
 import { DEMO_SAMPLES } from './samples.mjs';
+import { createRuleLoader } from './rules-loader.mjs';
 
 const LANGUAGE_KEY = 'humanizer-lint.language';
 const THEME_KEY = 'humanizer-lint.theme';
@@ -54,8 +55,8 @@ const queryState = parseDemoQuery(window.location.search);
 let currentLanguage = 'en';
 let currentTheme = 'light';
 let currentCommand = 'skill';
-let analyzer;
 let defaultProfile;
+let analysisRun = 0;
 let lastResult;
 let lastText = '';
 let lastSampleId = null;
@@ -64,7 +65,9 @@ let ready = false;
 function stored(key) {
   try {
     return localStorage.getItem(key);
-  } catch {
+  } catch (error) {
+    console.error('Preference storage read failed', error);
+    document.documentElement.dataset.storageReadFailed = 'true';
     return null;
   }
 }
@@ -72,8 +75,9 @@ function stored(key) {
 function save(key, value) {
   try {
     localStorage.setItem(key, value);
-  } catch {
-    // ponytail: preference persistence is optional when browser storage is unavailable.
+  } catch (error) {
+    console.error('Preference storage unavailable', error);
+    setError(copy().storageUnavailable);
   }
 }
 
@@ -91,7 +95,7 @@ function initialTheme() {
 }
 
 function copy() {
-  return I18N[currentLanguage];
+  return I18N[currentLanguage] ?? I18N.en;
 }
 
 function sampleLabel(id) {
@@ -205,7 +209,6 @@ function setMetric(element, value, detail, healthy) {
 
 function renderMetrics(report) {
   const { metrics } = report;
-  const thresholds = defaultProfile.thresholds;
   const skipped = rhythmGateSkipped(report);
   const cvTarget = report.targets.cvMin;
   const cvHealthy = metrics.burstinessCV >= cvTarget;
@@ -217,7 +220,7 @@ function renderMetrics(report) {
   );
 
   const rhythmHealthy = metrics.adjacentDelta >= report.targets.rhythmDeltaMin
-    && (metrics.sentenceCount < 8 || (metrics.shortSentenceRatio >= thresholds.shortSentenceRatio && metrics.longSentenceRatio >= thresholds.longSentenceRatio));
+    && (metrics.sentenceCount < report.targets.minSentencesForStats || (metrics.shortSentenceRatio >= report.targets.shortSentenceRatioMin && metrics.longSentenceRatio >= report.targets.longSentenceRatioMin));
   setMetric(
     metricElements.rhythm,
     `Δ ${formatNumber(metrics.adjacentDelta)}`,
@@ -235,8 +238,7 @@ function renderMetrics(report) {
   );
 
   const slopCount = report.violations.filter((violation) => violation.type === 'SLOP_PHRASE').length;
-  const morphologyTypes = new Set(['SLOP_PHRASE', 'EXCESSIVE_NOMINALIZATION', 'PASSIVE_BLOATING', 'DEFINITIONAL_OPENING']);
-  const slopHealthy = !report.violations.some((violation) => morphologyTypes.has(violation.type));
+  const slopHealthy = lexicalHealth(report);
   setMetric(
     metricElements.slop,
     `${slopCount} ${copy().metricPhrases}`,
@@ -301,8 +303,7 @@ function render(report, animate = false) {
     element.textContent = json;
     const statusHost = element.closest('.gate-block')?.querySelector('[data-gate-status]');
     if (statusHost) {
-      let gateStatus = '';
-      try { gateStatus = String(JSON.parse(json).status ?? ''); } catch { gateStatus = ''; }
+      const gateStatus = String(report.deliveryGate[name]?.status ?? '');
       statusHost.textContent = gateStatus;
       statusHost.hidden = !gateStatus;
       statusHost.dataset.state = /^PASS|^\d+\//.test(gateStatus) ? 'pass' : /^SKIP/i.test(gateStatus) ? 'skip' : 'info';
@@ -330,6 +331,9 @@ function applyLanguage(nextLanguage, persist = false) {
   currentLanguage = nextLanguage;
   const strings = copy();
   document.documentElement.lang = currentLanguage;
+  const storageWarning = document.querySelector('#storage-warning');
+  storageWarning.textContent = strings.storageReadUnavailable;
+  storageWarning.hidden = document.documentElement.dataset.storageReadFailed !== 'true';
   document.title = strings.pageTitle;
   document.querySelectorAll('[data-i18n]').forEach((element) => {
     element.textContent = strings[element.dataset.i18n];
@@ -399,9 +403,13 @@ async function copyText(value, button) {
       fallback.style.position = 'fixed';
       fallback.style.opacity = '0';
       document.body.append(fallback);
-      fallback.select();
-      const copied = document.execCommand('copy');
-      fallback.remove();
+      let copied;
+      try {
+        fallback.select();
+        copied = document.execCommand('copy');
+      } finally {
+        fallback.remove();
+      }
       if (!copied) throw new Error('copy failed');
     }
     copyStatus.textContent = copy().copied;
@@ -413,39 +421,55 @@ async function copyText(value, button) {
       delete button.dataset.copied;
       if (label) label.textContent = copy()[button.dataset.copyKey];
     }, 1800);
-  } catch {
+  } catch (error) {
+    console.error('Clipboard copy failed', error);
     setError(copy().copyUnavailable);
   }
 }
 
 async function loadJson(path) {
-  const response = await fetch(path);
-  if (!response.ok) throw new Error(String(response.status));
+  const response = await fetch(new URL(path, import.meta.url));
+  if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
   return response.json();
 }
 
+const ruleLoader = createRuleLoader(async (code) => {
+  try { return await loadJson(`./rules/${code}-slop.json`); }
+  catch (error) { console.error(`Rule pack ${code} unavailable`, error); throw error; }
+});
+
 async function runAnalysis() {
   setError();
+  const run = ++analysisRun;
   const value = text.value.trim();
   if (!value) {
+    analyze.disabled = false;
     setError(copy().emptyText);
     text.focus();
     return;
   }
+  const input = text.value;
+  const selectedLanguage = getAnalysisLanguage();
   analyze.disabled = true;
   try {
-    lastText = text.value;
-    lastResult = await analyzer.analyzeTextAsync(lastText, { language: getAnalysisLanguage() });
-    render(lastResult, true);
-  } catch {
-    setError(copy().analysisFailed);
+    const { rules, missing } = await ruleLoader.load(selectedLanguage);
+    const analyzer = createBrowserAnalyzer({ rules, defaultProfile });
+    const report = await analyzer.analyzeTextAsync(input, { language: missing.length ? 'universal' : selectedLanguage });
+    if (run !== analysisRun) return;
+    lastText = input;
+    lastResult = report;
+    render(report, true);
+    if (missing.length) setError(`${copy().rulesUnavailable} (${missing.join(', ')})`);
+  } catch (error) {
+    console.error('Analysis failed', error);
+    if (run === analysisRun) setError(copy().analysisFailed);
   } finally {
-    analyze.disabled = false;
+    if (run === analysisRun) analyze.disabled = false;
   }
 }
 
 async function loadSample(sample, updateUrl = true) {
-  const selected = DEMO_SAMPLES[sample];
+  const selected = Object.hasOwn(DEMO_SAMPLES, sample) ? DEMO_SAMPLES[sample] : null;
   if (!selected) return;
   lastSampleId = sample;
   if (sampleCurrent) sampleCurrent.textContent = sampleLabel(sample);
@@ -460,7 +484,8 @@ async function loadSample(sample, updateUrl = true) {
 }
 
 applyTheme(initialTheme());
-applyLanguage(queryState.language ?? initialLanguage());
+const pathLanguage = window.location.pathname.split('/').filter(Boolean)[0];
+applyLanguage(queryState.language ?? (UI_LANGUAGE_CODES.includes(pathLanguage) ? pathLanguage : initialLanguage()));
 setupReveal();
 gateBlocks.forEach((block) => {
   block.addEventListener('toggle', () => updateGateToggle(block));
@@ -491,24 +516,21 @@ analysisOptions.forEach((option) => option.addEventListener('click', async () =>
 }));
 
 try {
-  const [ruleEntries, profile] = await Promise.all([
-    Promise.all(['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'].map(async (code) => [code, await loadJson(`./rules/${code}-slop.json`)])),
-    loadJson('./profiles/default-human.json'),
-  ]);
-  defaultProfile = profile;
-  analyzer = createBrowserAnalyzer({ rules: Object.fromEntries(ruleEntries), defaultProfile });
+  defaultProfile = await loadJson('./profiles/default-human.json');
   ready = true;
   analyze.disabled = false;
   analyze.textContent = copy().analyze;
-  setAnalysisLanguage(queryState.targetLang ?? DEMO_SAMPLES[queryState.sample]?.language ?? 'auto');
-  if (queryState.sample) {
+  const requestedSample = Object.hasOwn(DEMO_SAMPLES, queryState.sample) ? DEMO_SAMPLES[queryState.sample] : null;
+  setAnalysisLanguage(queryState.targetLang ?? requestedSample?.language ?? 'auto');
+  if (requestedSample) {
     lastSampleId = queryState.sample;
     if (sampleCurrent) sampleCurrent.textContent = sampleLabel(lastSampleId);
-    text.value = DEMO_SAMPLES[queryState.sample].text;
+    text.value = requestedSample.text;
     await runAnalysis();
   }
-} catch {
-  setError(copy().analysisFailed);
+} catch (error) {
+  console.error('Analyzer initialization failed', error);
+  setError(`${copy().analysisFailed} (profiles/default-human.json)`);
 }
 
 const mobileMenu = document.querySelector('.mobile-menu');

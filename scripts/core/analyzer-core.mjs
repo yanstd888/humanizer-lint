@@ -1,11 +1,12 @@
 const parentDirectory = '..';
 const utilityModule = (...segments) => new URL([parentDirectory, 'utils', ...segments].join('/'), import.meta.url);
 const { sanitizeMarkdownWithMap } = await import(utilityModule('sanitizer.mjs'));
-const { coefficientOfVariation, mean, punctuationRates } = await import(utilityModule('metrics-core.mjs'));
+const { coefficientOfVariation, mean, punctuationRates, MIN_SENTENCES_FOR_RHYTHM } = await import(utilityModule('metrics-core.mjs'));
 const { isCJKText, tokenizeText } = await import(utilityModule('tokenizer.mjs'));
 const { lintDomainHygiene } = await import(utilityModule('domain-linters.mjs'));
 
 const HAN = /[\u4e00-\u9fff]/gu;
+const STRONG_STAGING = new Set(['NOT_X_BUT_Y', 'STAGED_RUN_UP', 'DEEP_SOUNDING_SAYING', 'DRAMATIC_ONE_LINE_CLOSER', 'CHATBOT_RESIDUE', 'BORROWED_AUTHORITY', 'ARGUING_WITH_NO_ONE', 'INFLATED_SIGNIFICANCE', 'COPULA_AVOIDANCE', 'KNOWLEDGE_LIMIT_DISCLAIMER']);
 const KANA = /[\u3040-\u30ff]/u;
 const ARABIC = /[\u0600-\u06ff]/u;
 const ID_EXCLUSIVE_WORDS = new Set(['tidak', 'karena', 'bisa', 'seperti', 'dari', 'bahwa']);
@@ -54,26 +55,18 @@ function regexFor(pattern) {
 }
 
 function mapSentenceOffsets(sentences, sanitized) {
+  const normalized = sanitized.text.replace(/\s+/gu, ' ');
+  const positions = [];
+  for (let i = 0; i < sanitized.text.length; i += 1) {
+    positions.push(sanitized.map[i]);
+    if (/\s/u.test(sanitized.text[i])) while (/\s/u.test(sanitized.text[i + 1] ?? '')) i += 1;
+  }
   let cursor = 0;
   for (const sentence of sentences) {
-    const pattern = sentence.text.split(/\s+/u).map((part) => part.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')).join('\\s+');
-    const regex = new RegExp(pattern, 'gu');
-    regex.lastIndex = cursor;
-    const match = regex.exec(sanitized.text);
-    if (!match) break;
-    let position = match.index;
-    const offsets = [];
-    for (let i = 0; i < sentence.text.length; i += 1) {
-      if (/\s/u.test(sentence.text[i])) {
-        offsets.push(sanitized.map[position]);
-        while (/\s/u.test(sanitized.text[position] ?? '')) position += 1;
-      } else {
-        offsets.push(sanitized.map[position]);
-        position += 1;
-      }
-    }
-    sentence.sourceMap = offsets;
-    cursor = match.index + match[0].length;
+    const start = normalized.indexOf(sentence.text, cursor);
+    if (start < 0) break;
+    sentence.sourceMap = positions.slice(start, start + sentence.text.length);
+    cursor = start + sentence.text.length;
   }
 }
 
@@ -92,9 +85,11 @@ function suggestedReplacement(type, match, matches = []) {
   return undefined;
 }
 
-function patternViolations(tokenized, rules, wordCount, original) {
+function patternViolations(tokenized, rules, wordCount, original, language) {
   if (!rules?.patterns) return [];
   const violations = [];
+  const chineseBoundaries = new WeakMap();
+  let chineseSegmenter;
   for (const rule of rules.patterns) {
     const candidates = [];
     const sentences = rule.scope === 'paragraph-start'
@@ -102,14 +97,38 @@ function patternViolations(tokenized, rules, wordCount, original) {
       : tokenized.sentences;
 
     for (const sentence of sentences) {
+      // ponytail: recognizes explicit EN/ID attribution only; use a citation parser for broader coverage.
+      if (rule.type === 'BORROWED_AUTHORITY' && /\b(?:[Aa]ccording to|[Mm]enurut)\s+(?:(?:Dr|Prof)\.\s+)?(?!Dr\b|Prof\b)[A-Z][\p{L}\p{N}.-]+/u.test(sentence.text)) continue;
       const regex = regexFor(rule.pattern);
-      for (const match of sentence.text.matchAll(regex)) candidates.push({ sentence, match: match[0], offset: match.index });
+      for (const match of sentence.text.matchAll(regex)) {
+        if (language === 'zh' && typeof rule.minedPhrase === 'string') {
+          // ponytail: ICU word boundaries vary by runtime; review mined rules after runtime upgrades.
+          if (!chineseBoundaries.has(sentence)) {
+            if (typeof Intl.Segmenter !== 'function') throw new Error('Chinese mined rules require Intl.Segmenter for word boundaries.');
+            chineseSegmenter ??= new Intl.Segmenter('zh', { granularity: 'word' });
+            const words = [...chineseSegmenter.segment(sentence.text)].filter((part) => part.isWordLike);
+            chineseBoundaries.set(sentence, { starts: new Set(words.map((part) => part.index)), ends: new Set(words.map((part) => part.index + part.segment.length)) });
+          }
+          const boundaries = chineseBoundaries.get(sentence);
+          if (!boundaries.starts.has(match.index) || !boundaries.ends.has(match.index + match[0].length)) continue;
+        }
+        candidates.push({ sentence, match: match[0], offset: match.index });
+      }
     }
 
     const allowed = rule.maxOccurrences == null
       ? 0
       : rule.maxOccurrences * Math.max(1, Math.ceil(wordCount / (rule.perWords || wordCount || 1)));
-    for (const candidate of candidates.slice(allowed)) {
+    const seenPerParagraph = new Map();
+    const selected = rule.scope === 'paragraph-frequency' ? candidates.filter((candidate) => {
+      const index = candidate.sentence.paragraphIndex;
+      const count = (seenPerParagraph.get(index) ?? 0) + 1;
+      seenPerParagraph.set(index, count);
+      const size = tokenized.paragraphs.find((paragraph) => paragraph.paragraphIndex === index)?.words.length ?? 0;
+      const limit = (rule.maxOccurrences ?? 0) * Math.max(1, Math.ceil(size / (rule.perWords || size || 1)));
+      return count > limit;
+    }) : candidates.slice(allowed);
+    for (const candidate of selected) {
       const indices = candidate.sentence.sourceMap?.slice(candidate.offset, candidate.offset + candidate.match.length);
       const start = indices?.[0];
       const end = indices?.[indices.length - 1];
@@ -117,6 +136,7 @@ function patternViolations(tokenized, rules, wordCount, original) {
       violations.push({
         type: rule.type,
         ruleId: rule.id,
+        ...(rule.weakAlone === true ? { weakAlone: true } : {}),
         occurrenceCount: candidates.length,
         location: locationFor(candidate.sentence),
         match: offset ? original.slice(offset.start, offset.end) : candidate.match,
@@ -229,9 +249,119 @@ function rhetoricalViolations(tokenized) {
     }));
 }
 
+function pairedContrasts(tokenized, language) {
+  if (language !== 'en') return [];
+  const findings = [];
+  for (const paragraph of tokenized.paragraphs) {
+    for (let i = 1; i < paragraph.sentences.length; i += 1) {
+      const first = paragraph.sentences[i - 1];
+      const second = paragraph.sentences[i];
+      if (/^no prior\.$/iu.test(first.text) && /^no nostalgia\.$/iu.test(second.text)) {
+        findings.push({ type: 'DRAMATIC_ONE_LINE_CLOSER', location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${first.sentenceIndex}-${second.sentenceIndex}`, fixInstruction: 'Review whether this staged ending adds a supported point.' });
+      }
+      if (/^this\s+(?:doesn['’]t|does not)\s+mean\b/iu.test(first.text) && /^it\s+means\b/iu.test(second.text)) {
+        findings.push({ type: 'NOT_X_BUT_Y', location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${first.sentenceIndex}-${second.sentenceIndex}`, fixInstruction: 'Review whether the contrast is needed; state the supported point directly.' });
+      }
+    }
+  }
+  return findings;
+}
+
+function delayedDecision(tokenized, language) {
+  const sentences = tokenized.paragraphs[0]?.sentences ?? [];
+  // ponytail: explicit EN/ID decision openers after 3 sentences and 45 words only; use validated discourse analysis for broader coverage.
+  const opener = language === 'id' ? /^(?:kami merekomendasikan|keputusan kami adalah|kami memilih)\b/iu : language === 'en' ? /^(?:we recommend|our decision is|we chose)\b/iu : null;
+  if (!opener) return [];
+  const index = sentences.findIndex((sentence) => opener.test(sentence.text));
+  if (index < 3 || sentences.slice(0, index).reduce((sum, sentence) => sum + sentence.wordCount, 0) < 45) return [];
+  const sentence = sentences[index];
+  return [{ type: 'DELAYED_DECISION_LEAD', weakAlone: true, location: locationFor(sentence), fixInstruction: 'Consider whether the decision should appear earlier; preserve context and evidence.' }];
+}
+
+function inconsistentQuotes(tokenized, source) {
+  const findings = [];
+  for (const paragraph of tokenized.paragraphs) {
+    let style = '';
+    // ponytail: paired double quotes within one sentence only; use a syntax-aware quote parser for nesting and multiline quotations.
+    for (const sentence of paragraph.sentences) {
+      for (const match of sentence.text.matchAll(/"[^"“”\n]+"|“[^“”"\n]+”/gu)) {
+        const current = match[0][0];
+        if (style && current !== style) {
+          const positions = sentence.sourceMap?.slice(match.index, match.index + match[0].length);
+          const start = positions?.[0];
+          const end = positions?.[positions.length - 1];
+          if (start >= 0 && end >= start && source.slice(start, end + 1) === match[0]) findings.push({ type: 'INCONSISTENT_QUOTES', weakAlone: true, location: locationFor(sentence), match: match[0], charOffset: { start, end: end + 1 }, fixInstruction: 'Review quote style without changing any quoted wording.' });
+          break;
+        }
+        style = current;
+      }
+      if (findings.at(-1)?.location === locationFor(sentence)) break;
+    }
+  }
+  return findings;
+}
+
+function markdownFormatting(source, active, tokenized) {
+  const findings = [];
+  let offset = 0;
+  let listStart = 0;
+  let listCount = 0;
+  let comment = false;
+  const frontmatter = /^---[ \t]*\r?\n[\s\S]*?\r?\n---[ \t]*(?:\r?\n|$)/u.exec(source)?.[0].length ?? 0;
+  // ponytail: ATX headings and single-line unordered items only; O(items × sentences). Use a parser and indexed offsets for broader coverage or scale.
+  for (const [index, line] of source.split(/(?<=\n)/u).entries()) {
+    const heading = /^ {0,3}#{1,6}[ \t]+([^\r\n]+)/u.exec(line);
+    if (active[index] && offset >= frontmatter && !comment && heading) {
+      const next = tokenized.sentences.find((sentence) => sentence.sourceMap?.some((position) => position >= offset + line.length));
+      const nextStart = next?.sourceMap?.find((position) => position >= offset + line.length);
+      const interveningHeading = Number.isInteger(nextStart) && /^ {0,3}#{1,6}[ \t]/mu.test(source.slice(offset + line.length, nextStart));
+      const location = next && !interveningHeading ? `Paragraph ${next.paragraphIndex}` : 'Heading';
+      const charOffset = { start: offset, end: offset + heading[0].length };
+      if (/[\p{Extended_Pictographic}←-⇿]/u.test(heading[1])) findings.push({ type: 'DECORATIVE_HEADING', weakAlone: true, location, match: heading[0], charOffset, fixInstruction: 'Review whether the decorative symbol helps readers navigate.' });
+      const normalize = (value) => value.trim().replace(/[.!?]+$/u, '').trim().toLocaleLowerCase('und');
+      if (next && !interveningHeading && normalize(heading[1]) === normalize(next.text)) findings.push({ type: 'HEADING_REPEATED_IN_OPENING', weakAlone: true, location, match: heading[0], charOffset, fixInstruction: 'Review whether the opening adds information beyond the heading.' });
+    }
+    const listItem = active[index] && offset >= frontmatter && !comment && /^ {0,3}[-*+][ \t]+\*\*[^*\r\n]+:\*\*[ \t]+\S[^\r\n]*/u.exec(line);
+    if (listItem) {
+      if (listCount++ === 0) listStart = offset;
+      if (listCount === 3) {
+        const end = offset + listItem[0].length;
+        const sentence = tokenized.sentences.find((item) => item.sourceMap?.some((position) => position >= listStart && position < end));
+        findings.push({ type: 'DECORATIVE_BOLD_LIST', weakAlone: true, location: sentence ? `Paragraph ${sentence.paragraphIndex}` : 'List', match: source.slice(listStart, end), charOffset: { start: listStart, end }, fixInstruction: 'Review whether repeated bold labels help readers navigate.' });
+      }
+    } else listCount = 0;
+    if (active[index] && offset >= frontmatter) for (const marker of line.matchAll(/<!--|-->/gu)) {
+      if (marker[0] === '<!--' && !comment) comment = true;
+      else if (marker[0] === '-->' && comment) comment = false;
+    }
+    offset += line.length;
+  }
+  return findings;
+}
+
+function repeatedOpenings(tokenized) {
+  const findings = [];
+  for (const paragraph of tokenized.paragraphs) {
+    let previous = '';
+    for (let i = 1; i < paragraph.sentences.length; i += 1) {
+      const first = paragraph.sentences[i - 1];
+      const second = paragraph.sentences[i];
+      const opening = first.words.length >= 3 ? first.words.slice(0, 2).join(' ') : '';
+      const next = second.words.length >= 3 ? second.words.slice(0, 2).join(' ') : '';
+      if (opening && opening === next && previous !== opening) findings.push({
+        type: 'REPEATED_SENTENCE_OPENING', weakAlone: true,
+        location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${first.sentenceIndex}-${second.sentenceIndex}`,
+        fixInstruction: 'Review repeated openings; vary them only where the meaning benefits.',
+      });
+      previous = opening === next ? opening : '';
+    }
+  }
+  return findings;
+}
+
 function structuralViolations(tokenized, metrics) {
   const violations = [];
-  if (metrics.wordCount >= 150 && metrics.compressionRatio < 0.42) {
+  if (metrics.wordCount >= 150 && metrics.compressionRatio < 0.64) {
     violations.push({
       type: 'LOW_ENTROPY_REPETITION',
       location: 'Whole text',
@@ -277,8 +407,8 @@ function structuralViolations(tokenized, metrics) {
 
 function statisticalViolations(metrics, thresholds, mattrTarget) {
   const violations = [];
-  const cvTarget = metrics.sentenceCount >= 8 ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
-  if (metrics.sentenceCount >= 8 && metrics.burstinessCV < cvTarget) {
+  const cvTarget = metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
+  if (metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && metrics.burstinessCV < cvTarget) {
     violations.push({
       type: 'LOW_BURSTINESS',
       location: 'Whole text',
@@ -287,7 +417,7 @@ function statisticalViolations(metrics, thresholds, mattrTarget) {
       fixInstruction: 'Vary sentence lengths by splitting one uniform sentence and merging another where the meaning supports it.',
     });
   }
-  if (metrics.sentenceCount >= 8 && (metrics.shortSentenceRatio < thresholds.shortSentenceRatio || metrics.longSentenceRatio < thresholds.longSentenceRatio)) {
+  if (metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && (metrics.shortSentenceRatio < thresholds.shortSentenceRatio || metrics.longSentenceRatio < thresholds.longSentenceRatio)) {
     violations.push({
       type: 'MISSING_SENTENCE_RANGE',
       location: 'Whole text',
@@ -296,7 +426,7 @@ function statisticalViolations(metrics, thresholds, mattrTarget) {
       fixInstruction: 'Review sentence variety only where it improves clarity; preserve the intended meaning and register.',
     });
   }
-  if (metrics.sentenceCount >= 8 && metrics.adjacentDelta < thresholds.adjacentDelta) {
+  if (metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && metrics.adjacentDelta < thresholds.adjacentDelta) {
     violations.push({
       type: 'LOW_ADJACENT_DELTA',
       location: 'Whole text',
@@ -427,23 +557,26 @@ function voiceDeviation(metrics, tokenized, text, profile) {
   return result < 0.0005 ? 0 : result;
 }
 
+function lexicalPenalty(violations) {
+  return Math.min(30, violations.reduce((total, violation) => {
+    if (violation.severity === 'warn') return total;
+    if (violation.type === 'SLOP_PHRASE' || violation.type === 'DEFINITIONAL_OPENING' || STRONG_STAGING.has(violation.type) || violation.weakAlone) return total + 5;
+    if (violation.type === 'STRUCTURAL_CLICHE') return total + 4;
+    if (['RHETORICAL_SLOP', 'WEAK_CTA', 'HYPERBOLIC_CLAIM', 'TAUTOLOGICAL_CODE_COMMENT', 'DECORATIVE_COMMENT_BANNER', 'LAZY_AI_PLACEHOLDER', 'MISSING_ACCESSIBLE_NAME', 'MISSING_IMG_ALT', 'HEADING_ORDER_SKIP', 'AI_GRADIENT_CLICHE', 'NON_RESPONSIVE_FIXED_WIDTH'].includes(violation.type)) return total + 4;
+    return total;
+  }, 0));
+}
+
 function scoreResult(metrics, violations, thresholds, mattrTarget) {
-  const cvTarget = metrics.sentenceCount >= 8 ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
-  let burstinessPenalty = metrics.sentenceCount >= 8 && metrics.burstinessCV < cvTarget ? Math.min(25, Math.round((cvTarget - metrics.burstinessCV) * 100)) : 0;
-  if (metrics.sentenceCount >= 8 && (metrics.shortSentenceRatio < thresholds.shortSentenceRatio || metrics.longSentenceRatio < thresholds.longSentenceRatio)) {
+  const cvTarget = metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
+  let burstinessPenalty = metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && metrics.burstinessCV < cvTarget ? Math.min(25, Math.round((cvTarget - metrics.burstinessCV) * 100)) : 0;
+  if (metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && (metrics.shortSentenceRatio < thresholds.shortSentenceRatio || metrics.longSentenceRatio < thresholds.longSentenceRatio)) {
     burstinessPenalty = Math.min(25, burstinessPenalty + 8);
   }
   if (violations.some((violation) => violation.type === 'FLAT_PARAGRAPH_RHYTHM')) burstinessPenalty = Math.min(25, burstinessPenalty + 5);
   const rhythmPenalty = Math.min(20, violations.reduce((total, violation) => {
     if (violation.type === 'MONOTONOUS_RHYTHM') return total + 6;
     if (violation.type === 'UNIFORM_CLAUSE_STRUCTURE') return total + 5;
-    return total;
-  }, 0));
-  const lexicalPenalty = Math.min(30, violations.reduce((total, violation) => {
-    if (violation.severity === 'warn') return total;
-    if (violation.type === 'SLOP_PHRASE' || violation.type === 'DEFINITIONAL_OPENING') return total + 5;
-    if (violation.type === 'STRUCTURAL_CLICHE') return total + 4;
-    if (['RHETORICAL_SLOP', 'WEAK_CTA', 'HYPERBOLIC_CLAIM', 'TAUTOLOGICAL_CODE_COMMENT', 'DECORATIVE_COMMENT_BANNER', 'LAZY_AI_PLACEHOLDER', 'MISSING_ACCESSIBLE_NAME', 'MISSING_IMG_ALT', 'HEADING_ORDER_SKIP', 'AI_GRADIENT_CLICHE', 'NON_RESPONSIVE_FIXED_WIDTH'].includes(violation.type)) return total + 4;
     return total;
   }, 0));
   const morphologyPenalty = Math.min(15,
@@ -453,7 +586,7 @@ function scoreResult(metrics, violations, thresholds, mattrTarget) {
   const entropyPenalty = violations.some((violation) => ['LOW_ENTROPY_REPETITION', 'SYMMETRIC_PARAGRAPHS', 'REPETITIVE_STARTERS', 'REPETITIVE_NGRAM'].includes(violation.type)) ? 5 : 0;
   const profilePenalty = violations.some((violation) => violation.type === 'VOICE_PROFILE_DEVIATION') ? 5 : 0;
   const vocabularyAndProfilePenalty = Math.min(10, vocabularyPenalty + entropyPenalty + profilePenalty);
-  return Math.max(0, Math.round(100 - burstinessPenalty - rhythmPenalty - lexicalPenalty - morphologyPenalty - vocabularyAndProfilePenalty));
+  return Math.max(0, Math.round(100 - burstinessPenalty - rhythmPenalty - lexicalPenalty(violations) - morphologyPenalty - vocabularyAndProfilePenalty));
 }
 
 function withSeverity(violations, tokenized, source) {
@@ -461,6 +594,18 @@ function withSeverity(violations, tokenized, source) {
   const minorTransitions = new Set(['EN017', 'EN018', 'ID009', 'ID010', 'ID011']);
   const counts = new Map();
   for (const violation of violations) counts.set(violation.ruleId, (counts.get(violation.ruleId) ?? 0) + 1);
+  const lineStarts = [0];
+  for (const match of source.matchAll(/\r\n|\r|\n/gu)) lineStarts.push(match.index + match[0].length);
+  const position = (offset) => {
+    let low = 0;
+    let high = lineStarts.length;
+    while (low + 1 < high) {
+      const mid = Math.floor((low + high) / 2);
+      if (lineStarts[mid] <= offset) low = mid;
+      else high = mid;
+    }
+    return { line: low + 1, column: offset - lineStarts[low] + 1 };
+  };
   return violations.map((violation) => {
     const severity = warnings.has(violation.type) || (minorTransitions.has(violation.ruleId) && (violation.occurrenceCount ?? counts.get(violation.ruleId)) === 1) ? 'warn' : 'error';
     if (violation.charOffset) return { ...violation, severity, ruleId: violation.ruleId ?? violation.type, sourceScope: 'match' };
@@ -478,6 +623,11 @@ function withSeverity(violations, tokenized, source) {
     const match = source.slice(start, end);
     return { ...violation, ...(violation.match && violation.match !== match ? { detail: violation.match } : {}), ruleId: violation.ruleId ?? violation.type, severity, match, charOffset: { start, end }, sourceScope: positions.length ? 'sentence-range' : 'document-excerpt' };
   })
+    .map((violation) => {
+      const start = position(violation.charOffset.start);
+      const end = position(violation.charOffset.end);
+      return { ...violation, line: start.line, column: start.column, endLine: end.line, endColumn: end.column };
+    })
     .sort((left, right) => (left.charOffset?.start ?? Infinity) - (right.charOffset?.start ?? Infinity));
 }
 
@@ -492,7 +642,7 @@ function deliveryGate({ metrics, violations, language, rulePack, score, status }
   }));
   return {
     rhythmAndStylometry: {
-      status: metrics.sentenceCount < 8 ? 'SKIP (insufficient sentence count <8 for statistical variance)' : 'EVALUATED',
+      status: metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM ? `SKIP (insufficient sentence count <${MIN_SENTENCES_FOR_RHYTHM} for statistical variance)` : 'EVALUATED',
       burstinessCV: metrics.burstinessCV,
       paragraphBurstinessCV: metrics.paragraphBurstinessCV,
       adjacentDelta: metrics.adjacentDelta,
@@ -504,7 +654,7 @@ function deliveryGate({ metrics, violations, language, rulePack, score, status }
       rulePack,
       mode: rulePack === 'universal' ? 'Universal stylometry' : '8 language-specific lexical pack',
       ngrams: types(['REPETITIVE_NGRAM']),
-      morphology: types(['SLOP_PHRASE', 'EXCESSIVE_NOMINALIZATION', 'PASSIVE_BLOATING', 'DEFINITIONAL_OPENING']),
+      morphology: violations.filter((violation) => ['SLOP_PHRASE', 'EXCESSIVE_NOMINALIZATION', 'PASSIVE_BLOATING', 'DEFINITIONAL_OPENING'].includes(violation.type) || STRONG_STAGING.has(violation.type)),
     },
     domainHygiene: {
       copywritingAndCta: types(['WEAK_CTA', 'HYPERBOLIC_CLAIM']),
@@ -515,14 +665,18 @@ function deliveryGate({ metrics, violations, language, rulePack, score, status }
   };
 }
 
-function applyIgnoreDirectives(input, options = {}) {
+function ambiguousTemplateSource(source, options) {
+  return source.includes('`') && (/\.(?:[cm]?[jt]sx?|mdx)$/iu.test(options.sourcePath ?? '') || (options.domain === 'code' && !options.sourcePath));
+}
+
+function applyIgnoreDirectives(input, options = {}, activeOutput = []) {
   const lines = String(input ?? '').split(/(?<=\n)/u);
   const fileDirective = /^\s*<!--\s*humanizer-ignore-file\s*-->\s*$/u;
   let fence = null;
   // ponytail: disable ambiguous template cases; a full language parser can narrow the exclusion.
   let blockComment = false;
   const jsSource = /\.[cm]?[jt]sx?$/iu.test(options.sourcePath ?? '') || (options.domain === 'code' && !options.sourcePath);
-  if (jsSource && String(input ?? '').includes('`')) return String(input ?? '');
+  if (ambiguousTemplateSource(String(input ?? ''), options)) return String(input ?? '');
   const active = lines.map((line) => {
     const inTemplate = blockComment;
     if (jsSource) {
@@ -548,13 +702,19 @@ function applyIgnoreDirectives(input, options = {}) {
     if (fence && marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) { fence = null; return false; }
     return !fence;
   });
-  if (lines.some((line, index) => active[index] && fileDirective.test(line))) return String(input ?? '').replace(/[^\r\n]/g, ' ');
+  for (const value of active) activeOutput.push(value);
+  let contentStart = 0;
+  if (/^---\s*$/u.test(lines[0]?.trimEnd() ?? '')) {
+    const closing = lines.findIndex((line, index) => index > 0 && /^---\s*$/u.test(line.trimEnd()));
+    if (closing > 0) contentStart = closing + 1;
+  }
+  if (lines.some((line, index) => index >= contentStart && index < 10 && active[index] && fileDirective.test(line))) return String(input ?? '').replace(/[^\r\n]/g, ' ');
   const directive = /^(?:\s*<!--\s*humanizer-ignore\s*-->\s*|\s*\/\/\s*humanizer-ignore\s*|\s*\/\*\s*humanizer-ignore\s*\*\/\s*)$/u;
   let ignoreNext = false;
   return lines.map((line, index) => {
     if (!active[index]) return line;
     if (ignoreNext && line.trim()) { ignoreNext = false; return line.replace(/[^\r\n]/g, ' '); }
-    const inlineHtml = /^([^`"'<>\r\n]+?)\s*<!--\s*humanizer-ignore\s*-->\s*$/u.exec(line);
+    const inlineHtml = !/^\s*(?:[-+*]\s|\d+[.)]\s|>|\|)/u.test(line) && !/\|/u.test(line) && /^([^`"'<>\r\n]+?)\s*<!--\s*humanizer-ignore\s*-->\s*$/u.exec(line);
     const inlineCode = /^\s*\/\/[^\n]*?(?:\/\/\s*humanizer-ignore|\/\*\s*humanizer-ignore\s*\*\/)\s*$/u.test(line);
     if (inlineHtml || inlineCode) return line.replace(/[^\x0a\x0d]/g, ' ');
     if (!directive.test(line)) return line;
@@ -564,6 +724,48 @@ function applyIgnoreDirectives(input, options = {}) {
   }).join('');
 }
 
+function stripIgnoreMarkers(source, active) {
+  return source.split(/(?<=\n)/u).map((line, index) => {
+    if (!active[index]) return line;
+    const html = /<!--\s*humanizer-ignore(?:-file)?(?:\s+[A-Z0-9_, ]+)?\s*-->/u;
+    if (/^\s*(?:[-+*]\s|\d+[.)]\s|>|\|)/u.test(line) || /\|/u.test(line)) return line.replace(html, (match) => match.replace(/[^\r\n]/g, ' '));
+    if (/^\s*<!--/u.test(line) || /^[^`"'<>\r\n]+<!--/u.test(line)) return line.replace(html, (match) => match.replace(/[^\r\n]/g, ' '));
+    if (/^\s*\/\/\s*humanizer-ignore(?:\s+[A-Z0-9_, ]+)?\s*$/u.test(line)) return line.replace(/[^\r\n]/g, ' ');
+    return line;
+  }).join('');
+}
+
+function scopedIgnoreDirectives(source, masked, options, active) {
+  if (options.noIgnore || ambiguousTemplateSource(source, options)) return { text: masked, scopes: [] };
+  const lines = source.split(/(?<=\n)/u);
+  const maskedLines = masked.split(/(?<=\n)/u);
+  const scopes = [];
+  let offset = 0;
+  let fence = null;
+  let pending = null;
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+    const marker = /^ {0,3}(`{3,}|~{3,})([^\r\n]*)/u.exec(line);
+    if (!fence && marker) fence = marker[1];
+    else if (fence && marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = null;
+    else if (!fence && active[index]) {
+      const match = /^(?:\s*<!--[\t ]*humanizer-ignore[\t ]+([A-Z0-9_, ]+)[\t ]*-->[\t ]*|\s*\/\/[\t ]*humanizer-ignore[\t ]+([A-Z0-9_, ]+)[\t ]*)\r?\n?$/u.exec(line);
+      if (match && maskedLines[index] === line) {
+        const rules = (match[1] ?? match[2]).split(',').map((value) => value.trim()).filter(Boolean);
+        if (rules.length && rules.every((value) => /^[A-Z][A-Z0-9_]*$/u.test(value))) {
+          pending = { kind: 'next-line', line: index + 1, scope: rules };
+          maskedLines[index] = line.replace(/[^\r\n]/g, ' ');
+        }
+      } else if (pending && line.trim()) {
+        scopes.push({ start: offset, end: offset + line.length, directive: pending });
+        pending = null;
+      }
+    }
+    offset += line.length;
+  }
+  return { text: maskedLines.join(''), scopes };
+}
+
 export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calculateMetricsAsync }) {
   if (!rules || !defaultProfile || typeof calculateMetrics !== 'function') {
     throw new TypeError('createAnalyzer requires rules, defaultProfile, and calculateMetrics');
@@ -571,9 +773,33 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
 
   const prepare = (input, options) => {
     const source = String(input ?? '');
-    const ignoreWarning = source.includes('humanizer-ignore') && source.includes('`') && (/\.[cm]?[jt]sx?$/iu.test(options.sourcePath ?? '') || (options.domain === 'code' && !options.sourcePath)) ? 'Ignore directives are disabled for JavaScript/TypeScript inputs containing backticks.' : '';
-    const original = applyIgnoreDirectives(input, options);
-    const mapped = sanitizeMarkdownWithMap(original);
+    const ignoreWarning = source.includes('humanizer-ignore') && ambiguousTemplateSource(source, options) ? 'Ignore directives are disabled for JavaScript/TypeScript or MDX inputs containing backticks.' : '';
+    const ignoreWarnings = ignoreWarning ? [ignoreWarning] : [];
+    const lines = source.split(/\r?\n/u);
+    for (const [index, line] of lines.entries()) {
+      if (/humanizer-ignore/u.test(line) && (/^\s*(?:[-+*]\s|\d+[.)]\s|>|\|)/u.test(line) || /\|/u.test(line))) ignoreWarnings.push(`Line ${index + 1}: ambiguous Markdown ignore directive; no finding was suppressed.`);
+      if (/humanizer-ignore-file/u.test(line) && index >= 10) ignoreWarnings.push(`Line ${index + 1}: file ignore is only supported in the first 10 physical lines.`);
+      if (/humanizer-ign[a-z-]*/iu.test(line) && !/humanizer-ignore(?:-file)?\b/u.test(line)) ignoreWarnings.push(`Line ${index + 1}: unrecognized ignore directive; no finding was suppressed.`);
+      const scoped = /humanizer-ignore[\t ]+([^\r\n]*?)(?:-->|\*\/|$)/u.exec(line);
+      if (scoped && scoped[1].trim() && !/^[A-Z][A-Z0-9_]*(?:\s*,\s*[A-Z][A-Z0-9_]*)*\s*$/u.test(scoped[1].trim())) ignoreWarnings.push(`Line ${index + 1}: invalid rule scope; no finding was suppressed.`);
+    }
+    const active = [];
+    const maskedWithIgnores = applyIgnoreDirectives(input, options, active);
+    for (const [index, line] of lines.entries()) {
+      if (active[index] === false && /humanizer-ignore/u.test(line)) ignoreWarnings.push(`Line ${index + 1}: ignore directive is inactive inside a fenced or ambiguous code context.`);
+    }
+    const masked = options.noIgnore ? stripIgnoreMarkers(source, active) : maskedWithIgnores.split(/(?<=\n)/u).map((line, index) => {
+      if (!active[index] || !(/^\s*(?:[-+*]\s|\d+[.)]\s|>|\|)/u.test(line) || /\|/u.test(line))) return line;
+      return line.replace(/<!--\s*humanizer-ignore(?:-file)?(?:\s+[A-Z0-9_, ]+)?\s*-->/u, (match) => match.replace(/[^\r\n]/g, ' '));
+    }).join('');
+    const { text: original, scopes } = scopedIgnoreDirectives(source, masked, options, active);
+    const sourceLines = source.split(/(?<=\n)/u);
+    const analysisLines = original.split(/(?<=\n)/u);
+    for (let index = 1; index < sourceLines.length - 1; index += 1) {
+      const directive = /^\s*(?:<!--[\t ]*humanizer-ignore[\t ]+[A-Z][A-Z0-9_]*(?:[\t ]*,[\t ]*[A-Z][A-Z0-9_]*)*[\t ]*-->|\/\/[\t ]*humanizer-ignore[\t ]+[A-Z][A-Z0-9_]*(?:[\t ]*,[\t ]*[A-Z][A-Z0-9_]*)*)[\t ]*\r?\n$/u;
+      if (active[index - 1] && active[index] && active[index + 1] && sourceLines[index - 1].trim() && sourceLines[index + 1].trim() && directive.test(sourceLines[index])) analysisLines[index] = analysisLines[index].replace(/[\r\n]/gu, ' ');
+    }
+    const mapped = sanitizeMarkdownWithMap(analysisLines.join(''));
     const sanitized = mapped.text;
     const requestedLanguage = String(options.language ?? 'auto').toLowerCase();
     const initial = tokenizeText(sanitized, requestedLanguage);
@@ -582,8 +808,11 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
     mapSentenceOffsets(tokenized.sentences, mapped);
     return {
       source,
-      ignoreWarning,
+      ignoreWarning: ignoreWarning || ignoreWarnings.join(' '),
+      ignoreWarnings,
+      scopes,
       original,
+      active,
       sanitized,
       language,
       rulePack: rules[language] ? language : 'universal',
@@ -591,26 +820,66 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
     };
   };
 
-  const analyzePrepared = ({ source, ignoreWarning, original, sanitized, language, rulePack, tokenized }, options, metrics) => {
+  const analyzePrepared = ({ source, ignoreWarning, ignoreWarnings, scopes, original, active, sanitized, language, rulePack, tokenized }, options, metrics) => {
     const profile = options.profile ?? defaultProfile;
     const thresholds = { ...defaultProfile.thresholds, ...(profile.thresholds ?? {}) };
     const mattrTarget = mattrThreshold(thresholds, language, tokenized);
-    const targets = { cvMin: thresholds.burstinessCVLong, paragraphCvMin: 0.25, mattrMin: mattrTarget, rhythmDeltaMin: thresholds.adjacentDelta, minSentencesForStats: 8, passScore: thresholds.passScore };
-    const allowlist = [...(profile.allowlist ?? []), ...(options.allowlist ?? [])].map((phrase) => String(phrase).trim().toLocaleLowerCase()).filter(Boolean);
+    const targets = { cvMin: thresholds.burstinessCVLong, paragraphCvMin: 0.25, mattrMin: mattrTarget, rhythmDeltaMin: thresholds.adjacentDelta, shortSentenceRatioMin: thresholds.shortSentenceRatio, longSentenceRatioMin: thresholds.longSentenceRatio, minSentencesForStats: MIN_SENTENCES_FOR_RHYTHM, passScore: thresholds.passScore };
+    const allowlist = options.noIgnore ? [] : [...(profile.allowlist ?? []), ...(options.allowlist ?? [])].map((phrase) => String(phrase).trim().toLocaleLowerCase()).filter(Boolean);
     const isAllowed = (violation) => typeof violation.match === 'string' && allowlist.includes(violation.match.toLocaleLowerCase());
-    const patternMatches = patternViolations(tokenized, rules[language], metrics.wordCount, original).filter((violation) => !isAllowed(violation));
-    const domainFindings = lintDomainHygiene(original, options.sourcePath, options.domain ?? 'auto').filter((violation) => !isAllowed(violation));
+    const proseInput = ['prose', 'copywriting'].includes(options.domain) || (!['code', 'ui'].includes(options.domain) && (!options.sourcePath || /\.(?:md|txt)$/iu.test(options.sourcePath)));
+    const rawPatternMatches = [
+      ...patternViolations(tokenized, rules[language], metrics.wordCount, original, language),
+      ...(proseInput ? inconsistentQuotes(tokenized, source) : []),
+      ...(proseInput ? delayedDecision(tokenized, language) : []),
+      ...((!options.sourcePath || /\.md$/iu.test(options.sourcePath)) && !['code', 'ui'].includes(options.domain) ? markdownFormatting(original, active, tokenized) : []),
+    ];
+    const rawDomainFindings = lintDomainHygiene(original, options.sourcePath, options.domain ?? 'auto');
+    const dashBaseline = Number(profile?.targets?.punctuationRates?.dash ?? profile?.metrics?.punctuationRates?.dash);
+    const expectedDashes = options.profile != null && Number.isFinite(dashBaseline) && dashBaseline > 0 && round(punctuationRates(sanitized, metrics.wordCount).dash) <= dashBaseline;
+    const patternMatches = expectedDashes ? rawPatternMatches.filter((finding) => finding.ruleId !== 'EN044') : rawPatternMatches;
+    const domainFindings = rawDomainFindings;
+    const suppressed = [];
+    const allowlistApplied = [];
+    const visible = (findings) => {
+      const retained = findings.filter((finding) => {
+      const offset = finding.charOffset?.start;
+      const scope = scopes.find((item) => Number.isInteger(offset) && offset >= item.start && offset < item.end && (item.directive.scope.includes(finding.type) || item.directive.scope.includes(finding.ruleId)));
+      const allowed = isAllowed(finding);
+      if (!scope && !allowed) return true;
+      if (allowed) allowlistApplied.push(finding.match.toLocaleLowerCase());
+      const line = Number.isInteger(offset) ? source.slice(0, offset).split(/\r\n|\r|\n/u).length : null;
+      suppressed.push({ ...finding, line, directive: scope?.directive ?? { kind: 'allowlist', line: null, scope: 'phrase' } });
+      return false;
+      });
+      const counts = new Map();
+      for (const finding of retained) if (finding.weakAlone) {
+        const paragraph = /^Paragraph (\d+)/u.exec(finding.location ?? '')?.[1];
+        if (paragraph) counts.set(paragraph, (counts.get(paragraph) ?? 0) + 1);
+      }
+      return retained.map((finding) => {
+        if (!finding.weakAlone) return finding;
+        const paragraph = /^Paragraph (\d+)/u.exec(finding.location ?? '')?.[1];
+        return { ...finding, severity: paragraph && counts.get(paragraph) >= 3 ? 'error' : 'warn' };
+      });
+    };
 
-    if (metrics.sentenceCount < thresholds.minimumSentences) {
-      const violations = withSeverity(attachSurgicalHints([
+    if (metrics.sentenceCount < Math.min(thresholds.minimumSentences, MIN_SENTENCES_FOR_RHYTHM)) {
+      const violations = visible(withSeverity(attachSurgicalHints([
         ...patternMatches,
+        ...pairedContrasts(tokenized, language),
+        ...repeatedOpenings(tokenized),
         ...domainFindings,
-      ], tokenized), tokenized, source);
+      ], tokenized), tokenized, source));
       const result = {
+        schemaVersion: 1,
         status: violations.some((violation) => violation.severity === 'error') ? 'FAIL' : 'SKIP',
         ...(ignoreWarning ? { ignoreWarning } : {}),
+      ignoreWarnings,
         targets,
-        score: 100,
+        suppressed,
+        allowlistApplied: [...new Set(allowlistApplied)],
+        score: 100 - lexicalPenalty(violations),
         language,
         rulePack,
         warning: 'Text too short for statistical stylometry (< 8 sentences)',
@@ -634,10 +903,12 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
       match: 'Mean sentence length deviates >30% from target voice profile',
       fixInstruction: 'Adjust overall sentence complexity so mean sentence length approaches the target profile.',
     }] : [];
-    const violations = withSeverity(attachSurgicalHints([
+    const violations = visible(withSeverity(attachSurgicalHints([
       ...patternMatches,
-      ...(metrics.sentenceCount >= 8 ? monotonyViolations(tokenized) : []),
-      ...(metrics.sentenceCount >= 8 ? paragraphRhythmViolations(tokenized) : []),
+      ...pairedContrasts(tokenized, language),
+      ...repeatedOpenings(tokenized),
+      ...(metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM ? monotonyViolations(tokenized) : []),
+      ...(metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM ? paragraphRhythmViolations(tokenized) : []),
       ...structuralViolations(tokenized, metrics),
       ...repetitiveNgramViolations(tokenized, rules[language]?.stopwords),
       ...rhetoricalViolations(tokenized),
@@ -645,19 +916,23 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
       ...profileViolations,
       ...statisticalViolations(metrics, thresholds, mattrTarget),
       ...domainFindings,
-    ], tokenized), tokenized, source);
+    ], tokenized), tokenized, source));
     const score = scoreResult(metrics, violations, thresholds, mattrTarget);
-    const cvTarget = metrics.sentenceCount >= 8 ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
+    const cvTarget = metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
     const forbiddenTypes = new Set(['SLOP_PHRASE', 'DEFINITIONAL_OPENING', 'RHETORICAL_SLOP', 'WEAK_CTA', 'HYPERBOLIC_CLAIM', 'TAUTOLOGICAL_CODE_COMMENT', 'DECORATIVE_COMMENT_BANNER', 'LAZY_AI_PLACEHOLDER', 'MISSING_ACCESSIBLE_NAME', 'MISSING_IMG_ALT', 'HEADING_ORDER_SKIP', 'AI_GRADIENT_CLICHE', 'NON_RESPONSIVE_FIXED_WIDTH']);
-    const forbidden = violations.some((violation) => violation.severity === 'error' && forbiddenTypes.has(violation.type));
-    const rhythmPass = metrics.sentenceCount < 8 || metrics.adjacentDelta >= thresholds.adjacentDelta;
-    const distributionPass = metrics.sentenceCount < 8 || (metrics.shortSentenceRatio >= thresholds.shortSentenceRatio && metrics.longSentenceRatio >= thresholds.longSentenceRatio);
-    const status = score >= thresholds.passScore && !forbidden && (metrics.sentenceCount < 8 || metrics.burstinessCV >= cvTarget) && rhythmPass && distributionPass ? 'PASS' : 'FAIL';
+    const forbidden = violations.some((violation) => violation.severity === 'error' && (forbiddenTypes.has(violation.type) || STRONG_STAGING.has(violation.type)));
+    const rhythmPass = metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM || metrics.adjacentDelta >= thresholds.adjacentDelta;
+    const distributionPass = metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM || (metrics.shortSentenceRatio >= thresholds.shortSentenceRatio && metrics.longSentenceRatio >= thresholds.longSentenceRatio);
+    const status = score >= thresholds.passScore && !forbidden && (metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM || metrics.burstinessCV >= cvTarget) && rhythmPass && distributionPass ? 'PASS' : 'FAIL';
 
     const result = {
+      schemaVersion: 1,
       status,
       ...(ignoreWarning ? { ignoreWarning } : {}),
+      ignoreWarnings,
       targets,
+      suppressed,
+      allowlistApplied: [...new Set(allowlistApplied)],
       score,
       language,
       rulePack,
@@ -668,16 +943,59 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
     return result;
   };
 
+  const collectMasked = (result, strict, prepared) => {
+    const { source, original } = prepared;
+    const lines = source.split(/\r\n|\r|\n/u);
+    const originalLines = original.split(/\r\n|\r|\n/u);
+    const fileLine = lines.findIndex((line, index) => /<!--\s*humanizer-ignore-file\s*-->/u.test(line) && originalLines[index]?.trim() === '');
+    const existing = new Set(result.suppressed.map((v) => `${v.type}:${v.charOffset?.start}:${v.charOffset?.end}`));
+    for (const finding of strict.violations) {
+      const { start, end } = finding.charOffset ?? {};
+      if (!Number.isInteger(start) || !Number.isInteger(end) || finding.sourceScope !== 'match') continue;
+      if (source.slice(start, end) === original.slice(start, end)) continue;
+      const key = `${finding.type}:${start}:${end}`;
+      if (existing.has(key)) continue;
+      const line = source.slice(0, start).split(/\r\n|\r|\n/u).length;
+      const text = lines[line - 1] ?? '';
+      const lineStart = start - (source.slice(0, start).split(/\r\n|\r|\n/u).at(-1)?.length ?? 0);
+      const directiveOffset = text.indexOf('humanizer-ignore');
+      if (directiveOffset >= 0) {
+        const marker = text.lastIndexOf('<!--', directiveOffset);
+        if (marker >= 0 && start >= lineStart + marker) continue;
+        if (/^\s*\/\/\s*humanizer-ignore/u.test(text)) continue;
+      }
+      let directiveLine = fileLine >= 0 ? fileLine + 1 : line;
+      if (fileLine < 0 && !/humanizer-ignore/u.test(lines[line - 1] ?? '')) {
+        for (let index = line - 2; index >= 0; index -= 1) {
+          if (lines[index].trim()) { if (/humanizer-ignore/u.test(lines[index])) directiveLine = index + 1; break; }
+        }
+      }
+      result.suppressed.push({ ...finding, line, directive: { kind: fileLine >= 0 ? 'file' : 'line', line: directiveLine, scope: 'all' } });
+      existing.add(key);
+    }
+    return result;
+  };
+
   return {
     analyzeText(input, options = {}) {
       const prepared = prepare(input, options);
-      return analyzePrepared(prepared, options, calculateMetrics(prepared.tokenized, prepared.sanitized));
+      const result = analyzePrepared(prepared, options, calculateMetrics(prepared.tokenized, prepared.sanitized));
+      if (options.noIgnore || prepared.original === prepared.source) return result;
+      const strictOptions = { ...options, noIgnore: true };
+      const strictPrepared = prepare(input, strictOptions);
+      const strict = analyzePrepared(strictPrepared, strictOptions, calculateMetrics(strictPrepared.tokenized, strictPrepared.sanitized));
+      return collectMasked(result, strict, prepared);
     },
     async analyzeTextAsync(input, options = {}) {
       if (typeof calculateMetricsAsync !== 'function') return this.analyzeText(input, options);
       const prepared = prepare(input, options);
       const metrics = await calculateMetricsAsync(prepared.tokenized, prepared.sanitized);
-      return analyzePrepared(prepared, options, metrics);
+      const result = analyzePrepared(prepared, options, metrics);
+      if (options.noIgnore || prepared.original === prepared.source) return result;
+      const strictOptions = { ...options, noIgnore: true };
+      const strictPrepared = prepare(input, strictOptions);
+      const strictMetrics = await calculateMetricsAsync(strictPrepared.tokenized, strictPrepared.sanitized);
+      return collectMasked(result, analyzePrepared(strictPrepared, strictOptions, strictMetrics), prepared);
     },
   };
 }

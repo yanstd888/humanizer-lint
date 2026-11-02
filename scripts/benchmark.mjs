@@ -6,7 +6,7 @@ import path from 'node:path';
 import { analyzeText } from './analyze.mjs';
 
 const parentDirectory = '..';
-const { DEMO_SAMPLES } = await import(new URL([parentDirectory, 'demo', 'samples.mjs'].join('/'), import.meta.url));
+const { DEMO_SAMPLES } = await import(new URL([parentDirectory, 'benchmark', 'fixtures.mjs'].join('/'), import.meta.url));
 
 const LANGUAGES = ['en', 'id', 'es', 'ms', 'fr', 'de', 'pt', 'zh'];
 const CORPUS = [['id-formal-legal.txt', 'id'], ['id-en-mixed-tech.md', 'id'], ['en-pre-llm-essay.txt', 'en'], ['translated-docs.txt', 'en'], ['clean-ui-component.tsx', 'en']];
@@ -51,11 +51,14 @@ export function runBenchmark(iterations = 20) {
   const mean = (values) => values.reduce((sum, value) => sum + value, 0) / values.length;
   const deterministic = firstPass.every((item, index) => item.actual === secondPass[index].actual && item.score === secondPass[index].score);
   const correct = firstPass.filter((item) => item.actual === item.expected).length;
-  const corpusResults = CORPUS.map(([file, language]) => {
-    const text = readFileSync(new URL([parentDirectory, 'tests', 'corpus', file].join('/'), import.meta.url), 'utf8');
+  const corpusResults = CORPUS.flatMap(([file, language]) => {
+    let text;
+    try { text = readFileSync(new URL([parentDirectory, 'tests', 'corpus', file].join('/'), import.meta.url), 'utf8'); }
+    catch (error) { if (error.code === 'ENOENT') return []; throw error; }
     const { status, score } = analyzeText(text, { language, sourcePath: file });
-    return { file, language, expected: 'not FAIL', status, score };
+    return [{ file, language, expected: 'not FAIL', status, score }];
   });
+  if (corpusResults.length > 0 && corpusResults.length !== CORPUS.length) throw new Error('Exploratory corpus is incomplete');
   const falsePositives = corpusResults.filter((item) => item.status === 'FAIL').length;
   const evaluated = corpusResults.filter((item) => item.status !== 'SKIP').length;
 
@@ -84,6 +87,13 @@ function currentModulePath() {
 
 if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(currentModulePath())) {
   const report = runBenchmark();
-  process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+  if (process.argv.includes('--table')) {
+    console.log('Synthetic Reference Fixtures (16 multilingual + 4 domain)');
+    console.table(report.results);
+    console.log(`Synthetic fixture pass rate: ${report.syntheticFixturePassRate}; deterministic: ${report.deterministic}`);
+    console.log(`Exploratory Corpus (FAIL on assumed-human: ${report.realWorldCorpus.falsePositives}/${report.realWorldCorpus.total}; not a population estimate)`);
+    console.table(report.realWorldCorpus.results);
+    console.log(report.realWorldCorpus.caveat);
+  } else process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
   if (!report.deterministic || report.syntheticFixturePassRate !== 1 || report.meanScoreSeparation <= 0) process.exitCode = 1;
 }

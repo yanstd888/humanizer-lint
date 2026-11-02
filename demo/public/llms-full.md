@@ -1,12 +1,14 @@
 # humanizer-lint — Full Technical Reference
 
-> Version 1.5.0. The static build renders this file as `/llms-full.txt` with the checked-in rule catalogs and default profile.
+> Version 1.5.1. The static build renders this file as `/llms-full.txt` with the checked-in rule catalogs and default profile.
 
 ## Purpose
 
-`humanizer-lint` is a deterministic local prose-quality linter. Eight language-specific packs (`en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh`) provide lexical rules; universal mode uses native `Intl.Segmenter` for sentence-rhythm diagnostics across 100+ languages. It does not classify authorship or upload text.
+`humanizer-lint` is a deterministic local prose-quality linter. Eight language-specific packs (`en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh`) provide lexical rules; universal mode uses native `Intl.Segmenter` for experimental, uncalibrated rhythm diagnostics in other languages. It does not classify authorship or upload text.
 
 Metrics such as document CV, paragraph CV, adjacent delta, sentence-length ranges, MATTR, and compression ratio are diagnostics. Formal or regulated prose may legitimately have lower variance and should preserve required terms.
+
+**Bahasa Indonesia:** Linter prosa lokal tanpa dependency yang menandai tulisan kaku ala AI (frasa klise, ritme kalimat datar, kata berulang) dan menunjukkan bagian yang perlu direvisi. Pemeriksa gaya, bukan detektor AI.
 
 ## CLI
 
@@ -66,4 +68,15 @@ The benchmark covers 16 multilingual and 4 domain synthetic fixtures. Its fixtur
 {{defaultProfile}}
 ```
 
-A local, zero-dependency prose and copywriting linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording, translationese) and tells you exactly what to revise. A deterministic style and rhythm checker, not an AI authorship detector. Experimental rhythm diagnostics (uncalibrated thresholds).
+A local, zero-dependency prose linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording) and tells you what to revise. A style checker, not an AI detector. Experimental rhythm diagnostics (uncalibrated thresholds).
+
+## Multilingual writing intents
+
+- EN: AI humanizer, humanize AI text, prose linter, anti-slop linter, AI writing style editor, sentence burstiness checker, Markdown prose linter and copywriting/CTA linter.
+- ID: humanizer bahasa Indonesia; perbaiki tulisan AI yang kaku, hilangkan kata klise AI, dan cek variasi ritme kalimat.
+- MS: humanizer teks bahasa Melayu; semak dan baiki gaya ayat AI.
+- ES: humanizador de texto IA; mejorar textos generados por IA y eliminar clichés de ChatGPT.
+- FR: humaniseur de texte IA; corriger le style robotique IA et supprimer les clichés de rédaction.
+- DE: KI-Schreibstil verbessern und KI-Floskeln entfernen.
+- PT: humanizador de texto IA; deixar texto de IA mais natural e remover clichês de IA.
+- ZH: AI文章润色与人性化，消除AI写作腔，去除生硬翻译腔，提升文章可读性与句式节奏。

@@ -19,9 +19,9 @@ const { analyzeText } = createAnalyzer({ rules: RULES, defaultProfile: DEFAULT_P
 export { analyzeText };
 
 function formatHuman(result, includeDeliveryGate = false) {
-  const lines = [`Status: ${result.status}`, `Score: ${result.score}`, `Language: ${result.language}`, `Rule pack: ${result.rulePack}`];
+  const lines = [`Status: ${result.status}`, `Score: ${result.score}`, `Language: ${result.language}`, `Rule pack: ${result.rulePack}`, `Suppressed: ${result.suppressed.length}`];
   if (result.warning) lines.push(`Warning: ${result.warning}`);
-  if (result.ignoreWarning) lines.push(`Warning: ${result.ignoreWarning}`);
+  for (const warning of result.ignoreWarnings ?? []) lines.push(`Warning: ${warning}`);
   lines.push('', 'Metrics:');
   for (const [name, value] of Object.entries(result.metrics)) lines.push(`  ${name}: ${value}`);
   if (result.violations.length) lines.push('', 'Violations:');
@@ -81,13 +81,16 @@ export async function runAnalyzeCli(argv, io = {}) {
       options: {
         file: { type: 'string' },
         stdin: { type: 'boolean' },
+        'stdin-filename': { type: 'string' },
         lang: { type: 'string', default: 'auto' },
         profile: { type: 'string' },
         allow: { type: 'string' },
         'min-score': { type: 'string' },
         domain: { type: 'string', default: 'auto' },
         'no-domain-lint': { type: 'boolean' },
+        'no-ignore': { type: 'boolean' },
         json: { type: 'boolean' },
+        brief: { type: 'boolean' },
         'delivery-gate': { type: 'boolean' },
         help: { type: 'boolean' },
       },
@@ -98,10 +101,12 @@ export async function runAnalyzeCli(argv, io = {}) {
     values.lang ??= 'auto';
     values.domain ??= 'auto';
     if (values.help) {
-      stdout('Usage: humanizer-lint (--file <path> | --stdin | <files...>) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--allow <phrases>] [--min-score <0-100>] [--domain auto|prose|copywriting|code|ui] [--no-domain-lint] [--json] [--delivery-gate]\n');
+      stdout('Usage: humanizer-lint (--file <path> | --stdin | <files...>) [--stdin-filename <name>] [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--allow <phrases>] [--min-score <0-100>] [--domain auto|prose|copywriting|code|ui] [--no-domain-lint] [--no-ignore] [--json] [--brief] [--delivery-gate]\n');
       return 0;
     }
     if ((values.stdin && (values.file || positionals.length)) || (values.file && positionals.length) || (!values.stdin && !values.file && !positionals.length)) throw new Error('Choose exactly one input: --file, file paths, or --stdin');
+    if (values.brief && !values.json) throw new Error('--brief requires --json');
+    if (values['stdin-filename'] !== undefined && (!values.stdin || !values['stdin-filename'].trim())) throw new Error('--stdin-filename requires --stdin and a nonempty name');
     if (!/^(?:auto|universal|[a-z]{2})$/u.test(values.lang)) throw new Error('--lang must be auto, universal, or an ISO 639-1 code');
     if (!['auto', 'prose', 'copywriting', 'code', 'ui'].includes(values.domain)) throw new Error('--domain must be auto, prose, copywriting, code, or ui');
     if (values.stdin && io.stdin == null && process.stdin.isTTY) throw new Error('--stdin requires piped input');
@@ -112,11 +117,17 @@ export async function runAnalyzeCli(argv, io = {}) {
     const reports = [];
     for (const file of files) {
       const text = file ? await new Promise((resolve, reject) => readFile(file, 'utf8', (error, data) => error ? reject(error) : resolve(data))) : await stdin();
-      const result = analyzeText(text, { language: values.lang, profile, sourcePath: file, domain: values['no-domain-lint'] ? 'prose' : values.domain, allowlist: values.allow ? values.allow.split(',') : [] });
+      const result = analyzeText(text, { language: values.lang, profile, sourcePath: file ?? values['stdin-filename'], domain: values['no-domain-lint'] ? 'prose' : values.domain, allowlist: values.allow ? values.allow.split(',') : [], noIgnore: values['no-ignore'] });
       reports.push({ file, result });
     }
     const multi = reports.length > 1;
-    stdout(values.json ? `${JSON.stringify(multi ? reports : reports[0].result, null, 2)}\n` : reports.map(({ file, result }) => `${multi ? `File: ${file}\n` : ''}${formatHuman(result, values['delivery-gate'])}`).join('\n'));
+    const project = (result) => values.brief ? {
+      ...Object.fromEntries(['schemaVersion', 'status', 'score', 'targets', 'violations', 'ignoreWarnings', 'allowlistApplied'].map((key) => [key, result[key]])),
+      suppressed: result.suppressed.map(({ type, ruleId, location, charOffset, directive, match, sourceScope }) => ({ type, ruleId, location, charOffset, directive, match, sourceScope })),
+      deliveryGate: { rhythmAndStylometry: { status: result.deliveryGate.rhythmAndStylometry.status }, finalVerdict: { status: result.status, score: result.score } },
+    } : result;
+    const jsonOutput = multi ? reports.map(({ file, result }) => ({ file, result: project(result) })) : project(reports[0].result);
+    stdout(values.json ? `${JSON.stringify(jsonOutput, null, values.brief ? 0 : 2)}\n` : reports.map(({ file, result }) => `${multi ? `File: ${file}\n` : ''}${formatHuman(result, values['delivery-gate'])}`).join('\n'));
     return reports.some(({ result }) => result.status === 'FAIL' || (minimumScore !== null && result.score < minimumScore)) ? 1 : 0;
   } catch (error) {
     stderr(`ERROR: ${error.message}\n`);

@@ -2,6 +2,6 @@
   "name": "humanizer-lint",
   "taglineEn": "Deterministic Multilingual AI Prose Humanizer, Anti-Cliché Style Linter & Sentence Rhythm Analyzer",
   "taglineId": "Linter Gaya Tulisan AI, Editor Prosa Natural & Penganalisis Ritme Kalimat Multi-Bahasa secara Deterministik",
-  "canonicalEn": "A local, zero-dependency prose and copywriting linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording, translationese) and tells you exactly what to revise. A deterministic style and rhythm checker, not an AI authorship detector.",
-  "canonicalId": "Linter prosa dan copywriting lokal tanpa dependency yang menandai tulisan kaku ala AI (frasa klise, ritme kalimat datar, pengulangan kata, terjemahan kaku) serta menunjukkan bagian eksak yang perlu direvisi. Pemeriksa kualitas gaya tulisan, bukan detektor kepengarangan AI."
+  "canonicalEn": "A local, zero-dependency prose linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording) and tells you what to revise. A style checker, not an AI detector.",
+  "canonicalId": "Linter prosa lokal tanpa dependency yang menandai tulisan kaku ala AI (frasa klise, ritme kalimat datar, kata berulang) dan menunjukkan bagian yang perlu direvisi. Pemeriksa gaya, bukan detektor AI."
 }

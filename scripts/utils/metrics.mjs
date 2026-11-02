@@ -1,9 +1,8 @@
-import { deflateRawSync } from 'node:zlib';
-
 import {
   adjacentDelta,
   coefficientOfVariation,
   createMetrics,
+  deterministicDeflateRaw,
   mattr,
   mean,
   punctuationRates,
@@ -12,7 +11,7 @@ import {
 
 const metrics = createMetrics({
   encode: (text) => Buffer.from(text, 'utf8'),
-  deflateRaw: (bytes) => deflateRawSync(bytes),
+  deflateRaw: deterministicDeflateRaw,
 });
 
 export {

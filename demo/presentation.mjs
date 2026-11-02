@@ -23,6 +23,7 @@ export function languageLabel(language) {
 }
 
 export const rhythmGateSkipped = (report) => report.metrics.sentenceCount < report.targets.minSentencesForStats;
+export const lexicalHealth = (report) => !report.deliveryGate.lexicalAndMorphology.morphology.some((finding) => finding.severity === 'error');
 
 export function parseDemoQuery(search) {
   const query = new URLSearchParams(search);

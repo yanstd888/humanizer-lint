@@ -2,6 +2,22 @@
   "language": "en",
   "stopwords": ["the", "and", "of", "to", "in", "is", "that", "for", "it", "with", "as", "on", "are", "this", "by", "be", "at", "or", "from", "an"],
   "patterns": [
+    {"id":"EN058","type":"FORCED_TRIAD","pattern":"\\b[\\p{L}]{3,},\\s+[\\p{L}]{3,},\\s+and\\s+[\\p{L}]{3,}\\b","fixInstruction":"Review this pattern in context; revise only if it obscures meaning.","weakAlone":true},
+    {"id":"EN059","type":"OVER_HYPHENATION","pattern":"\\b(?!CC-BY-NC-(?:SA|ND)\\b)[\\p{L}]+(?:-[\\p{L}]+){3,}\\b","fixInstruction":"Review this pattern in context; revise only if it obscures meaning.","weakAlone":true},
+    {"id":"EN060","type":"PASSIVE_MISSING_SUBJECT","pattern":"\\bit was (?:decided|determined|concluded) that\\b","fixInstruction":"Review this pattern in context; revise only if it obscures meaning.","weakAlone":true},
+    {"id":"EN054","type":"ARGUING_WITH_NO_ONE","pattern":"\\bi['’]m not saying\\b[^.!?]{1,80},\\s*but\\b|\\ba tempting approach would be\\b","fixInstruction":"Review this phrase in context and state supported facts directly."},
+    {"id":"EN055","type":"INFLATED_SIGNIFICANCE","pattern":"\\b(?:mark(?:s|ing) a pivotal moment|the future looks bright|continues to thrive)\\b","fixInstruction":"Review this phrase in context and state supported facts directly."},
+    {"id":"EN056","type":"COPULA_AVOIDANCE","pattern":"\\b(?:serves as|stands as|boasts)\\b","fixInstruction":"Review this phrase in context and state supported facts directly."},
+    {"id":"EN057","type":"KNOWLEDGE_LIMIT_DISCLAIMER","pattern":"\\bwhile details are limited in available sources,?\\s+it appears\\b","fixInstruction":"Review this phrase in context and state supported facts directly."},
+    {"id":"EN051","type":"DRAMATIC_ONE_LINE_CLOSER","pattern":"\\blet that sink in\\b|\\bthat is the real win\\b","fixInstruction":"Review the claim and context; keep only supported, relevant prose."},
+    {"id":"EN052","type":"CHATBOT_RESIDUE","pattern":"\\b(?:great question|i hope this helps|here is the revised)\\b","fixInstruction":"Review the claim and context; keep only supported, relevant prose."},
+    {"id":"EN053","type":"BORROWED_AUTHORITY","pattern":"\\bexperts (?:believe|say|claim)\\b","fixInstruction":"Review the claim and context; keep only supported, relevant prose."},
+    {"id":"EN048","type":"STACKED_QUALIFIERS","pattern":"\\bcould potentially possibly\\b","fixInstruction":"Review this phrase in context; revise only if it obscures meaning.","weakAlone":true},
+    {"id":"EN049","type":"VAGUE_CONNECTION","pattern":"\\b(?:in connection with|associated with the leadership of)\\b","fixInstruction":"Review this phrase in context; revise only if it obscures meaning.","weakAlone":true},
+    {"id":"EN050","type":"META_DOCUMENT_TALK","pattern":"\\bthe table below compares\\b","fixInstruction":"Review this phrase in context; revise only if it obscures meaning.","weakAlone":true},
+    {"id":"EN045","type":"NOT_X_BUT_Y","pattern":"\\bit['’]s not just\\b[^.!?]{1,80},\\s*it['’]s\\b","fixInstruction":"State the positive claim directly."},
+    {"id":"EN046","type":"STAGED_RUN_UP","pattern":"\\bhere(?:['’]s| is) the (?:thing|kicker):|\\blet['’]s dive in\\b|^honestly\\?","fixInstruction":"Start with the relevant fact."},
+    {"id":"EN047","type":"DEEP_SOUNDING_SAYING","pattern":"\\bat its core,?\\s+what really matters is\\b","fixInstruction":"Name the specific point directly."},
     {"id":"EN001","type":"SLOP_PHRASE","pattern":"\\bdelve\\b","fixInstruction":"Name the exact action or subject instead."},
     {"id":"EN002","type":"SLOP_PHRASE","pattern":"\\btapestry\\b","fixInstruction":"Replace the metaphor with a concrete description."},
     {"id":"EN003","type":"SLOP_PHRASE","pattern":"\\btestament\\b","fixInstruction":"State the evidence directly."},
@@ -42,9 +58,9 @@
     {"id":"EN038","type":"SLOP_PHRASE","pattern":"\\bexciting times (?:lie|are) ahead\\b","fixInstruction":"Replace optimism with a supported next step."},
     {"id":"EN039","type":"SLOP_PHRASE","pattern":"\\bstands as a testament\\b","fixInstruction":"State the evidence directly."},
     {"id":"EN040","type":"SLOP_PHRASE","pattern":"\\bmarking a (?:pivotal|significant) moment\\b","fixInstruction":"State what happened and its direct effect."},
-    {"id":"EN041","type":"STRUCTURAL_CLICHE","pattern":",\\s+[a-z]+ing\\s+(?:a|the|its|their|this|that)\\s+[a-z]+","fixInstruction":"Split or rewrite the participial tail as a supported clause."},
+    {"id":"EN041","type":"SHALLOW_PARTICIPLE_TAIL","weakAlone":true,"pattern":",[ \\t]+(?:[a-z]+ing[ \\t]+(?:a|the|its|their|this|that)[ \\t]+[a-z]+|(?:showcasing|reflecting|symbolizing)[ \\t]+[a-z]+)","fixInstruction":"Split or rewrite the participial tail as a supported clause."},
     {"id":"EN042","type":"STRUCTURAL_CLICHE","pattern":"\\bnot only[\\s\\S]{0,100}?but also\\b","fixInstruction":"State both claims directly without the binary formula."},
     {"id":"EN043","type":"STRUCTURAL_CLICHE","pattern":"\\bit['’]s not just about[\\s\\S]{0,100}?it['’]s about\\b","fixInstruction":"State the positive claim directly."},
-    {"id":"EN044","type":"STRUCTURAL_CLICHE","pattern":"(?:—|--)","maxOccurrences":1,"perWords":250,"fixInstruction":"Replace repeated dashes with the punctuation that matches the relationship."}
+    {"id":"EN044","type":"EM_DASH_OVERUSE","scope":"paragraph-frequency","pattern":"(?:—|--)","maxOccurrences":1,"perWords":250,"weakAlone":true,"fixInstruction":"Review repeated dashes in context; preserve a consistent author voice."}
   ]
 }
