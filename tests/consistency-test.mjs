@@ -5,7 +5,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const read = (file) => readFile(path.join(root, file), 'utf8');
+const read = (file) => readFile(path.join(root, file), 'utf8').then((text) => text.replace(/\r\n/g, '\n'));
 
 test('canonical product position, version and experimental scope stay synchronized', async () => {
   const [canonical, manifest, skill, readme, source, llms, full, built, skillsConfig, indonesianPage] = await Promise.all([
