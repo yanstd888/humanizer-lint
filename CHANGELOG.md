@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Label newly mined rule patterns with their `mined` source; existing rules remain unchanged.
+
 - Bind evaluation regression baselines to development prompt provenance as well as corpus content.
 
 - Add six explicitly assistant-authored, related AI examples to the incomplete development corpus; their prompt descriptions are post-hoc.

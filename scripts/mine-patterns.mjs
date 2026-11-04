@@ -82,7 +82,7 @@ async function main() {
       if (existingPhrases.has(item.phrase) || existing.has(pattern) || existing.has(previousPattern) || existing.has(legacyPattern)) continue;
       while (ids.has(`MINED_${values.lang.toUpperCase()}_${n}`)) n += 1;
       const id = `MINED_${values.lang.toUpperCase()}_${n++}`;
-      pack.patterns.push({ id, type: 'SLOP_PHRASE', pattern, minedPhrase: item.phrase, fixInstruction: 'Review this corpus-derived phrase in context; preserve accurate meaning.' });
+      pack.patterns.push({ id, type: 'SLOP_PHRASE', pattern, minedPhrase: item.phrase, source: 'mined', fixInstruction: 'Review this corpus-derived phrase in context; preserve accurate meaning.' });
       ids.add(id); existing.add(pattern); existingPhrases.add(item.phrase); added += 1;
     }
     if (added) {

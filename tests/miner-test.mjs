@@ -43,6 +43,7 @@ test('miner compares document frequencies without modifying rule packs', async (
     const first = JSON.parse(execFileSync(process.execPath, args, { encoding: 'utf8' }));
     const rules = JSON.parse(await readFile(pack, 'utf8')).patterns;
     assert.ok(first.writtenRules > 0);
+    assert.ok(rules.every((rule) => rule.source === 'mined'));
     assert.ok(rules.some((rule) => new RegExp(rule.pattern, 'iu').test('Magic purple dragon arrives.')));
     const solar = report.candidates.find((item) => item.phrase === 'solar orbit');
     assert.equal(solar.aiDocuments, 3);
