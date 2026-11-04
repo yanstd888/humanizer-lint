@@ -17,6 +17,11 @@ test('workflow actions are pinned to full commit SHAs', async () => {
   }
 });
 
+test('npm exclusion is configured for the evaluation corpus', async () => {
+  const ignore = await read('benchmark', '.npmignore');
+  assert.match(ignore, /^corpus\/$/m);
+});
+
 test('lockfile and plugin metadata match package metadata', async () => {
   const pkg = JSON.parse(await read('package.json'));
   const lock = JSON.parse(await read('package-lock.json'));
