@@ -34,7 +34,7 @@ These files are evaluation inputs, not a representative population. A false-posi
 - `en-pre-llm-essay.txt`: PASS (94); the passage predates LLMs, and rhythm metrics do not establish writing quality or authorship.
 - `translated-docs.txt`: FAIL (76); low burstiness, paragraph rhythm and symmetry can still flag formal technical documentation. The single missing sentence-range side is now a warning.
 
-The sentence-range change is provisional: this small corpus contains no AI-labeled evaluation documents and cannot measure the effect on recall.
+The sentence-range change is provisional: the labeled evaluation corpus is small and its related AI examples cannot establish the effect on recall.
 
 These are observations from the current implementation, not independent adjudication or a basis to tune the analyzer against this small set. Aggregate diagnostic excerpts identify context, not necessarily a phrase to replace.
 

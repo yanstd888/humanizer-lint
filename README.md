@@ -44,7 +44,7 @@ npx skills add yanstd888/humanizer-lint
 
 Run `npm run benchmark` to reproduce the 20 synthetic fixtures (16 multilingual and 4 domain checks) and exploratory source corpus on the local machine.
 
-From a repository checkout, `npm run eval -- --json` runs a preliminary, non-representative development seed: three English and one Indonesian historical human-source excerpts, with no AI-labeled documents. The English excerpts return one FAIL (1/3, Wilson 95% interval 6.1%–79.2%); the Indonesian excerpt does not (0/1, interval 0%–79.3%). Recall, precision and AUC cannot be estimated without AI samples. These small, non-random results are not population estimates; the held-out test split is not yet populated.
+From a repository checkout, `npm run eval -- --json` runs a preliminary development seed of four historical human-source excerpts and six assistant-authored AI examples. The English subset has 1/3 human FAIL and 2/3 AI FAIL; Indonesian has 0/1 human FAIL and 1/3 AI FAIL. The Wilson 95% intervals are 6.1%–79.2% and 20.8%–93.9% for English FPR and TPR, and 0%–79.3% and 6.1%–79.2% for Indonesian FPR and TPR. These tiny, non-random samples are not population estimates; there is no held-out test split.
 
 ## Known limitations
 

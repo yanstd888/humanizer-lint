@@ -1,6 +1,6 @@
 # Evaluation seed
 
-This is an incomplete development-only seed, not a representative or independently adjudicated evaluation corpus. It contains four historical human-source excerpts and no AI examples. Consequently recall, precision and AUC are unavailable and the regression gate cannot yet run. Do not tune rules or thresholds against this seed alone. There is no held-out test set yet.
+This is an incomplete development-only seed, not a representative or independently adjudicated evaluation corpus. It contains four historical human-source excerpts and six assistant-authored AI examples. The AI examples are related variants of a single scenario, not independent samples. Their prompt records are post-hoc task descriptions, not captured requests; they are not counted as adversarial tests. The regression gate cannot yet run against the old baseline. Do not tune rules or thresholds against this seed alone. There is no held-out test set yet.
 
 The English historical excerpts are public domain in the United States; rights elsewhere may differ. The Sastrawi excerpt retains the MIT notice in `LICENSES/SASTRAWI-LICENSE.txt`. The Indonesian legal text is attributed to the specified Wikisource revision; its underlying legal-text status is documented in the manifest, with the transcription subject to Wikisource terms. Original retrieval dates before this seed are unknown; `retrievedDate` records copying from the repository's existing corpus on 2026-11-04.
 
