@@ -249,8 +249,9 @@ function rhetoricalViolations(tokenized) {
     }));
 }
 
-function pairedContrasts(tokenized, language) {
+function pairedContrasts(tokenized, language, pack) {
   if (language !== 'en') return [];
+  const contrasts = (pack?.editorial?.pairedContrasts ?? []).map(({ first, second }) => [new RegExp(first, 'iu'), new RegExp(second, 'iu')]);
   const findings = [];
   for (const paragraph of tokenized.paragraphs) {
     for (let i = 1; i < paragraph.sentences.length; i += 1) {
@@ -261,7 +262,7 @@ function pairedContrasts(tokenized, language) {
       if (i === paragraph.sentences.length - 1 && first.wordCount <= 4 && second.wordCount <= 4 && firstToken && firstToken === secondToken) {
         findings.push({ type: 'DRAMATIC_ONE_LINE_CLOSER', weakAlone: true, location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${first.sentenceIndex}-${second.sentenceIndex}`, fixInstruction: 'Review whether this staged ending adds a supported point.' });
       }
-      if (/^this\s+(?:doesn['’]t|does not)\s+mean\b/iu.test(first.text) && /^it\s+means\b/iu.test(second.text)) {
+      if (contrasts.some(([left, right]) => left.test(first.text) && right.test(second.text))) {
         findings.push({ type: 'NOT_X_BUT_Y', location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${first.sentenceIndex}-${second.sentenceIndex}`, fixInstruction: 'Review whether the contrast is needed; state the supported point directly.' });
       }
     }
@@ -870,7 +871,7 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
     if (metrics.sentenceCount < Math.min(thresholds.minimumSentences, MIN_SENTENCES_FOR_RHYTHM)) {
       const violations = visible(withSeverity(attachSurgicalHints([
         ...patternMatches,
-        ...pairedContrasts(tokenized, language),
+        ...pairedContrasts(tokenized, language, rules[language]),
         ...repeatedOpenings(tokenized),
         ...domainFindings,
       ], tokenized), tokenized, source));
@@ -910,7 +911,7 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
     }] : [];
     const violations = visible(withSeverity(attachSurgicalHints([
       ...patternMatches,
-      ...pairedContrasts(tokenized, language),
+      ...pairedContrasts(tokenized, language, rules[language]),
       ...repeatedOpenings(tokenized),
       ...(metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM ? monotonyViolations(tokenized) : []),
       ...(metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM ? paragraphRhythmViolations(tokenized) : []),
