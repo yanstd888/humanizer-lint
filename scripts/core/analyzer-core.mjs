@@ -256,8 +256,10 @@ function pairedContrasts(tokenized, language) {
     for (let i = 1; i < paragraph.sentences.length; i += 1) {
       const first = paragraph.sentences[i - 1];
       const second = paragraph.sentences[i];
-      if (/^no prior\.$/iu.test(first.text) && /^no nostalgia\.$/iu.test(second.text)) {
-        findings.push({ type: 'DRAMATIC_ONE_LINE_CLOSER', location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${first.sentenceIndex}-${second.sentenceIndex}`, fixInstruction: 'Review whether this staged ending adds a supported point.' });
+      const firstToken = first.text.match(/^[\p{L}\p{N}]+/u)?.[0].toLocaleLowerCase();
+      const secondToken = second.text.match(/^[\p{L}\p{N}]+/u)?.[0].toLocaleLowerCase();
+      if (i === paragraph.sentences.length - 1 && first.wordCount <= 4 && second.wordCount <= 4 && firstToken && firstToken === secondToken) {
+        findings.push({ type: 'DRAMATIC_ONE_LINE_CLOSER', weakAlone: true, location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${first.sentenceIndex}-${second.sentenceIndex}`, fixInstruction: 'Review whether this staged ending adds a supported point.' });
       }
       if (/^this\s+(?:doesn['’]t|does not)\s+mean\b/iu.test(first.text) && /^it\s+means\b/iu.test(second.text)) {
         findings.push({ type: 'NOT_X_BUT_Y', location: `Paragraph ${paragraph.paragraphIndex}, Sentences ${first.sentenceIndex}-${second.sentenceIndex}`, fixInstruction: 'Review whether the contrast is needed; state the supported point directly.' });

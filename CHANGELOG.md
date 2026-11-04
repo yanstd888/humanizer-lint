@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Generalize the English short paired-closer finding to repeated opening tokens at paragraph endings; isolated occurrences are warnings. This structural change is provisional pending labeled evaluation.
+
 - Treat a one-sided sentence-range gap as a warning rather than a failed gate or score deduction; this structural change remains provisional pending a larger labeled evaluation.
 
 - Report skipped rhythm statistics and failed verdict gates in analysis output without changing scores or verdicts.
