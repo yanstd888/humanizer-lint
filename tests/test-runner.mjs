@@ -28,6 +28,7 @@ await import(projectModule('tests', 'miner-test.mjs'));
 await import(projectModule('tests', 'probes-test.mjs'));
 await import(projectModule('tests', 'supply-chain-test.mjs'));
 await import(projectModule('tests', 'eval-test.mjs'));
+await import(projectModule('tests', 'rhythm-transparency-test.mjs'));
 await import(projectModule('tests', 'deterministic-compression-test.mjs'));
 
 let rootPath = decodeURIComponent(projectModule().pathname);

@@ -4,6 +4,8 @@ Run the local analyzer with `node <skill_dir>/scripts/analyze.mjs --stdin --json
 
 Fingerprint with `node <skill_dir>/scripts/fingerprint.mjs --dir <samples_dir> --out <profile.json>`; `--input` and `--output` are aliases. Both tools run locally and require Node.js 18.3.0 or later.
 
+JSON and brief JSON include `rhythmEvaluated` and `failedGates`. Fewer than eight sentences skip rhythm statistics and include a `warning`. `failedGates` is empty for PASS or SKIP; on FAIL it names the conditions that failed. Human-readable output also shows rhythm coverage, warnings, and failed gates.
+
 ## GitHub Actions
 
 To run the analyzer from source against another repository without an npm release:

@@ -386,7 +386,7 @@ The profile records mean sentence length, standard deviation, burstiness, adjace
 ```
 <!-- END:generated:json-example -->
 
-This abbreviated output is generated from `A short sentence.`; the full result includes `schemaVersion`, `metrics`, `targets`, `deliveryGate`, `suppressed`, `allowlistApplied`, and `ignoreWarnings`. When applicable, `ignoreWarning` summarizes ignore-related warnings. Findings may include `sourceScope`, UTF-16 `charOffset: { start, end }`, and 1-based `line`, `column`, `endLine`, and `endColumn`; consult `schemas/report.schema.json` and check `schemaVersion` before consuming the report.
+This abbreviated output is generated from `A short sentence.`; the full result includes `schemaVersion`, `rhythmEvaluated`, `failedGates`, `metrics`, `targets`, `deliveryGate`, `suppressed`, `allowlistApplied`, and `ignoreWarnings`. `rhythmEvaluated` is false below eight sentences; `warning` explains when rhythm statistics are skipped. For FAIL, `failedGates` lists the gates responsible; it is empty otherwise. `rhythmEvaluated`, `failedGates`, and any `warning` are also retained in `--json --brief`. When applicable, `ignoreWarning` summarizes ignore-related warnings. Findings may include `sourceScope`, UTF-16 `charOffset: { start, end }`, and 1-based `line`, `column`, `endLine`, and `endColumn`; consult `schemas/report.schema.json` and check `schemaVersion` before consuming the report.
 
 ## Use as an agent skill
 

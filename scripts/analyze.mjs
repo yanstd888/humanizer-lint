@@ -19,7 +19,8 @@ const { analyzeText } = createAnalyzer({ rules: RULES, defaultProfile: DEFAULT_P
 export { analyzeText };
 
 function formatHuman(result, includeDeliveryGate = false) {
-  const lines = [`Status: ${result.status}`, `Score: ${result.score}`, `Language: ${result.language}`, `Rule pack: ${result.rulePack}`, `Suppressed: ${result.suppressed.length}`];
+  const lines = [`Status: ${result.status}`, `Score: ${result.score}`, `Language: ${result.language}`, `Rule pack: ${result.rulePack}`, `Rhythm evaluated: ${result.rhythmEvaluated ? 'yes' : 'no'}`, `Suppressed: ${result.suppressed.length}`];
+  if (result.failedGates.length) lines.push(`Failed gates: ${result.failedGates.join(', ')}`);
   if (result.warning) lines.push(`Warning: ${result.warning}`);
   for (const warning of result.ignoreWarnings ?? []) lines.push(`Warning: ${warning}`);
   lines.push('', 'Metrics:');
@@ -122,7 +123,8 @@ export async function runAnalyzeCli(argv, io = {}) {
     }
     const multi = reports.length > 1;
     const project = (result) => values.brief ? {
-      ...Object.fromEntries(['schemaVersion', 'status', 'score', 'targets', 'violations', 'ignoreWarnings', 'allowlistApplied'].map((key) => [key, result[key]])),
+      ...Object.fromEntries(['schemaVersion', 'status', 'score', 'rhythmEvaluated', 'failedGates', 'targets', 'violations', 'ignoreWarnings', 'allowlistApplied'].map((key) => [key, result[key]])),
+      ...(result.warning ? { warning: result.warning } : {}),
       suppressed: result.suppressed.map(({ type, ruleId, location, charOffset, directive, match, sourceScope }) => ({ type, ruleId, location, charOffset, directive, match, sourceScope })),
       deliveryGate: { rhythmAndStylometry: { status: result.deliveryGate.rhythmAndStylometry.status }, finalVerdict: { status: result.status, score: result.score } },
     } : result;

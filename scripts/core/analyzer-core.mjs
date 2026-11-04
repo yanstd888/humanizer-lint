@@ -874,6 +874,8 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
       const result = {
         schemaVersion: 1,
         status: violations.some((violation) => violation.severity === 'error') ? 'FAIL' : 'SKIP',
+        rhythmEvaluated: false,
+        failedGates: violations.some((violation) => violation.severity === 'error') ? ['errorFinding'] : [],
         ...(ignoreWarning ? { ignoreWarning } : {}),
       ignoreWarnings,
         targets,
@@ -882,7 +884,7 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
         score: 100 - lexicalPenalty(violations),
         language,
         rulePack,
-        warning: 'Text too short for statistical stylometry (< 8 sentences)',
+        warning: metrics.sentenceCount >= 3 ? 'Rhythm statistics skipped: fewer than 8 sentences; only lexical, structural and domain checks ran.' : 'Text too short for statistical stylometry (< 8 sentences)',
         metrics: Object.fromEntries(Object.entries({ ...metrics, nominalizationRatio: 0, passiveRatio: 0, voiceProfileDeviation: 0 }).map(([key, value]) => [key, typeof value === 'number' ? round(value) : value])),
         violations,
       };
@@ -925,9 +927,19 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
     const distributionPass = metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM || (metrics.shortSentenceRatio >= thresholds.shortSentenceRatio && metrics.longSentenceRatio >= thresholds.longSentenceRatio);
     const status = score >= thresholds.passScore && !forbidden && (metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM || metrics.burstinessCV >= cvTarget) && rhythmPass && distributionPass ? 'PASS' : 'FAIL';
 
+    const failedGates = status === 'FAIL' ? [
+      ...(forbidden ? ['forbiddenFinding'] : []),
+      ...(score < thresholds.passScore ? ['score'] : []),
+      ...(metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && metrics.burstinessCV < cvTarget ? ['burstinessCV'] : []),
+      ...(!rhythmPass ? ['adjacentDelta'] : []),
+      ...(!distributionPass ? ['sentenceRange'] : []),
+    ] : [];
     const result = {
       schemaVersion: 1,
       status,
+      rhythmEvaluated: metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM,
+      failedGates,
+      ...(metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM ? { warning: 'Rhythm statistics skipped: fewer than 8 sentences; only lexical, structural and domain checks ran.' } : {}),
       ...(ignoreWarning ? { ignoreWarning } : {}),
       ignoreWarnings,
       targets,

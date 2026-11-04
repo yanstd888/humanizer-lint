@@ -21,7 +21,7 @@ npm run benchmark
 
 ## Result shape
 
-Each result contains `status`, `score`, `language`, `rulePack`, `metrics`, `violations`, and `deliveryGate`.
+Each result contains `status`, `score`, `language`, `rulePack`, `rhythmEvaluated`, `failedGates`, `metrics`, `violations`, and `deliveryGate`. Fewer than eight sentences set `rhythmEvaluated` to false and emit a `warning`; `failedGates` identifies the conditions behind FAIL and is empty for PASS or SKIP. Short texts failing on an error finding report `errorFinding`; other gates include `forbiddenFinding`, `score`, `burstinessCV`, `adjacentDelta`, and `sentenceRange`.
 
 `deliveryGate` contains:
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Report skipped rhythm statistics and failed verdict gates in analysis output without changing scores or verdicts.
+
 - Add a preliminary evaluation harness and three-source development seed; the seed has no AI samples and cannot measure recall or AUC.
 - Add a security policy and private vulnerability reporting guidance; include homepage, repository, and keywords in plugin manifests.
 

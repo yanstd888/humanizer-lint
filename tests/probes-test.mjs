@@ -43,7 +43,7 @@ test('probe tech-readme is not FAIL', { todo: true }, async () => {
 });
 
 // T2: a 7-sentence text must disclose that rhythm statistics were skipped.
-test('probe evasion-id carries the rhythm-not-evaluated marker', { todo: true }, async () => {
+test('probe evasion-id carries the rhythm-not-evaluated marker', async () => {
   const result = await analyzeProbe('evasion-id');
   assert.equal(result.rhythmEvaluated, false);
   assert.match(result.warning ?? '', /Rhythm statistics skipped/);
