@@ -4,6 +4,8 @@
 
 # humanizer-lint
 
+[![HOL Guard](https://img.shields.io/endpoint?url=https%3A%2F%2Fhol.org%2Fapi%2Fregistry%2Fbadges%2Fplugin%3Fslug%3Dyanstd888%252Fhumanizer-lint%26metric%3Drelease)](https://hol.org/registry/plugins/yanstd888%2Fhumanizer-lint?utm_source=hol_marketplace&utm_medium=plugins_badge&utm_campaign=plugins&utm_content=yanstd888%2Fhumanizer-lint&ref=plugin-author-311c519a)
+
 ### Edit stiff AI-shaped prose with a deterministic local prose and rhythm linter
 
 A local, zero-dependency prose linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording) and tells you what to revise. A style checker, not an AI detector.
