@@ -423,7 +423,6 @@ function statisticalViolations(metrics, thresholds, mattrTarget) {
   if (metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && (metrics.shortSentenceRatio < thresholds.shortSentenceRatio || metrics.longSentenceRatio < thresholds.longSentenceRatio)) {
     violations.push({
       type: 'MISSING_SENTENCE_RANGE',
-      severity: metrics.shortSentenceRatio < thresholds.shortSentenceRatio && metrics.longSentenceRatio < thresholds.longSentenceRatio ? 'error' : 'warn',
       location: 'Whole text',
       shortSentenceRatio: round(metrics.shortSentenceRatio),
       longSentenceRatio: round(metrics.longSentenceRatio),
@@ -574,7 +573,7 @@ function lexicalPenalty(violations) {
 function scoreResult(metrics, violations, thresholds, mattrTarget) {
   const cvTarget = metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM ? thresholds.burstinessCVLong : thresholds.burstinessCVShort;
   let burstinessPenalty = metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && metrics.burstinessCV < cvTarget ? Math.min(25, Math.round((cvTarget - metrics.burstinessCV) * 100)) : 0;
-  if (metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && metrics.shortSentenceRatio < thresholds.shortSentenceRatio && metrics.longSentenceRatio < thresholds.longSentenceRatio) {
+  if (metrics.sentenceCount >= MIN_SENTENCES_FOR_RHYTHM && (metrics.shortSentenceRatio < thresholds.shortSentenceRatio || metrics.longSentenceRatio < thresholds.longSentenceRatio)) {
     burstinessPenalty = Math.min(25, burstinessPenalty + 8);
   }
   if (violations.some((violation) => violation.type === 'FLAT_PARAGRAPH_RHYTHM')) burstinessPenalty = Math.min(25, burstinessPenalty + 5);
@@ -611,7 +610,7 @@ function withSeverity(violations, tokenized, source) {
     return { line: low + 1, column: offset - lineStarts[low] + 1 };
   };
   return violations.map((violation) => {
-    const severity = (violation.type === 'MISSING_SENTENCE_RANGE' && violation.severity === 'warn') || warnings.has(violation.type) || (minorTransitions.has(violation.ruleId) && (violation.occurrenceCount ?? counts.get(violation.ruleId)) === 1) ? 'warn' : 'error';
+    const severity = warnings.has(violation.type) || (minorTransitions.has(violation.ruleId) && (violation.occurrenceCount ?? counts.get(violation.ruleId)) === 1) ? 'warn' : 'error';
     if (violation.charOffset) return { ...violation, severity, ruleId: violation.ruleId ?? violation.type, sourceScope: 'match' };
     const location = violation.location ?? '';
     const sentenceRange = /Sentences? (\d+)(?:-(\d+))?/u.exec(location);
@@ -928,7 +927,7 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
     const forbiddenTypes = new Set(['SLOP_PHRASE', 'DEFINITIONAL_OPENING', 'RHETORICAL_SLOP', 'WEAK_CTA', 'HYPERBOLIC_CLAIM', 'TAUTOLOGICAL_CODE_COMMENT', 'DECORATIVE_COMMENT_BANNER', 'LAZY_AI_PLACEHOLDER', 'MISSING_ACCESSIBLE_NAME', 'MISSING_IMG_ALT', 'HEADING_ORDER_SKIP', 'AI_GRADIENT_CLICHE', 'NON_RESPONSIVE_FIXED_WIDTH']);
     const forbidden = violations.some((violation) => violation.severity === 'error' && (forbiddenTypes.has(violation.type) || STRONG_STAGING.has(violation.type)));
     const rhythmPass = metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM || metrics.adjacentDelta >= thresholds.adjacentDelta;
-    const distributionPass = metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM || metrics.shortSentenceRatio >= thresholds.shortSentenceRatio || metrics.longSentenceRatio >= thresholds.longSentenceRatio;
+    const distributionPass = metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM || (metrics.shortSentenceRatio >= thresholds.shortSentenceRatio && metrics.longSentenceRatio >= thresholds.longSentenceRatio);
     const status = score >= thresholds.passScore && !forbidden && (metrics.sentenceCount < MIN_SENTENCES_FOR_RHYTHM || metrics.burstinessCV >= cvTarget) && rhythmPass && distributionPass ? 'PASS' : 'FAIL';
 
     const failedGates = status === 'FAIL' ? [

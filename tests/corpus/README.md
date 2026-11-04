@@ -30,11 +30,11 @@ These files are evaluation inputs, not a representative population. A false-posi
 
 ## Exploratory review of current failures
 
-- `id-en-mixed-tech.md`: PASS (89); technical terminology and document structure still require contextual review.
-- `en-pre-llm-essay.txt`: PASS (94); the passage predates LLMs, and rhythm metrics do not establish writing quality or authorship.
-- `translated-docs.txt`: FAIL (76); low burstiness, paragraph rhythm and symmetry can still flag formal technical documentation. The single missing sentence-range side is now a warning.
+- `id-en-mixed-tech.md`: FAIL (81); technical terminology and document structure require contextual review.
+- `en-pre-llm-essay.txt`: FAIL (86); the passage predates LLMs, and rhythm metrics do not establish writing quality or authorship.
+- `translated-docs.txt`: FAIL (68); formal technical documentation may legitimately use regular structure.
 
-The sentence-range change is provisional: the labeled evaluation corpus is small and its related AI examples cannot establish the effect on recall.
+A provisional one-sided sentence-range change was reverted after it reduced recall on the small development seed. The examples are related and cannot establish population performance.
 
 These are observations from the current implementation, not independent adjudication or a basis to tune the analyzer against this small set. Aggregate diagnostic excerpts identify context, not necessarily a phrase to replace.
 
