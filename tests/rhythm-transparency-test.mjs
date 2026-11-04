@@ -32,9 +32,8 @@ test('failed gates identify actual causes including short lexical failures', asy
   assert.equal(short.status, 'FAIL');
   assert.ok(short.failedGates.includes('errorFinding'));
   const failed = analyzeText(await read('tech-readme'), { language: 'en' });
-  assert.equal(failed.status, 'FAIL');
-  assert.ok(failed.failedGates.includes('sentenceRange'));
-  assert.ok(!failed.failedGates.includes('score'));
+  assert.equal(failed.status, 'PASS');
+  assert.deepEqual(failed.failedGates, []);
   const scored = analyzeText(await read('human-en'), { language: 'en', profile: { thresholds: { passScore: 101 } } });
   assert.equal(scored.status, 'FAIL');
   assert.ok(scored.failedGates.includes('score'));

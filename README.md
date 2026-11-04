@@ -44,7 +44,7 @@ npx skills add yanstd888/humanizer-lint
 
 Run `npm run benchmark` to reproduce the 20 synthetic fixtures (16 multilingual and 4 domain checks) and exploratory source corpus on the local machine.
 
-From a repository checkout, `npm run eval -- --json` runs a preliminary, non-representative development seed: two English and one Indonesian historical human-source excerpts, with no AI-labeled documents. The English excerpts both return FAIL (2/2, Wilson 95% interval 34.2%–100%); the Indonesian excerpt does not (0/1, interval 0%–79.3%). Recall, precision and AUC cannot be estimated without AI samples. These small, non-random results are not population estimates; the held-out test split is not yet populated.
+From a repository checkout, `npm run eval -- --json` runs a preliminary, non-representative development seed: two English and one Indonesian historical human-source excerpts, with no AI-labeled documents. The English excerpts return one FAIL (1/2, Wilson 95% interval 9.5%–90.5%); the Indonesian excerpt does not (0/1, interval 0%–79.3%). Recall, precision and AUC cannot be estimated without AI samples. These small, non-random results are not population estimates; the held-out test split is not yet populated.
 
 ## Known limitations
 
@@ -314,7 +314,7 @@ The JSON rule catalogs contain stable IDs. Runtime statistical checks use named 
 | `EN044` / `EM_DASH_OVERUSE` | English | Repeated dashes; a custom voice profile can exempt a rate at or below the author's baseline. |
 | `MONOTONOUS_RHYTHM` | Both | Three adjacent sentences whose lengths differ by at most three words. |
 | `LOW_BURSTINESS` | Both | Sentence-length coefficient of variation below the configured threshold. |
-| `MISSING_SENTENCE_RANGE` | Both | Text with at least eight sentences that lacks enough short or long sentences. |
+| `MISSING_SENTENCE_RANGE` | Both | For eight or more sentences, warns if one range is missing; both missing triggers an error and fails the range gate (provisional, not corpus-calibrated). |
 | `LOW_ADJACENT_DELTA` | Both | Consecutive sentence lengths that change too little. |
 | `LOW_LEXICAL_DIVERSITY` | Both | Adaptive MATTR below the language threshold. |
 | `LOW_ENTROPY_REPETITION` | Both | Low DEFLATE compression ratio in text of at least 150 words. |

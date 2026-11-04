@@ -38,7 +38,7 @@ test('probe evasion-id-10 stays FAIL', async () => {
 });
 
 // T3: a clean technical README must stop failing on the sentence-range gate.
-test('probe tech-readme is not FAIL', { todo: true }, async () => {
+test('probe tech-readme is not FAIL', async () => {
   assert.notEqual((await analyzeProbe('tech-readme')).status, 'FAIL');
 });
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Treat a one-sided sentence-range gap as a warning rather than a failed gate or score deduction; this structural change remains provisional pending a larger labeled evaluation.
+
 - Report skipped rhythm statistics and failed verdict gates in analysis output without changing scores or verdicts.
 
 - Add a preliminary evaluation harness and three-source development seed; the seed has no AI samples and cannot measure recall or AUC.

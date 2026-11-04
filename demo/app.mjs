@@ -220,7 +220,7 @@ function renderMetrics(report) {
   );
 
   const rhythmHealthy = metrics.adjacentDelta >= report.targets.rhythmDeltaMin
-    && (metrics.sentenceCount < report.targets.minSentencesForStats || (metrics.shortSentenceRatio >= report.targets.shortSentenceRatioMin && metrics.longSentenceRatio >= report.targets.longSentenceRatioMin));
+    && !report.failedGates.includes('sentenceRange');
   setMetric(
     metricElements.rhythm,
     `Δ ${formatNumber(metrics.adjacentDelta)}`,
