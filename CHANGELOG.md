@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a security policy and private vulnerability reporting guidance; include homepage, repository, and keywords in plugin manifests.
+
 - Reject Chinese mined-rule matches that start or end inside a segmented word; segmentation can vary with runtime ICU data.
 - Correct the Indonesian example explanation and document ICU-dependent Chinese mined-rule boundaries.
 - Exclude CC-BY-NC-SA and CC-BY-NC-ND license identifiers from the English over-hyphenation warning.

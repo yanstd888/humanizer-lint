@@ -26,6 +26,7 @@ const { runBenchmark } = await import(projectModule('scripts', 'benchmark.mjs'))
 await import(projectModule('tests', 'rhythm-gate-test.mjs'));
 await import(projectModule('tests', 'miner-test.mjs'));
 await import(projectModule('tests', 'probes-test.mjs'));
+await import(projectModule('tests', 'supply-chain-test.mjs'));
 await import(projectModule('tests', 'deterministic-compression-test.mjs'));
 
 let rootPath = decodeURIComponent(projectModule().pathname);
@@ -575,7 +576,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.5.1
   assert.match(license, /MIT License/);
 
   const rootMarkdown = (await readdir(root)).filter((name) => name.toLowerCase().endsWith('.md')).sort();
-  assert.deepEqual(rootMarkdown, ['CHANGELOG.md', 'README.md', 'SKILL.md']);
+  assert.deepEqual(rootMarkdown, ['CHANGELOG.md', 'README.md', 'SECURITY.md', 'SKILL.md']);
 });
 
 test('production scripts use only approved built-ins and forbidden APIs are absent', async () => {
