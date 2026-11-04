@@ -269,12 +269,12 @@ function pairedContrasts(tokenized, language) {
   return findings;
 }
 
-function delayedDecision(tokenized, language) {
+function delayedDecision(tokenized, pack) {
   const sentences = tokenized.paragraphs[0]?.sentences ?? [];
   // ponytail: explicit EN/ID decision openers after 3 sentences and 45 words only; use validated discourse analysis for broader coverage.
-  const opener = language === 'id' ? /^(?:kami merekomendasikan|keputusan kami adalah|kami memilih)\b/iu : language === 'en' ? /^(?:we recommend|our decision is|we chose)\b/iu : null;
-  if (!opener) return [];
-  const index = sentences.findIndex((sentence) => opener.test(sentence.text));
+  const openers = (pack?.editorial?.decisionOpeners ?? []).map((pattern) => new RegExp(pattern, 'iu'));
+  if (!openers.length) return [];
+  const index = sentences.findIndex((sentence) => openers.some((opener) => opener.test(sentence.text)));
   if (index < 3 || sentences.slice(0, index).reduce((sum, sentence) => sum + sentence.wordCount, 0) < 45) return [];
   const sentence = sentences[index];
   return [{ type: 'DELAYED_DECISION_LEAD', weakAlone: true, location: locationFor(sentence), fixInstruction: 'Consider whether the decision should appear earlier; preserve context and evidence.' }];
@@ -834,7 +834,7 @@ export function createAnalyzer({ rules, defaultProfile, calculateMetrics, calcul
     const rawPatternMatches = [
       ...patternViolations(tokenized, rules[language], metrics.wordCount, original, language),
       ...(proseInput ? inconsistentQuotes(tokenized, source) : []),
-      ...(proseInput ? delayedDecision(tokenized, language) : []),
+      ...(proseInput ? delayedDecision(tokenized, rules[language]) : []),
       ...((!options.sourcePath || /\.md$/iu.test(options.sourcePath)) && !['code', 'ui'].includes(options.domain) ? markdownFormatting(original, active, tokenized) : []),
     ];
     const rawDomainFindings = lintDomainHygiene(original, options.sourcePath, options.domain ?? 'auto');

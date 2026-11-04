@@ -1,5 +1,6 @@
 {
   "language": "id",
+  "editorial": { "decisionOpeners": ["^kami merekomendasikan\\b", "^keputusan kami adalah\\b", "^kami memilih\\b"] },
   "stopwords": ["yang", "dan", "di", "ini", "untuk", "dengan", "dari", "pada", "dalam", "tidak", "akan", "atau", "juga", "oleh", "adalah", "sebagai", "bahwa", "dapat", "karena", "tersebut"],
   "patterns": [
     {"id":"ID057","type":"STACKED_QUALIFIERS","pattern":"\\bmungkin[ \\t]+cenderung[ \\t]+dapat[ \\t]+dikatakan\\b","fixInstruction":"Review this phrase in context; revise only if it obscures meaning.","weakAlone":true},

@@ -30,6 +30,7 @@ await import(projectModule('tests', 'supply-chain-test.mjs'));
 await import(projectModule('tests', 'eval-test.mjs'));
 await import(projectModule('tests', 'rhythm-transparency-test.mjs'));
 await import(projectModule('tests', 'sentence-range-test.mjs'));
+await import(projectModule('tests', 'lexicon-data-test.mjs'));
 await import(projectModule('tests', 'deterministic-compression-test.mjs'));
 
 let rootPath = decodeURIComponent(projectModule().pathname);
