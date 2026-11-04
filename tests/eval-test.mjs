@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const parentDirectory = '..';
-const { summarize, validateCorpus, evaluate, parseOptions } = await import(new URL([parentDirectory, 'scripts', 'eval.mjs'].join('/'), import.meta.url));
+const { summarize, validateCorpus, evaluate, parseOptions, checkRegression } = await import(new URL([parentDirectory, 'scripts', 'eval.mjs'].join('/'), import.meta.url));
 
 test('evaluation counts skip separately and computes confusion, Wilson and tied AUC', () => {
   const rows = [
@@ -66,6 +66,14 @@ test('CLI produces deterministic output and default sweep reproduces the default
   assert.equal(sweep.status, 0, sweep.stderr);
   const value = JSON.parse(sweep.stdout);
   assert.deepEqual(value.sweep[0].aggregate, value.aggregate);
+});
+
+test('regression check enforces both metrics per language and rejects missing data', () => {
+  const report = (en, id) => ({ byLanguageSplit: { 'en:dev': en, 'id:dev': id } });
+  const baseline = report({ fpr: 0.1, tpr: 0.8 }, { fpr: 0.2, tpr: 0.9 });
+  assert.deepEqual(checkRegression(report({ fpr: 0.12, tpr: 0.78 }, { fpr: 0.2, tpr: 0.9 }), baseline), []);
+  assert.deepEqual(checkRegression(report({ fpr: 0.121, tpr: 0.779 }, { fpr: 0.2, tpr: 0.9 }), baseline), ['en:dev fpr regression', 'en:dev tpr regression']);
+  assert.throws(() => checkRegression(report({ fpr: 0.1, tpr: null }, { fpr: 0.2, tpr: 0.9 }), baseline), /Insufficient/);
 });
 
 test('test or all split cannot be swept', () => {

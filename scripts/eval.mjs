@@ -114,7 +114,7 @@ async function loadCorpus() {
     throw error;
   }
 }
-function checkRegression(report, baseline) {
+export function checkRegression(report, baseline) {
   const failures = [];
   for (const lang of ['en', 'id']) {
     const key = `${lang}:dev`, before = baseline.byLanguageSplit?.[key], after = report.byLanguageSplit?.[key];
