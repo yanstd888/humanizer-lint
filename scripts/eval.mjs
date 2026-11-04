@@ -152,8 +152,22 @@ async function main() {
     if (options.split !== 'dev' || options.lang !== 'all' || options.genre || options.sweep) throw new Error('--check requires all languages, dev split and no genre or sweep');
     report.regressions = checkRegression(report, JSON.parse(await fs.readFile(path.join(root, 'benchmark', 'eval-baseline.json'), 'utf8')));
   }
-  if (options.table) for (const [name, data] of Object.entries(report.byLanguageSplit)) console.log(`${name}\tn=${data.n}\tTPR=${data.tpr}\tFPR=${data.fpr}\tAUC=${data.auc}`);
-  else console.log(JSON.stringify(report, null, 2));
+  if (options.table) {
+    const display = (title, data) => {
+      const row = (name, result) => console.log(`${name}\t${JSON.stringify(result)}`);
+      console.log(title);
+      row('Aggregate', data.aggregate);
+      console.log('Language/split metrics');
+      for (const [name, value] of Object.entries(data.byLanguageSplit)) row(name, value);
+      console.log('Group metrics');
+      for (const { lang, genre, split, adversarial, ...metrics } of data.groups) row(`${lang}:${genre}:${split}:${adversarial}`, metrics);
+      console.log('Rule counts (dev documents)');
+      for (const rule of data.rules) console.log(`${rule.ruleId}\thuman=${rule.human}\tai=${rule.ai}`);
+    };
+    display('Evaluation', report);
+    for (const sweep of report.sweep ?? []) display(`Sweep ${sweep.parameter}=${sweep.value}`, sweep);
+    for (const failure of report.regressions ?? []) console.log(`Regression: ${failure}`);
+  } else console.log(JSON.stringify(report, null, 2));
   return report.regressions?.length ? 1 : 0;
 }
 if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {

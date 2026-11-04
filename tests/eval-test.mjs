@@ -79,6 +79,21 @@ test('regression check enforces both metrics per language and rejects missing da
   assert.throws(() => checkRegression(report({ fpr: 0.1, tpr: 0.8 }, { fpr: 0.2, tpr: 0.9 }), { ...baseline, devCorpus: undefined }), /corpus/i);
 });
 
+test('table output reports each dev group and rule counts', () => {
+  const script = fileURLToPath(new URL([parentDirectory, 'scripts', 'eval.mjs'].join('/'), import.meta.url));
+  const result = spawnSync(process.execPath, [script, '--split', 'dev', '--table'], { encoding: 'utf8' });
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /Group metrics/);
+  assert.match(result.stdout, /Rule counts \(dev documents\)/);
+  assert.match(result.stdout, /legal-formal/);
+  assert.match(result.stdout, /tprWilson95/);
+  assert.match(result.stdout, /fprWilson95/);
+  const sweep = spawnSync(process.execPath, [script, '--split', 'dev', '--table', '--sweep', 'passScore=70,80'], { encoding: 'utf8' });
+  assert.equal(sweep.status, 0, sweep.stderr);
+  assert.match(sweep.stdout, /Sweep passScore=70/);
+  assert.match(sweep.stdout, /Sweep passScore=80/);
+});
+
 test('test or all split cannot be swept', () => {
   assert.throws(() => parseOptions(['--split', 'test', '--sweep', 'passScore=70,80']), /dev/i);
   assert.throws(() => parseOptions(['--split', 'all', '--sweep', 'passScore=70,80']), /dev/i);

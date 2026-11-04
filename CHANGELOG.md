@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Show evaluation group metrics, rule counts, and requested sweep results in table output.
+
 - Refuse evaluation regression comparisons when the recorded development corpus differs or is missing; evaluation JSON includes the development texts and metadata for exact comparison.
 
 - Add a public-domain United States Declaration of Independence excerpt to the preliminary development corpus; evaluation remains incomplete.
