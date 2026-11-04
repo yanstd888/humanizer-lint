@@ -118,6 +118,7 @@ async function loadCorpus() {
   }
 }
 export function checkRegression(report, baseline) {
+  if (!Array.isArray(report.devCorpus) || !Array.isArray(baseline.devCorpus) || JSON.stringify(report.devCorpus) !== JSON.stringify(baseline.devCorpus)) throw new Error('Development corpus differs from baseline or is not recorded');
   const failures = [];
   for (const lang of ['en', 'id']) {
     const key = `${lang}:dev`, before = baseline.byLanguageSplit?.[key], after = report.byLanguageSplit?.[key];
@@ -136,6 +137,8 @@ async function main() {
   const defaultProfile = JSON.parse(await fs.readFile(path.join(root, 'profiles', 'default-human.json'), 'utf8'));
   const run = (analyzer) => evaluate(corpus.map((r) => { const outcome = analyzer(r.text, { language: r.lang, sourcePath: r.file }); return { ...r, status: outcome.status, score: outcome.score, violations: outcome.violations }; }));
   const report = run(analyzeText);
+  // Exact input copies bind a baseline to its development corpus without external hashing dependencies.
+  report.devCorpus = corpus.filter((r) => r.split === 'dev').map(({ text, ...metadata }) => ({ ...metadata, text }));
   if (options.sweep) {
     const languages = ['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'];
     const rules = Object.fromEntries(await Promise.all(languages.map(async (lang) => [lang, JSON.parse(await fs.readFile(path.join(root, 'rules', `${lang}-slop.json`), 'utf8'))])));

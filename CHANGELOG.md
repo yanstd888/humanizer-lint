@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Refuse evaluation regression comparisons when the recorded development corpus differs or is missing; evaluation JSON includes the development texts and metadata for exact comparison.
+
 - Add a public-domain United States Declaration of Independence excerpt to the preliminary development corpus; evaluation remains incomplete.
 
 - Reject evaluation corpus entries when their recorded word counts do not match the files.

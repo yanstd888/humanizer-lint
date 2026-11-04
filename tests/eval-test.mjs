@@ -70,11 +70,13 @@ test('CLI produces deterministic output and default sweep reproduces the default
 });
 
 test('regression check enforces both metrics per language and rejects missing data', () => {
-  const report = (en, id) => ({ byLanguageSplit: { 'en:dev': en, 'id:dev': id } });
+  const report = (en, id, devCorpus = [{ id: 'sample', text: 'original' }]) => ({ byLanguageSplit: { 'en:dev': en, 'id:dev': id }, devCorpus });
   const baseline = report({ fpr: 0.1, tpr: 0.8 }, { fpr: 0.2, tpr: 0.9 });
   assert.deepEqual(checkRegression(report({ fpr: 0.12, tpr: 0.78 }, { fpr: 0.2, tpr: 0.9 }), baseline), []);
   assert.deepEqual(checkRegression(report({ fpr: 0.121, tpr: 0.779 }, { fpr: 0.2, tpr: 0.9 }), baseline), ['en:dev fpr regression', 'en:dev tpr regression']);
   assert.throws(() => checkRegression(report({ fpr: 0.1, tpr: null }, { fpr: 0.2, tpr: 0.9 }), baseline), /Insufficient/);
+  assert.throws(() => checkRegression(report({ fpr: 0.1, tpr: 0.8 }, { fpr: 0.2, tpr: 0.9 }, [{ id: 'sample', text: 'modified' }]), baseline), /corpus/i);
+  assert.throws(() => checkRegression(report({ fpr: 0.1, tpr: 0.8 }, { fpr: 0.2, tpr: 0.9 }), { ...baseline, devCorpus: undefined }), /corpus/i);
 });
 
 test('test or all split cannot be swept', () => {
