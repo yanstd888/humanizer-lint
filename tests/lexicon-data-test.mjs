@@ -18,6 +18,20 @@ test('language rule packs drive paired contrast patterns', async () => {
   assert.ok(!analyzer.analyzeText('Alfa works.\n\nBravo wins.', { language: 'en' }).violations.some((v) => v.type === 'NOT_X_BUT_Y'));
 });
 
+test('rhetorical hooks survive lazy-loaded explicit, mixed and universal languages', async () => {
+  const { createRuleLoader } = await import(project('demo', 'rules-loader.mjs'));
+  const profile = await read('profiles', 'default-human.json');
+  const loader = createRuleLoader(async (language) => read('rules', `${language}-slop.json`));
+  for (const language of ['en', 'id', 'es', 'universal']) {
+    const { rules } = await loader.load(language);
+    const analyzer = createAnalyzer({ rules, defaultProfile: profile, calculateMetrics });
+    for (const hook of ["Here's the kicker:", 'Mengapa demikian?']) {
+      const report = analyzer.analyzeText(`${hook} The team reviewed the deployment. They documented the results. They changed the config.`, { language });
+      assert.ok(report.violations.some((v) => v.type === 'RHETORICAL_SLOP' && v.match.startsWith(hook)), `${language}: ${hook}`);
+    }
+  }
+});
+
 test('language rule packs drive decision openers', async () => {
   const en = await read('rules', 'en-slop.json');
   const id = await read('rules', 'id-slop.json');
