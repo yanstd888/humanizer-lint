@@ -36,6 +36,7 @@ test('manifest rejects missing files, duplicates, unsafe paths and unverified hu
     await writeFile(path.join(dir, 'human', 'en', 'a.txt'), 'sample');
     const item = { id: 'a', file: 'human/en/a.txt', lang: 'en', label: 'human', genre: 'technical-doc', split: 'dev', wordCount: 1, provenance: 'author-written', license: 'MIT', retrievedDate: '2026-11-04', firstPublishedYear: 2019 };
     assert.equal((await validateCorpus(dir, [item], {})).length, 1);
+    await assert.rejects(validateCorpus(dir, [{ ...item, wordCount: 2 }], {}), /wordCount/i);
     await assert.rejects(validateCorpus(dir, [item, item], {}), /duplicate/i);
     const { firstPublishedYear, ...unverified } = item;
     await assert.rejects(validateCorpus(dir, [unverified], {}), /human/i);

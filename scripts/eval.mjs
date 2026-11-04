@@ -100,7 +100,10 @@ export async function validateCorpus(dir, manifest, prompts) {
     if (relative === '' || relative === '..' || relative.startsWith(`..${path.sep}`) || path.isAbsolute(relative)) throw new Error(`Invalid file path: ${item.id}`);
     const stat = await fs.stat(target);
     if (!stat.isFile() || stat.size > 1048576) throw new Error(`Invalid file size or type: ${item.file}`);
-    result.push({ ...item, text: await fs.readFile(target, 'utf8') });
+    const text = await fs.readFile(target, 'utf8');
+    const count = text.trim() ? text.trim().split(/\s+/u).length : 0;
+    if (count !== item.wordCount) throw new Error(`wordCount mismatch: ${item.id}`);
+    result.push({ ...item, text });
   }
   return result.sort((a, b) => compare(a.id, b.id));
 }
