@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add a public-domain United States Declaration of Independence excerpt to the preliminary development corpus; evaluation remains incomplete.
+
 - Reject evaluation corpus entries when their recorded word counts do not match the files.
 
 - Generalize the English short paired-closer finding to repeated opening tokens at paragraph endings; isolated occurrences are warnings. This structural change is provisional pending labeled evaluation.

@@ -37,5 +37,18 @@
     "license": "MIT; see LICENSES/SASTRAWI-LICENSE.txt",
     "retrievedDate": "2026-11-04",
     "firstPublishedYear": 2017
+  },
+  {
+    "id": "en-declaration-1776",
+    "file": "human/en/declaration-1776.txt",
+    "lang": "en",
+    "label": "human",
+    "genre": "legal-formal",
+    "split": "dev",
+    "wordCount": 181,
+    "provenance": "https://www.gutenberg.org/cache/epub/1/pg1.txt; eBook 1, last updated 2025-09-02; excerpt from first two paragraphs, ending before Prudence",
+    "license": "Public domain in the USA; rights elsewhere may differ; https://www.gutenberg.org/ebooks/1",
+    "retrievedDate": "2026-11-04",
+    "firstPublishedYear": 1776
   }
 ]
