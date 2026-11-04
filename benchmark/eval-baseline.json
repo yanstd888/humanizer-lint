@@ -1,0 +1,216 @@
+{
+  "aggregate": {
+    "n": 3,
+    "confusion": {
+      "tp": 0,
+      "fn": 0,
+      "fp": 2,
+      "tn": 1,
+      "skipped": 0
+    },
+    "tpr": null,
+    "fpr": 0.666667,
+    "precision": 0,
+    "f1": 0,
+    "tprWilson95": null,
+    "fprWilson95": [
+      0.20766,
+      0.938508
+    ],
+    "auc": null,
+    "scores": {
+      "ai": {
+        "n": 0,
+        "median": null,
+        "p10": null,
+        "p90": null
+      },
+      "human": {
+        "n": 3,
+        "median": 86,
+        "p10": 46.8,
+        "p90": 87.6
+      }
+    }
+  },
+  "byLanguageSplit": {
+    "en:dev": {
+      "n": 2,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 2,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 1,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.34238,
+        1
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 2,
+          "median": 61.5,
+          "p10": 41.9,
+          "p90": 81.1
+        }
+      }
+    },
+    "id:dev": {
+      "n": 1,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 0,
+        "tn": 1,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 0,
+      "precision": null,
+      "f1": null,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0,
+        0.793451
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 1,
+          "median": 88,
+          "p10": 88,
+          "p90": 88
+        }
+      }
+    }
+  },
+  "groups": [
+    {
+      "lang": "en",
+      "genre": "technical-doc",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 2,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 2,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 1,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.34238,
+        1
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 2,
+          "median": 61.5,
+          "p10": 41.9,
+          "p90": 81.1
+        }
+      }
+    },
+    {
+      "lang": "id",
+      "genre": "legal-formal",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 1,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 0,
+        "tn": 1,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 0,
+      "precision": null,
+      "f1": null,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0,
+        0.793451
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 1,
+          "median": 88,
+          "p10": 88,
+          "p90": 88
+        }
+      }
+    }
+  ],
+  "rules": [
+    {
+      "ruleId": "EN044",
+      "human": 2,
+      "ai": 0
+    },
+    {
+      "ruleId": "EXCESSIVE_NOMINALIZATION",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "LOW_ENTROPY_REPETITION",
+      "human": 2,
+      "ai": 0
+    },
+    {
+      "ruleId": "MISSING_SENTENCE_RANGE",
+      "human": 2,
+      "ai": 0
+    },
+    {
+      "ruleId": "MONOTONOUS_RHYTHM",
+      "human": 2,
+      "ai": 0
+    },
+    {
+      "ruleId": "SYMMETRIC_PARAGRAPHS",
+      "human": 1,
+      "ai": 0
+    }
+  ]
+}

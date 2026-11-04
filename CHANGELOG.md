@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add a preliminary evaluation harness and three-source development seed; the seed has no AI samples and cannot measure recall or AUC.
 - Add a security policy and private vulnerability reporting guidance; include homepage, repository, and keywords in plugin manifests.
 
 - Reject Chinese mined-rule matches that start or end inside a segmented word; segmentation can vary with runtime ICU data.

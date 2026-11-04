@@ -1,0 +1,41 @@
+[
+  {
+    "id": "en-1962-computers",
+    "file": "human/en/1962-computers.txt",
+    "lang": "en",
+    "label": "human",
+    "genre": "technical-doc",
+    "split": "dev",
+    "wordCount": 281,
+    "provenance": "https://www.gutenberg.org/ebooks/72572; excerpt already retained in tests/corpus/en-pre-llm-essay.txt",
+    "license": "Public domain in the United States; rights elsewhere may differ",
+    "retrievedDate": "2026-11-04",
+    "firstPublishedYear": 1962
+  },
+  {
+    "id": "id-constitution-1945",
+    "file": "human/id/constitution-1945.txt",
+    "lang": "id",
+    "label": "human",
+    "genre": "legal-formal",
+    "split": "dev",
+    "wordCount": 178,
+    "provenance": "https://id.wikisource.org/w/index.php?title=Undang-Undang_Dasar_Negara_Republik_Indonesia_Tahun_1945/Naskah_asli&oldid=138525",
+    "license": "Underlying legal text: public domain in Indonesia (Copyright Act No. 28 of 2014, Article 42); Wikisource transcription and attribution: https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use; rights elsewhere not assessed",
+    "retrievedDate": "2026-11-04",
+    "firstPublishedYear": 1945
+  },
+  {
+    "id": "en-sastrawi-readme",
+    "file": "human/en/sastrawi-readme.txt",
+    "lang": "en",
+    "label": "human",
+    "genre": "technical-doc",
+    "split": "dev",
+    "wordCount": 500,
+    "provenance": "https://github.com/sastrawi/sastrawi/blob/09db1bda7756fae740767ed7eb8de1b01ae859d5/README.en.md; first 500 whitespace-delimited words",
+    "license": "MIT; see LICENSES/SASTRAWI-LICENSE.txt",
+    "retrievedDate": "2026-11-04",
+    "firstPublishedYear": 2017
+  }
+]
