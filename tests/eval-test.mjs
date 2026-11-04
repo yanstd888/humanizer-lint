@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const parentDirectory = '..';
-const { summarize, validateCorpus, evaluate, parseOptions, checkRegression } = await import(new URL([parentDirectory, 'scripts', 'eval.mjs'].join('/'), import.meta.url));
+const { summarize, validateCorpus, evaluate, parseOptions, checkRegression, developmentPrompts } = await import(new URL([parentDirectory, 'scripts', 'eval.mjs'].join('/'), import.meta.url));
 
 test('evaluation counts skip separately and computes confusion, Wilson and tied AUC', () => {
   const rows = [
@@ -70,13 +70,24 @@ test('CLI produces deterministic output and default sweep reproduces the default
 });
 
 test('regression check enforces both metrics per language and rejects missing data', () => {
-  const report = (en, id, devCorpus = [{ id: 'sample', text: 'original' }]) => ({ byLanguageSplit: { 'en:dev': en, 'id:dev': id }, devCorpus });
+  const report = (en, id, devCorpus = [{ id: 'sample', text: 'original' }]) => ({ byLanguageSplit: { 'en:dev': en, 'id:dev': id }, devCorpus, devPrompts: {} });
   const baseline = report({ fpr: 0.1, tpr: 0.8 }, { fpr: 0.2, tpr: 0.9 });
   assert.deepEqual(checkRegression(report({ fpr: 0.12, tpr: 0.78 }, { fpr: 0.2, tpr: 0.9 }), baseline), []);
   assert.deepEqual(checkRegression(report({ fpr: 0.121, tpr: 0.779 }, { fpr: 0.2, tpr: 0.9 }), baseline), ['en:dev fpr regression', 'en:dev tpr regression']);
   assert.throws(() => checkRegression(report({ fpr: 0.1, tpr: null }, { fpr: 0.2, tpr: 0.9 }), baseline), /Insufficient/);
   assert.throws(() => checkRegression(report({ fpr: 0.1, tpr: 0.8 }, { fpr: 0.2, tpr: 0.9 }, [{ id: 'sample', text: 'modified' }]), baseline), /corpus/i);
   assert.throws(() => checkRegression(report({ fpr: 0.1, tpr: 0.8 }, { fpr: 0.2, tpr: 0.9 }), { ...baseline, devCorpus: undefined }), /corpus/i);
+});
+
+test('development prompt provenance participates in baseline identity', () => {
+  const entries = [{ split: 'dev', label: 'ai', promptId: 'b' }, { split: 'test', label: 'ai', promptId: 'secret' }, { split: 'dev', label: 'ai', promptId: 'a' }];
+  const selected = developmentPrompts(entries, { a: { text: 'one' }, b: { text: 'two' }, secret: { text: 'holdout' } });
+  assert.deepEqual(selected, { a: { text: 'one' }, b: { text: 'two' } });
+  const metrics = { 'en:dev': { fpr: 0, tpr: 1 }, 'id:dev': { fpr: 0, tpr: 1 } };
+  const baseline = { devCorpus: [], devPrompts: selected, byLanguageSplit: metrics };
+  assert.deepEqual(checkRegression(baseline, baseline), []);
+  assert.throws(() => checkRegression({ ...baseline, devPrompts: { ...selected, a: { text: 'changed' } } }, baseline), /prompt/i);
+  assert.throws(() => checkRegression({ ...baseline, devPrompts: undefined }, baseline), /prompt/i);
 });
 
 test('table output reports each dev group and rule counts', () => {

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Bind evaluation regression baselines to development prompt provenance as well as corpus content.
+
 - Add six explicitly assistant-authored, related AI examples to the incomplete development corpus; their prompt descriptions are post-hoc.
 
 - Show evaluation group metrics, rule counts, and requested sweep results in table output.

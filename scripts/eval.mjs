@@ -111,13 +111,18 @@ async function loadCorpus() {
   const directory = path.join(root, 'benchmark', 'corpus');
   try {
     const [manifest, prompts] = await Promise.all(['manifest.json', 'prompts.json'].map(async (name) => JSON.parse(await fs.readFile(path.join(directory, name), 'utf8'))));
-    return await validateCorpus(directory, manifest, prompts);
+    return { entries: await validateCorpus(directory, manifest, prompts), prompts };
   } catch (error) {
     if (error.code === 'ENOENT') throw new Error('Evaluation corpus missing: create benchmark/corpus/manifest.json and prompts.json');
     throw error;
   }
 }
+export function developmentPrompts(entries, prompts) {
+  const ids = [...new Set(entries.filter((entry) => entry.split === 'dev' && entry.label === 'ai').map((entry) => entry.promptId))].sort(compare);
+  return Object.fromEntries(ids.map((id) => [id, prompts[id]]));
+}
 export function checkRegression(report, baseline) {
+  if (!report.devPrompts || !baseline.devPrompts || JSON.stringify(report.devPrompts) !== JSON.stringify(baseline.devPrompts)) throw new Error('Development prompt provenance differs from baseline or is not recorded');
   if (!Array.isArray(report.devCorpus) || !Array.isArray(baseline.devCorpus) || JSON.stringify(report.devCorpus) !== JSON.stringify(baseline.devCorpus)) throw new Error('Development corpus differs from baseline or is not recorded');
   const failures = [];
   for (const lang of ['en', 'id']) {
@@ -132,13 +137,15 @@ export function checkRegression(report, baseline) {
 }
 async function main() {
   const options = parseOptions(process.argv.slice(2));
-  const corpus = (await loadCorpus()).filter((r) => (options.split === 'all' || r.split === options.split) && (options.lang === 'all' || r.lang === options.lang) && (!options.genre || r.genre === options.genre));
+  const { entries, prompts } = await loadCorpus();
+  const corpus = entries.filter((r) => (options.split === 'all' || r.split === options.split) && (options.lang === 'all' || r.lang === options.lang) && (!options.genre || r.genre === options.genre));
   if (!corpus.length) throw new Error('No corpus entries match the requested filters');
   const defaultProfile = JSON.parse(await fs.readFile(path.join(root, 'profiles', 'default-human.json'), 'utf8'));
   const run = (analyzer) => evaluate(corpus.map((r) => { const outcome = analyzer(r.text, { language: r.lang, sourcePath: r.file }); return { ...r, status: outcome.status, score: outcome.score, violations: outcome.violations }; }));
   const report = run(analyzeText);
   // Exact input copies bind a baseline to its development corpus without external hashing dependencies.
   report.devCorpus = corpus.filter((r) => r.split === 'dev').map(({ text, ...metadata }) => ({ ...metadata, text }));
+  report.devPrompts = developmentPrompts(corpus, prompts);
   if (options.sweep) {
     const languages = ['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'];
     const rules = Object.fromEntries(await Promise.all(languages.map(async (lang) => [lang, JSON.parse(await fs.readFile(path.join(root, 'rules', `${lang}-slop.json`), 'utf8'))])));
