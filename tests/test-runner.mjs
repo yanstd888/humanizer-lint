@@ -25,6 +25,7 @@ const { lintCopywriting, lintCodeComments, lintUiAndAccessibility } = await impo
 const { runBenchmark } = await import(projectModule('scripts', 'benchmark.mjs'));
 await import(projectModule('tests', 'rhythm-gate-test.mjs'));
 await import(projectModule('tests', 'miner-test.mjs'));
+await import(projectModule('tests', 'probes-test.mjs'));
 await import(projectModule('tests', 'deterministic-compression-test.mjs'));
 
 let rootPath = decodeURIComponent(projectModule().pathname);
