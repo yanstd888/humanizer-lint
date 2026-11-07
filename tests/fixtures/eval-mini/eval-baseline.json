@@ -1,0 +1,736 @@
+{
+  "aggregate": {
+    "n": 10,
+    "confusion": {
+      "tp": 2,
+      "fn": 2,
+      "fp": 2,
+      "tn": 2,
+      "skipped": 2
+    },
+    "tpr": 0.5,
+    "fpr": 0.5,
+    "precision": 0.5,
+    "f1": 0.5,
+    "tprWilson95": [
+      0.150039,
+      0.849961
+    ],
+    "fprWilson95": [
+      0.150039,
+      0.849961
+    ],
+    "auc": 0.4375,
+    "scores": {
+      "ai": {
+        "n": 4,
+        "median": 90,
+        "p10": 73,
+        "p90": 100
+      },
+      "human": {
+        "n": 4,
+        "median": 86,
+        "p10": 51,
+        "p90": 100
+      }
+    }
+  },
+  "byLanguageSplit": {
+    "en:dev": {
+      "n": 5,
+      "confusion": {
+        "tp": 1,
+        "fn": 1,
+        "fp": 1,
+        "tn": 1,
+        "skipped": 1
+      },
+      "tpr": 0.5,
+      "fpr": 0.5,
+      "precision": 0.5,
+      "f1": 0.5,
+      "tprWilson95": [
+        0.094531,
+        0.905469
+      ],
+      "fprWilson95": [
+        0.094531,
+        0.905469
+      ],
+      "auc": 0.375,
+      "scores": {
+        "ai": {
+          "n": 2,
+          "median": 85,
+          "p10": 73,
+          "p90": 97
+        },
+        "human": {
+          "n": 2,
+          "median": 71,
+          "p10": 47.8,
+          "p90": 94.2
+        }
+      }
+    },
+    "id:dev": {
+      "n": 5,
+      "confusion": {
+        "tp": 1,
+        "fn": 1,
+        "fp": 1,
+        "tn": 1,
+        "skipped": 1
+      },
+      "tpr": 0.5,
+      "fpr": 0.5,
+      "precision": 0.5,
+      "f1": 0.5,
+      "tprWilson95": [
+        0.094531,
+        0.905469
+      ],
+      "fprWilson95": [
+        0.094531,
+        0.905469
+      ],
+      "auc": 0.375,
+      "scores": {
+        "ai": {
+          "n": 2,
+          "median": 90,
+          "p10": 82,
+          "p90": 98
+        },
+        "human": {
+          "n": 2,
+          "median": 86,
+          "p10": 74.8,
+          "p90": 97.2
+        }
+      }
+    }
+  },
+  "groups": [
+    {
+      "lang": "en",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 1,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 0,
+        "tn": 1,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 0,
+      "precision": null,
+      "f1": null,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0,
+        0.793451
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 1,
+          "median": 100,
+          "p10": 100,
+          "p90": 100
+        }
+      }
+    },
+    {
+      "lang": "en",
+      "genre": "email-chat",
+      "split": "dev",
+      "adversarial": "humanize-prompt",
+      "n": 1,
+      "confusion": {
+        "tp": 0,
+        "fn": 1,
+        "fp": 0,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": 0,
+      "fpr": null,
+      "precision": null,
+      "f1": 0,
+      "tprWilson95": [
+        0,
+        0.793451
+      ],
+      "fprWilson95": null,
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 1,
+          "median": 100,
+          "p10": 100,
+          "p90": 100
+        },
+        "human": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        }
+      }
+    },
+    {
+      "lang": "en",
+      "genre": "email-chat",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 1,
+      "confusion": {
+        "tp": 1,
+        "fn": 0,
+        "fp": 0,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": 1,
+      "fpr": null,
+      "precision": 1,
+      "f1": 1,
+      "tprWilson95": [
+        0.206549,
+        1
+      ],
+      "fprWilson95": null,
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 1,
+          "median": 70,
+          "p10": 70,
+          "p90": 70
+        },
+        "human": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        }
+      }
+    },
+    {
+      "lang": "en",
+      "genre": "technical-doc",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 2,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 1,
+        "tn": 0,
+        "skipped": 1
+      },
+      "tpr": null,
+      "fpr": 1,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.206549,
+        1
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 1,
+          "median": 42,
+          "p10": 42,
+          "p90": 42
+        }
+      }
+    },
+    {
+      "lang": "id",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 1,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 0,
+        "tn": 1,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 0,
+      "precision": null,
+      "f1": null,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0,
+        0.793451
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 1,
+          "median": 100,
+          "p10": 100,
+          "p90": 100
+        }
+      }
+    },
+    {
+      "lang": "id",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "adversarial": "synonym-swap",
+      "n": 1,
+      "confusion": {
+        "tp": 1,
+        "fn": 0,
+        "fp": 0,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": 1,
+      "fpr": null,
+      "precision": 1,
+      "f1": 1,
+      "tprWilson95": [
+        0.206549,
+        1
+      ],
+      "fprWilson95": null,
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 1,
+          "median": 80,
+          "p10": 80,
+          "p90": 80
+        },
+        "human": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        }
+      }
+    },
+    {
+      "lang": "id",
+      "genre": "email-chat",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 1,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 0,
+        "tn": 0,
+        "skipped": 1
+      },
+      "tpr": null,
+      "fpr": null,
+      "precision": null,
+      "f1": null,
+      "tprWilson95": null,
+      "fprWilson95": null,
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        }
+      }
+    },
+    {
+      "lang": "id",
+      "genre": "email-chat",
+      "split": "dev",
+      "adversarial": "paraphrase",
+      "n": 1,
+      "confusion": {
+        "tp": 0,
+        "fn": 1,
+        "fp": 0,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": 0,
+      "fpr": null,
+      "precision": null,
+      "f1": 0,
+      "tprWilson95": [
+        0,
+        0.793451
+      ],
+      "fprWilson95": null,
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 1,
+          "median": 100,
+          "p10": 100,
+          "p90": 100
+        },
+        "human": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        }
+      }
+    },
+    {
+      "lang": "id",
+      "genre": "technical-doc",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 1,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 1,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 1,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.206549,
+        1
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 1,
+          "median": 72,
+          "p10": 72,
+          "p90": 72
+        }
+      }
+    }
+  ],
+  "rules": [
+    {
+      "ruleId": "EN001",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN002",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN007",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN012",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN017",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN018",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN019",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN020",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN022",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN024",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN025",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN034",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN035",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN041",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "EN044",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "ID001",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "ID028",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "ID033",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "ID034",
+      "human": 0,
+      "ai": 1
+    },
+    {
+      "ruleId": "LOW_ADJACENT_DELTA",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "MISSING_SENTENCE_RANGE",
+      "human": 2,
+      "ai": 0
+    },
+    {
+      "ruleId": "MONOTONOUS_RHYTHM",
+      "human": 2,
+      "ai": 0
+    }
+  ],
+  "devCorpus": [
+    {
+      "id": "mini-ai-en-humanized-02",
+      "file": "ai/en/email-humanized-02.txt",
+      "lang": "en",
+      "label": "ai",
+      "genre": "email-chat",
+      "split": "dev",
+      "provenance": "author-written",
+      "license": "Synthetic test fixture",
+      "retrievedDate": "2026-11-04",
+      "generator": "assistant-authored synthetic sample (no external model call)",
+      "promptId": "mini-ai-02",
+      "adversarial": "humanize-prompt",
+      "wordCount": 39,
+      "text": "I rewrote the agenda doc three times. The first version had eleven sections and nobody read past the third. Dana cut it to four on a Tuesday, and standup finished early for once. Keep it short or skip it.\n"
+    },
+    {
+      "id": "mini-ai-en-slack-01",
+      "file": "ai/en/email-slack-01.txt",
+      "lang": "en",
+      "label": "ai",
+      "genre": "email-chat",
+      "split": "dev",
+      "provenance": "author-written",
+      "license": "Synthetic test fixture",
+      "retrievedDate": "2026-11-04",
+      "generator": "assistant-authored synthetic sample (no external model call)",
+      "promptId": "mini-ai-01",
+      "adversarial": "none",
+      "wordCount": 61,
+      "text": "In today's fast-paced work environment, it is important to note that a robust meeting agenda can unlock valuable insights for every stakeholder. Moreover, this holistic approach fosters seamless collaboration across the entire team. Furthermore, teams can delve into a rich tapestry of ideas to drive meaningful outcomes. In conclusion, embracing this transformation is not just an option, it is a necessity.\n"
+    },
+    {
+      "id": "mini-ai-id-blog-03",
+      "file": "ai/id/blog-opinion-03.txt",
+      "lang": "id",
+      "label": "ai",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "provenance": "author-written",
+      "license": "Synthetic test fixture",
+      "retrievedDate": "2026-11-04",
+      "generator": "assistant-authored synthetic sample (no external model call)",
+      "promptId": "mini-ai-03",
+      "adversarial": "synonym-swap",
+      "wordCount": 44,
+      "text": "Di era digital saat ini, pemanfaatan teknologi dinilai krusial untuk tiap usaha. Bukan itu saja, solusi ini turut memberikan keuntungan besar bagi seluruh kalangan. Dengan demikian, organisasi mampu meningkatkan efisiensi secara berarti pada berbagai aspek. Oleh karena itu, perusahaan harus memanfaatkan teknologi secara maksimal.\n"
+    },
+    {
+      "id": "mini-ai-id-chat-11",
+      "file": "ai/id/email-chat-11.txt",
+      "lang": "id",
+      "label": "ai",
+      "genre": "email-chat",
+      "split": "dev",
+      "provenance": "author-written",
+      "license": "Synthetic test fixture",
+      "retrievedDate": "2026-11-04",
+      "generator": "assistant-authored synthetic sample (no external model call)",
+      "promptId": "mini-ai-04",
+      "adversarial": "paraphrase",
+      "wordCount": 27,
+      "text": "Rapat mingguan jadi terlalu panjang. Saya coba pangkas agendanya jadi empat poin dan waktunya kepotong separuh. Dana setuju. Kalau bisa selesai dalam dua puluh menit, kenapa tidak.\n"
+    },
+    {
+      "id": "mini-human-en-blog-05",
+      "file": "human/en/blog-opinion-05.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "provenance": "tests/fixtures/probes/human-en.md (task-provided sample); first 45 whitespace-delimited words",
+      "license": "Task-provided fixture; license not assessed",
+      "retrievedDate": "2026-11-04",
+      "verifiedHumanNote": "Excerpt of a task-provided human sample fixture; retained verbatim in tests/fixtures/probes.",
+      "wordCount": 45,
+      "text": "I broke the build twice before lunch. The first time was my fault: I renamed a config key and forgot the staging script still read the old one. The second time wasn't. Somebody had pinned a transitive dependency to a version that no longer existed\n"
+    },
+    {
+      "id": "mini-human-en-tech-06",
+      "file": "human/en/technical-doc-06.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "provenance": "https://github.com/sastrawi/sastrawi/blob/09db1bda7756fae740767ed7eb8de1b01ae859d5/README.en.md; first 120 whitespace-delimited words",
+      "license": "MIT; see benchmark/corpus/LICENSES/SASTRAWI-LICENSE.txt",
+      "retrievedDate": "2026-11-04",
+      "firstPublishedYear": 2017,
+      "wordCount": 120,
+      "text": "Sastrawi ========= Sastrawi is a simple PHP library which provides stemming of words in Indonesian Language (Bahasa). Despite its simplicity, this library is designed to be high quality and well documented. For more information in english, see [README](https://github.com/andylib/sastrawi/blob/master/README.en.md). | Development | Master | Releases | Statistics | | ----------- | ------ | -------- | ---------- | | [![Build Status](https://travis-ci.org/sastrawi/sastrawi.svg?branch=development)](https://travis-ci.org/sastrawi/sastrawi) [![Code Coverage](https://scrutinizer-ci.com/g/sastrawi/sastrawi/badges/coverage.png?s=942cb014be9bbbf41e62c15389663f4253f5efac)](https://scrutinizer-ci.com/g/sastrawi/sastrawi/) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sastrawi/sastrawi/badges/quality-score.png?s=152027ad0516653ff4eb5b05bff7266aeb600bfd)](https://scrutinizer-ci.com/g/sastrawi/sastrawi/) | [![Build Status](https://travis-ci.org/sastrawi/sastrawi.svg?branch=master)](https://travis-ci.org/sastrawi/sastrawi) | [![Latest Unstable Version](https://poser.pugx.org/sastrawi/sastrawi/v/unstable.png)](https://packagist.org/packages/sastrawi/sastrawi) [![Latest Stable Version](https://poser.pugx.org/sastrawi/sastrawi/v/stable.png)](https://packagist.org/packages/sastrawi/sastrawi) | [![Total Downloads](https://poser.pugx.org/sastrawi/sastrawi/downloads.png)](https://packagist.org/packages/sastrawi/sastrawi) | Why? ----- Indonesia is the fourth most populous country in the world. Indonesian internet users use indonesian language as their primary language. So, developers need a tool to improve text searching in Indonesian language. One of the most important tool is a\n"
+    },
+    {
+      "id": "mini-human-en-tech-07",
+      "file": "human/en/technical-doc-07.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "provenance": "tests/fixtures/probes/tech-readme.md (task-provided sample); first two sentences",
+      "license": "Task-provided fixture; license not assessed",
+      "retrievedDate": "2026-11-04",
+      "verifiedHumanNote": "Excerpt of a task-provided human sample fixture; retained verbatim in tests/fixtures/probes.",
+      "wordCount": 16,
+      "text": "Run `npm install -g foo-cli` to install the tool. The command needs Node 18 or newer.\n"
+    },
+    {
+      "id": "mini-human-id-blog-08",
+      "file": "human/id/blog-opinion-08.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "provenance": "tests/fixtures/probes/human-id.md (task-provided sample); first 45 whitespace-delimited words",
+      "license": "Task-provided fixture; license not assessed",
+      "retrievedDate": "2026-11-04",
+      "verifiedHumanNote": "Excerpt of a task-provided human sample fixture; retained verbatim in tests/fixtures/probes.",
+      "wordCount": 45,
+      "text": "Warung Bu Tini buka jam lima pagi. Itu sudah begitu sejak saya SD. Saya masih ingat bau gorengan yang tercium sampai ujung gang, dan bagaimana antrean pembeli bisa mengular sampai depan bengkel Pak Rahmat. Kata orang, rahasianya ada di sambal. Menurut saya, rahasianya justru di\n"
+    },
+    {
+      "id": "mini-human-id-chat-10",
+      "file": "human/id/email-chat-10.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "email-chat",
+      "split": "dev",
+      "provenance": "tests/fixtures/probes/human-id.md (task-provided sample); first two sentences",
+      "license": "Task-provided fixture; license not assessed",
+      "retrievedDate": "2026-11-04",
+      "verifiedHumanNote": "Excerpt of a task-provided human sample fixture; retained verbatim in tests/fixtures/probes.",
+      "wordCount": 13,
+      "text": "Warung Bu Tini buka jam lima pagi. Itu sudah begitu sejak saya SD.\n"
+    },
+    {
+      "id": "mini-human-id-tech-09",
+      "file": "human/id/technical-doc-09.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "provenance": "tests/corpus/id-en-mixed-tech.md (repo-retained human document); first 200 whitespace-delimited words",
+      "license": "See tests/corpus/README.md",
+      "retrievedDate": "2026-11-04",
+      "verifiedHumanNote": "Repo-retained human technical document; see tests/corpus/README.md provenance.",
+      "wordCount": 200,
+      "text": "Sastrawi ========= Sastrawi is a simple PHP library which allows you to reduce inflected words in Indonesian Language (Bahasa Indonesia) to their base form ([stem](http://en.wikipedia.org/wiki/Stemming)). Despite its simplicity, this library is designed to be high quality and well documented. For more information in english, see [README](https://github.com/andylib/sastrawi/blob/master/README.en.md). | Development | Master | Releases | Statistics | | ----------- | ------ | -------- | ---------- | | [![Build Status](https://travis-ci.org/sastrawi/sastrawi.svg?branch=development)](https://travis-ci.org/sastrawi/sastrawi) [![Code Coverage](https://scrutinizer-ci.com/g/sastrawi/sastrawi/badges/coverage.png?s=942cb014be9bbbf41e62c15389663f4253f5efac)](https://scrutinizer-ci.com/g/sastrawi/sastrawi/) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sastrawi/sastrawi/badges/quality-score.png?s=152027ad0516653ff4eb5b05bff7266aeb600bfd)](https://scrutinizer-ci.com/g/sastrawi/sastrawi/) | [![Build Status](https://travis-ci.org/sastrawi/sastrawi.svg?branch=master)](https://travis-ci.org/sastrawi/sastrawi) | [![Latest Stable Version](https://poser.pugx.org/sastrawi/sastrawi/v/stable.png)](https://packagist.org/packages/sastrawi/sastrawi) | [![Total Downloads](https://poser.pugx.org/sastrawi/sastrawi/downloads.png)](https://packagist.org/packages/sastrawi/sastrawi) | Stemming --------- [_Stemming_](http://en.wikipedia.org/wiki/Stemming) adalah proses mengubah kata berimbuhan menjadi kata dasar. Contohnya: - menahan => tahan - berbalas-balasan => balas Contoh kasus ------------- Katakanlah sebuah _blog post_ berisi: Rakyat memenuhi halaman gedung untuk menyuarakan isi hatinya. Pencarian dengan _query_ di bawah ini tidak akan menemukan _post_ di atas, ```slq SELECT * FROM posts WHERE content LIKE '%suara%' ``` Proses _stemming_ dapat membantu menemukan dokumen yang sedang dicari yaitu dengan menanggalkan imbuhan-imbuhan hingga hanya menyisakan kata dasar seperti berikut: rakyat penuh halaman gedung suara isi hati Lalu kata kunci pencarian juga dijadikan kata dasar: Bersuara => suara Sastrawi -------- - _Library PHP_ untuk _stemming_ Bahasa Indonesia. - Mudah diintegrasikan dengan _framework_ / _package_ lainnya. - Mempunyai _API_ yang\n"
+    }
+  ],
+  "devPrompts": {
+    "mini-ai-01": {
+      "text": "Write a professional email proposing a four-week trial of a shared meeting agenda for a small remote team.",
+      "note": "Synthetic seed prompt specified by the assistant; not a captured external model request."
+    },
+    "mini-ai-02": {
+      "text": "Write an informal but respectful email proposing a shared agenda trial. Avoid stock transitions and make the wording sound human; do not invent results.",
+      "note": "Synthetic seed prompt specified by the assistant; adversarial humanize-prompt."
+    },
+    "mini-ai-03": {
+      "text": "Tulis paragraf opini tentang adopsi teknologi untuk usaha kecil dengan bahasa formal.",
+      "note": "Synthetic seed prompt specified by the assistant; adversarial synonym-swap."
+    },
+    "mini-ai-04": {
+      "text": "Tulis email singkat kepada tim tentang rapat mingguan yang terlalu panjang.",
+      "note": "Synthetic seed prompt specified by the assistant; adversarial paraphrase."
+    }
+  }
+}

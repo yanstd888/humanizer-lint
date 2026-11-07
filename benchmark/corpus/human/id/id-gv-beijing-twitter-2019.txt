@@ -1,0 +1,19 @@
+---
+source: Global Voices
+author: Oiwan Lam
+translator: Vinna Florencia
+original: https://advox.globalvoices.org/2018/12/11/crackdown-in-beijing-using-twitter-is-more-dangerous-than-street-demonstrations/
+translation: https://id.globalvoices.org/2019/01/29/pemberantasan-twit-di-beijing-menggunakan-twitter-lebih-berbahaya-daripada-demonstrasi-jalanan/
+license: https://creativecommons.org/licenses/by/3.0/
+changes: excerpt; whitespace normalized
+---
+
+Pihak berwajib Beijing mengeluarkan larangan keras bagi semua pengguna Twitter di Tiongkok daratan.
+
+42 kesaksian yang rilis tanggal 5 Desember yang dikumpulkan oleh China Change, sebuah situs advokasi hak asasi manusia di Tiongkok, merinci pengalaman buruk ratusan pengguna Twitter yang ditahan dan diinterogasi oleh aparat keamanan nasional sejak September 2018. Dalam kebanyakan kasus, polisi bertanya — jika tidak, memaksa — para pengguna ini untuk menghapus postingan atau akun mereka.
+
+Meskipun Twitter diblokir di Tiongkok, banyak netizen menggunakan alat pengalih, seperti VPNs (jaringan privat virtual) untuk mengunjungi situs sosial media, berhubungan dengan teman-teman atau mengakses informasi dan berita tanpa sensor.
+
+Pada 2016, diperkirakan ada 10 juta pengguna Twitter di Tiongkok daratan. Mayoritas pengguna menggunakan situs ini sebagai sarana pengumpulan berita, dan menahan diri untuk berkomentar, tetapi beberapa secara terang-terangan, aktif berkomentar kritis ketika me-retweet berita kepada teman-temannya.
+
+Otoritas di Tiongkok daratan pernah menangkap para pengguna Twitter, tetapi tidak ada pola atau bukti yang jelas dari pembatasan keras tersebut. Insiden itu bersifat sporadis dan acak, seperti penangkapan seorang pengguna Twitter di Tiongkok pada tahun 2012 karena membuat lelucon tentang runtuhnya Aula Besar Rakyat.

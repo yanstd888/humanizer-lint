@@ -1,0 +1,23 @@
+## Introduction
+
+There was a time when I was tasked to maintain a system, and fix it iteratively
+whenever users report bugs. I was **not** on building-mode: the priority
+isn't the next killer feature or the next phase in the roadmap&mdash;it's
+simply to ensure that the software is working as expected. During those weeks
+of squashing bugs and triaging errors, I realized that debugging isn't as
+straightforward as I thought it was!
+
+**Debugging seems to be a skill expected from anyone entering into tech, but
+the knowledge on how to effectively do so is siloed-out.** It makes sense
+because as you learn how to code, you've certainly hit errors and
+debugged your way out of it. Then, as we went through our own tech journeys, we
+developed a tacit knowledge[^1] on how to debug.
+
+> I realized that I don't have a "mental framework" on how to debug
+> effectively. Usually, I just rely on my tacit knowledge and
+> practical experience.
+
+I realized that I don't have a "mental framework" on how to debug effectively.
+Usually, I just rely on my tacit knowledge and practical
+experience. Hence, I devised a short three-part framework for myself, and I'm sharing
+it to you through Pixel Art[^2]!

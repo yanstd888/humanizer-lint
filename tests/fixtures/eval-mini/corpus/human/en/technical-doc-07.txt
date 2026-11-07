@@ -1,0 +1,1 @@
+Run `npm install -g foo-cli` to install the tool. The command needs Node 18 or newer.

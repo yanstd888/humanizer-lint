@@ -1,104 +1,113 @@
 {
   "aggregate": {
-    "n": 3,
+    "n": 60,
     "confusion": {
-      "tp": 0,
+      "tp": 6,
       "fn": 0,
-      "fp": 2,
-      "tn": 1,
+      "fp": 43,
+      "tn": 11,
       "skipped": 0
     },
-    "tpr": null,
-    "fpr": 0.666667,
-    "precision": 0,
-    "f1": 0,
-    "tprWilson95": null,
-    "fprWilson95": [
-      0.20766,
-      0.938508
+    "tpr": 1,
+    "fpr": 0.796296,
+    "precision": 0.122449,
+    "f1": 0.218182,
+    "tprWilson95": [
+      0.609666,
+      1
     ],
-    "auc": null,
+    "fprWilson95": [
+      0.670977,
+      0.882259
+    ],
+    "auc": 0.421296,
     "scores": {
       "ai": {
-        "n": 0,
-        "median": null,
-        "p10": null,
-        "p90": null
+        "n": 6,
+        "median": 86,
+        "p10": 81,
+        "p90": 89.5
       },
       "human": {
-        "n": 3,
-        "median": 86,
-        "p10": 46.8,
-        "p90": 87.6
+        "n": 54,
+        "median": 84,
+        "p10": 64.6,
+        "p90": 95
       }
     }
   },
   "byLanguageSplit": {
     "en:dev": {
-      "n": 2,
+      "n": 31,
       "confusion": {
-        "tp": 0,
+        "tp": 3,
         "fn": 0,
-        "fp": 2,
-        "tn": 0,
+        "fp": 21,
+        "tn": 7,
         "skipped": 0
       },
-      "tpr": null,
-      "fpr": 1,
-      "precision": 0,
-      "f1": 0,
-      "tprWilson95": null,
-      "fprWilson95": [
-        0.34238,
+      "tpr": 1,
+      "fpr": 0.75,
+      "precision": 0.125,
+      "f1": 0.222222,
+      "tprWilson95": [
+        0.438503,
         1
       ],
-      "auc": null,
+      "fprWilson95": [
+        0.566443,
+        0.873235
+      ],
+      "auc": 0.440476,
       "scores": {
         "ai": {
-          "n": 0,
-          "median": null,
-          "p10": null,
-          "p90": null
+          "n": 3,
+          "median": 86,
+          "p10": 86,
+          "p90": 90.8
         },
         "human": {
-          "n": 2,
-          "median": 61.5,
-          "p10": 41.9,
-          "p90": 81.1
+          "n": 28,
+          "median": 87,
+          "p10": 66.8,
+          "p90": 100
         }
       }
     },
     "id:dev": {
-      "n": 1,
+      "n": 29,
       "confusion": {
-        "tp": 0,
+        "tp": 3,
         "fn": 0,
-        "fp": 0,
-        "tn": 1,
+        "fp": 22,
+        "tn": 4,
         "skipped": 0
       },
-      "tpr": null,
-      "fpr": 0,
-      "precision": null,
-      "f1": null,
-      "tprWilson95": null,
-      "fprWilson95": [
-        0,
-        0.793451
+      "tpr": 1,
+      "fpr": 0.846154,
+      "precision": 0.12,
+      "f1": 0.214286,
+      "tprWilson95": [
+        0.438503,
+        1
       ],
-      "auc": null,
+      "fprWilson95": [
+        0.664688,
+        0.9385
+      ],
+      "auc": 0.384615,
       "scores": {
         "ai": {
-          "n": 0,
-          "median": null,
-          "p10": null,
-          "p90": null
+          "n": 3,
+          "median": 86,
+          "p10": 78,
+          "p90": 86.8
         },
         "human": {
-          "n": 1,
-          "median": 88,
-          "p10": 88,
-          "p90": 88
+          "n": 26,
+          "median": 80.5,
+          "p10": 65,
+          "p90": 95
         }
       }
     }
@@ -106,25 +115,25 @@
   "groups": [
     {
       "lang": "en",
-      "genre": "technical-doc",
+      "genre": "blog-opinion",
       "split": "dev",
       "adversarial": "none",
-      "n": 2,
+      "n": 4,
       "confusion": {
         "tp": 0,
         "fn": 0,
         "fp": 2,
-        "tn": 0,
+        "tn": 2,
         "skipped": 0
       },
       "tpr": null,
-      "fpr": 1,
+      "fpr": 0.5,
       "precision": 0,
       "f1": 0,
       "tprWilson95": null,
       "fprWilson95": [
-        0.34238,
-        1
+        0.150039,
+        0.849961
       ],
       "auc": null,
       "scores": {
@@ -135,10 +144,238 @@
           "p90": null
         },
         "human": {
-          "n": 2,
-          "median": 61.5,
-          "p10": 41.9,
-          "p90": 81.1
+          "n": 4,
+          "median": 85,
+          "p10": 74.6,
+          "p90": 96.1
+        }
+      }
+    },
+    {
+      "lang": "en",
+      "genre": "email-chat",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 3,
+      "confusion": {
+        "tp": 3,
+        "fn": 0,
+        "fp": 0,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": 1,
+      "fpr": null,
+      "precision": 1,
+      "f1": 1,
+      "tprWilson95": [
+        0.438503,
+        1
+      ],
+      "fprWilson95": null,
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 3,
+          "median": 86,
+          "p10": 86,
+          "p90": 90.8
+        },
+        "human": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        }
+      }
+    },
+    {
+      "lang": "en",
+      "genre": "legal-formal",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 4,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 1,
+        "tn": 3,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 0.25,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.045587,
+        0.699358
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 4,
+          "median": 91,
+          "p10": 82.1,
+          "p90": 98.5
+        }
+      }
+    },
+    {
+      "lang": "en",
+      "genre": "news",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 10,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 9,
+        "tn": 1,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 0.9,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.59585,
+        0.982124
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 10,
+          "median": 87,
+          "p10": 73.9,
+          "p90": 92.8
+        }
+      }
+    },
+    {
+      "lang": "en",
+      "genre": "technical-doc",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 10,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 9,
+        "tn": 1,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 0.9,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.59585,
+        0.982124
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 10,
+          "median": 79,
+          "p10": 47.8,
+          "p90": 92.8
+        }
+      }
+    },
+    {
+      "lang": "id",
+      "genre": "academic-formal",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 21,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 18,
+        "tn": 3,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 0.857143,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.653639,
+        0.95019
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 21,
+          "median": 82,
+          "p10": 64,
+          "p90": 95
+        }
+      }
+    },
+    {
+      "lang": "id",
+      "genre": "email-chat",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 3,
+      "confusion": {
+        "tp": 3,
+        "fn": 0,
+        "fp": 0,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": 1,
+      "fpr": null,
+      "precision": 1,
+      "f1": 1,
+      "tprWilson95": [
+        0.438503,
+        1
+      ],
+      "fprWilson95": null,
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 3,
+          "median": 86,
+          "p10": 78,
+          "p90": 86.8
+        },
+        "human": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
         }
       }
     },
@@ -179,38 +416,1094 @@
           "p90": 88
         }
       }
+    },
+    {
+      "lang": "id",
+      "genre": "news",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 1,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 1,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 1,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.206549,
+        1
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 1,
+          "median": 79,
+          "p10": 79,
+          "p90": 79
+        }
+      }
+    },
+    {
+      "lang": "id",
+      "genre": "technical-doc",
+      "split": "dev",
+      "adversarial": "none",
+      "n": 3,
+      "confusion": {
+        "tp": 0,
+        "fn": 0,
+        "fp": 3,
+        "tn": 0,
+        "skipped": 0
+      },
+      "tpr": null,
+      "fpr": 1,
+      "precision": 0,
+      "f1": 0,
+      "tprWilson95": null,
+      "fprWilson95": [
+        0.438503,
+        1
+      ],
+      "auc": null,
+      "scores": {
+        "ai": {
+          "n": 0,
+          "median": null,
+          "p10": null,
+          "p90": null
+        },
+        "human": {
+          "n": 3,
+          "median": 75,
+          "p10": 70.2,
+          "p90": 82.2
+        }
+      }
     }
   ],
   "rules": [
     {
+      "ruleId": "EN025",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "EN030",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "EN041",
+      "human": 6,
+      "ai": 0
+    },
+    {
       "ruleId": "EN044",
-      "human": 2,
+      "human": 6,
+      "ai": 0
+    },
+    {
+      "ruleId": "EN049",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "EN058",
+      "human": 7,
       "ai": 0
     },
     {
       "ruleId": "EXCESSIVE_NOMINALIZATION",
+      "human": 2,
+      "ai": 0
+    },
+    {
+      "ruleId": "FLAT_PARAGRAPH_RHYTHM",
+      "human": 6,
+      "ai": 2
+    },
+    {
+      "ruleId": "ID008",
       "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "ID028",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "ID033",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "ID034",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "ID051",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "ID052",
+      "human": 11,
+      "ai": 0
+    },
+    {
+      "ruleId": "INCONSISTENT_QUOTES",
+      "human": 1,
+      "ai": 0
+    },
+    {
+      "ruleId": "LOW_BURSTINESS",
+      "human": 25,
       "ai": 0
     },
     {
       "ruleId": "LOW_ENTROPY_REPETITION",
-      "human": 2,
+      "human": 29,
+      "ai": 1
+    },
+    {
+      "ruleId": "LOW_LEXICAL_DIVERSITY",
+      "human": 5,
       "ai": 0
     },
     {
       "ruleId": "MISSING_SENTENCE_RANGE",
+      "human": 39,
+      "ai": 6
+    },
+    {
+      "ruleId": "MONOTONOUS_RHYTHM",
+      "human": 17,
+      "ai": 4
+    },
+    {
+      "ruleId": "PASSIVE_BLOATING",
       "human": 2,
       "ai": 0
     },
     {
-      "ruleId": "MONOTONOUS_RHYTHM",
-      "human": 2,
+      "ruleId": "REPEATED_SENTENCE_OPENING",
+      "human": 12,
+      "ai": 0
+    },
+    {
+      "ruleId": "REPETITIVE_NGRAM",
+      "human": 6,
+      "ai": 0
+    },
+    {
+      "ruleId": "REPETITIVE_STARTERS",
+      "human": 12,
       "ai": 0
     },
     {
       "ruleId": "SYMMETRIC_PARAGRAPHS",
+      "human": 6,
+      "ai": 0
+    },
+    {
+      "ruleId": "UNIFORM_CLAUSE_STRUCTURE",
       "human": 1,
       "ai": 0
     }
-  ]
+  ],
+  "devCorpus": [
+    {
+      "id": "en-1962-computers",
+      "file": "human/en/1962-computers.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 281,
+      "provenance": "https://www.gutenberg.org/ebooks/72572; excerpt already retained in tests/corpus/en-pre-llm-essay.txt",
+      "license": "Public domain in the United States; rights elsewhere may differ",
+      "retrievedDate": "2026-11-04",
+      "firstPublishedYear": 1962,
+      "text": "Along with computing machines a whole new technology is growing.\nUniversities and colleges—even high schools—are teaching courses in\ncomputers. And the computer itself is getting into the teaching business\ntoo. The “teaching machine” is one of the most challenging computer\ndevelopments to come along so far. These mechanical professors range\nfrom simple “programmed” notebooks, such as the Book of Knowledge and\nEncyclopedia Britannica are experimenting with, to complex computerized\nsystems such as that developed by U.S. Industries, Inc., for the Air\nForce and others.\n\nThe computer as a teaching machine immediately raises the question of\nintelligence, and whether or not the computer has any. Debate waxes hot\non this subject; but perhaps one authority was only half joking when he\nsaid that the computer designer’s competition was a unit about the size\nof a grapefruit, using only a tenth of a volt of electricity, with a\nmemory 10,000 times as extensive as any existing electronic computer.\nThis is a brief description of the human brain, of course.\n\nWhen the first computers appeared, those like ENIAC and BINAC, fiction\nwriters and even some science writers had a field day turning the\nmachines into diabolical “brains.” Whether or not the computer really\nthinks remains a controversial question. Some top scientists claim that\nthe computer will eventually be far smarter than its human builder;\nequally reputable authorities are just as sure that no computer will\never have an original thought in its head. Perhaps a safe middle road is\nexpressed with the title of this book; namely that the machine is simply\nan extension of the human brain. A high-speed abacus or slide rule, if\nyou will; accurate and foolproof, but a moron nonetheless.\n"
+    },
+    {
+      "id": "en-art-command-line-2020",
+      "file": "human/en/art-command-line-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 281,
+      "provenance": "Joshua Levy, authors and translators; The Art of Command Line, README.md at 725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75, 2020-03-25; https://github.com/jlevy/the-art-of-command-line/blob/725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75/README.md; https://github.com/jlevy/the-art-of-command-line/blob/725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75/AUTHORS.md ; contiguous raw Markdown excerpt; EN and ID are translations of the same source and are correlated",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/ ; license copy LICENSES/CC-BY-SA-4.0.txt; source license in https://raw.githubusercontent.com/jlevy/the-art-of-command-line/725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75/README.md",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit published 2020-03-25, prior to 2021: https://api.github.com/repos/jlevy/the-art-of-command-line/commits/725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75",
+      "text": "Fluency on the command line is a skill often neglected or considered arcane, but it improves your flexibility and productivity as an engineer in both obvious and subtle ways. This is a selection of notes and tips on using the command-line that we've found useful when working on Linux. Some tips are elementary, and some are fairly specific, sophisticated, or obscure. This page is not long, but if you can use and recall all the items here, you know a lot.\n\nThis work is the result of [many authors and translators](AUTHORS.md).\nSome of this\n[originally](http://www.quora.com/What-are-some-lesser-known-but-useful-Unix-commands)\n[appeared](http://www.quora.com/What-are-the-most-useful-Swiss-army-knife-one-liners-on-Unix)\non [Quora](http://www.quora.com/What-are-some-time-saving-tips-that-every-Linux-user-should-know),\nbut it has since moved to GitHub, where people more talented than the original author have made numerous improvements.\n[**Please submit a question**](https://airtable.com/shrzMhx00YiIVAWJg) if you have a question related to the command line. [**Please contribute**](/CONTRIBUTING.md) if you see an error or something that could be better!\n\n## Meta\n\nScope:\n\n- This guide is both for beginners and the experienced. The goals are *breadth* (everything important), *specificity* (give concrete examples of the most common case), and *brevity* (avoid things that aren't essential or digressions you can easily look up elsewhere). Every tip is essential in some situation or significantly saves time over alternatives.\n- This is written for Linux, with the exception of the \"[macOS only](#macos-only)\" and \"[Windows only](#windows-only)\" sections. Many of the other items apply or can be installed on other Unices or macOS (or even Cygwin).\n- The focus is on interactive Bash, though many tips apply to other shells and to general Bash scripting.\n- It includes both \"standard\" Unix commands as well as ones that require special package installs -- so long as they are important enough to merit inclusion.\n"
+    },
+    {
+      "id": "en-contributor-covenant-v20-2020",
+      "file": "human/en/en-contributor-covenant-v20-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "legal-formal",
+      "split": "dev",
+      "wordCount": 393,
+      "provenance": "Coraline Ada Ehmke and Contributor Covenant Contributors, Contributor Covenant Code of Conduct: Version 2.0 Pledge, Standards, and Responsibilities; commit 4460b54260c475e869e2ec69471a323013912798 (2020-12-19T02:07:23+00:00); https://github.com/ContributorCovenant/contributor_covenant/blob/4460b54260c475e869e2ec69471a323013912798/content/version/2/0/code_of_conduct.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/ContributorCovenant/contributor_covenant/4460b54260c475e869e2ec69471a323013912798/LICENSE.md",
+      "license": "CC BY 4.0; https://creativecommons.org/licenses/by/4.0/; license copy LICENSES/CC-BY-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit 4460b54260c475e869e2ec69471a323013912798 (2020-12-19T02:07:23+00:00) predates 2021; https://github.com/ContributorCovenant/contributor_covenant/commit/4460b54260c475e869e2ec69471a323013912798",
+      "text": "## Our Pledge\n\nWe as members, contributors, and leaders pledge to make participation in our\ncommunity a harassment-free experience for everyone, regardless of age, body\nsize, visible or invisible disability, ethnicity, sex characteristics, gender\nidentity and expression, level of experience, education, socio-economic status,\nnationality, personal appearance, race, religion, or sexual identity\nand orientation.\n\nWe pledge to act and interact in ways that contribute to an open, welcoming,\ndiverse, inclusive, and healthy community.\n\n## Our Standards\n\nExamples of behavior that contributes to a positive environment for our\ncommunity include:\n\n* Demonstrating empathy and kindness toward other people\n* Being respectful of differing opinions, viewpoints, and experiences\n* Giving and gracefully accepting constructive feedback\n* Accepting responsibility and apologizing to those affected by our mistakes,\n  and learning from the experience\n* Focusing on what is best not just for us as individuals, but for the\n  overall community\n\nExamples of unacceptable behavior include:\n\n* The use of sexualized language or imagery, and sexual attention or\n  advances of any kind\n* Trolling, insulting or derogatory comments, and personal or political attacks\n* Public or private harassment\n* Publishing others' private information, such as a physical or email\n  address, without their explicit permission\n* Other conduct which could reasonably be considered inappropriate in a\n  professional setting\n\n## Enforcement Responsibilities\n\nCommunity leaders are responsible for clarifying and enforcing our standards of\nacceptable behavior and will take appropriate and fair corrective action in\nresponse to any behavior that they deem inappropriate, threatening, offensive,\nor harmful.\n\nCommunity leaders have the right and responsibility to remove, edit, or reject\ncomments, commits, code, wiki edits, issues, and other contributions that are\nnot aligned to this Code of Conduct, and will communicate reasons for moderation\ndecisions when appropriate.\n\n## Scope\n\nThis Code of Conduct applies within all community spaces, and also applies when\nan individual is officially representing the community in public spaces.\nExamples of representing our community include using an official e-mail address,\nposting via an official social media account, or acting as an appointed\nrepresentative at an online or offline event.\n\n## Enforcement\n\nInstances of abusive, harassing, or otherwise unacceptable behavior may be\nreported to the community leaders responsible for enforcement at\n[INSERT CONTACT METHOD].\nAll complaints will be reviewed and investigated promptly and fairly.\n\nAll community leaders are obligated to respect the privacy and security of the\nreporter of any incident.\n"
+    },
+    {
+      "id": "en-declaration-1776",
+      "file": "human/en/declaration-1776.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "legal-formal",
+      "split": "dev",
+      "wordCount": 181,
+      "provenance": "https://www.gutenberg.org/cache/epub/1/pg1.txt; eBook 1, last updated 2025-09-02; excerpt from first two paragraphs, ending before Prudence",
+      "license": "Public domain in the USA; rights elsewhere may differ; https://www.gutenberg.org/ebooks/1",
+      "retrievedDate": "2026-11-04",
+      "firstPublishedYear": 1776,
+      "text": "When in the Course of human events, it becomes necessary for one people\nto dissolve the political bands which have connected them with another,\nand to assume, among the Powers of the earth, the separate and equal\nstation to which the Laws of Nature and of Nature’s God entitle them,\na decent respect to the opinions of mankind requires that they should\ndeclare the causes which impel them to the separation.\n\nWe hold these truths to be self-evident, that all men are created\nequal, that they are endowed by their Creator with certain unalienable\nRights, that among these are Life, Liberty, and the pursuit of\nHappiness. That to secure these rights, Governments are instituted\namong Men, deriving their just powers from the consent of the governed,\nThat whenever any Form of Government becomes destructive of these\nends, it is the Right of the People to alter or to abolish it, and to\ninstitute new Government, laying its foundation on such principles\nand organizing its powers in such form, as to them shall seem most\nlikely to effect their Safety and Happiness.\n"
+    },
+    {
+      "id": "en-gonzalez-haskell-sotu-2020",
+      "file": "human/en/en-gonzalez-haskell-sotu-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "wordCount": 190,
+      "provenance": "Gabriel Gonzalez, State of the Haskell Ecosystem (2020 Preview); commit a0333cc98561ea8a4245f2e72cc30a3266755c29 (2020-12-04T05:05:10Z); https://github.com/Gabriella439/post-rfc/blob/a0333cc98561ea8a4245f2e72cc30a3266755c29/sotu.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/Gabriella439/post-rfc/a0333cc98561ea8a4245f2e72cc30a3266755c29/LICENSE.md",
+      "license": "CC BY 4.0; https://creativecommons.org/licenses/by/4.0/; license copy LICENSES/CC-BY-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit a0333cc98561ea8a4245f2e72cc30a3266755c29 (2020-12-04T05:05:10Z) predates 2021; https://api.github.com/repos/Gabriella439/post-rfc/commits/a0333cc98561ea8a4245f2e72cc30a3266755c29",
+      "text": "# State of the Haskell ecosystem\n\nIn this post I will describe the current state of the Haskell ecosystem to the\nbest of my knowledge and its suitability for various programming domains and\ntasks.  The purpose of this post is to discuss both the good and the bad by\nadvertising where Haskell shines while highlighting where I believe there is\nroom for improvement.\n\nThis post is grouped into two sections: the first section covers Haskell's\nsuitability for particular programming application domains (i.e. servers,\ngames, or data science) and the second section covers Haskell's suitability\nfor common general-purpose programming needs (such as testing, IDEs, or\nconcurrency).\n\nThe topics are roughly sorted from greatest strengths to greatest weaknesses.\nEach programming area will also be summarized by a single rating of either:\n\n* **Best in class**: the best experience in any language\n* **Mature**: suitable for most programmers\n* **Immature**: only acceptable for early-adopters\n* **Bad**: pretty unusable\n\nThe more positive the rating the more I will support the rating with\nsuccess stories in the wild.  The more negative the rating the more I will\noffer constructive advice for how to improve things.\n"
+    },
+    {
+      "id": "en-julia-why-we-created-2012",
+      "file": "human/en/en-julia-why-we-created-2012.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "wordCount": 328,
+      "provenance": "Jeff Bezanson, Stefan Karpinski, Viral B. Shah, and Alan Edelman, Why We Created Julia; commit f20f30d79c1eb66916794a50c0a041070898377a (2020-12-30T15:10:31+00:00); https://github.com/JuliaLang/www.julialang.org/blob/f20f30d79c1eb66916794a50c0a041070898377a/blog/2012/02/why-we-created-julia.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/JuliaLang/www.julialang.org/f20f30d79c1eb66916794a50c0a041070898377a/LICENSE.md",
+      "license": "MIT; https://opensource.org/license/mit; license copy LICENSES/en-julia-why-we-created-2012-MIT.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit f20f30d79c1eb66916794a50c0a041070898377a (2020-12-30T15:10:31+00:00) predates 2021; https://github.com/JuliaLang/www.julialang.org/commit/f20f30d79c1eb66916794a50c0a041070898377a",
+      "text": "In short, because we are greedy.\n\nWe are power Matlab users.\nSome of us are Lisp hackers.\nSome are Pythonistas, others Rubyists, still others Perl hackers.\nThere are those of us who used Mathematica before we could grow facial hair.\nThere are those who still can't grow facial hair.\nWe've generated more R plots than any sane person should.\nC is our desert island programming language.\n\nWe love all of these languages;\nthey are wonderful and powerful.\nFor the work we do — scientific computing, machine learning, data mining, large-scale linear algebra, distributed and parallel computing — each one is perfect for some aspects of the work and terrible for others.\nEach one is a trade-off.\n\nWe are greedy: we want more.\n\nWe want a language that's open source, with a liberal license.\nWe want the speed of C with the dynamism of Ruby.\nWe want a language that's homoiconic, with true macros like Lisp, but with obvious, familiar mathematical notation like Matlab.\nWe want something as usable for general programming as Python,\nas easy for statistics as R,\nas natural for string processing as Perl,\nas powerful for linear algebra as Matlab,\nas good at gluing programs together as the shell.\nSomething that is dirt simple to learn, yet keeps the most serious hackers happy.\nWe want it interactive and we want it compiled.\n\n(Did we mention it should be as fast as C?)\n\nWhile we're being demanding, we want something that provides the distributed power of Hadoop — without the kilobytes of boilerplate Java and XML;\nwithout being forced to sift through gigabytes of log files on hundreds of machines to find our bugs.\nWe want the power without the layers of impenetrable complexity.\nWe want to write simple scalar loops that compile down to tight machine code using just the registers on a single CPU.\nWe want to write `A*B` and launch a thousand computations on a thousand machines, calculating a vast matrix product together.\n"
+    },
+    {
+      "id": "en-k8s-objects-desired-state-2020",
+      "file": "human/en/en-k8s-objects-desired-state-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 158,
+      "provenance": "The Kubernetes Authors, Understanding Kubernetes Objects: Persistent Entities and Desired State; commit 40728c2fbabd5facf6dae3028cb9aca0ed37e211 (2020-12-31T16:33:51+00:00); https://github.com/kubernetes/website/blob/40728c2fbabd5facf6dae3028cb9aca0ed37e211/content/en/docs/concepts/overview/working-with-objects/kubernetes-objects.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/kubernetes/website/40728c2fbabd5facf6dae3028cb9aca0ed37e211/LICENSE",
+      "license": "CC BY 4.0; https://creativecommons.org/licenses/by/4.0/; license copy LICENSES/CC-BY-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit 40728c2fbabd5facf6dae3028cb9aca0ed37e211 (2020-12-31T16:33:51+00:00) predates 2021; https://github.com/kubernetes/website/commit/40728c2fbabd5facf6dae3028cb9aca0ed37e211",
+      "text": "*Kubernetes objects* are persistent entities in the Kubernetes system. Kubernetes uses these entities to represent the state of your cluster. Specifically, they can describe:\n\n* What containerized applications are running (and on which nodes)\n* The resources available to those applications\n* The policies around how those applications behave, such as restart policies, upgrades, and fault-tolerance\n\nA Kubernetes object is a \"record of intent\"--once you create the object, the Kubernetes system will constantly work to ensure that object exists. By creating an object, you're effectively telling the Kubernetes system what you want your cluster's workload to look like; this is your cluster's *desired state*.\n\nTo work with Kubernetes objects--whether to create, modify, or delete them--you'll need to use the [Kubernetes API](/docs/concepts/overview/kubernetes-api/). When you use the `kubectl` command-line interface, for example, the CLI makes the necessary Kubernetes API calls for you. You can also use the Kubernetes API directly in your own programs using one of the [Client Libraries](/docs/reference/using-api/client-libraries/).\n"
+    },
+    {
+      "id": "en-k8s-what-kubernetes-is-not-2020",
+      "file": "human/en/en-k8s-what-kubernetes-is-not-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 367,
+      "provenance": "The Kubernetes Authors, What Kubernetes Is Not: Scope, Boundaries, and Contrasts with Traditional PaaS; commit 40728c2fbabd5facf6dae3028cb9aca0ed37e211 (2020-12-31T16:33:51+00:00); https://github.com/kubernetes/website/blob/40728c2fbabd5facf6dae3028cb9aca0ed37e211/content/en/docs/concepts/overview/what-is-kubernetes.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/kubernetes/website/40728c2fbabd5facf6dae3028cb9aca0ed37e211/LICENSE",
+      "license": "CC BY 4.0; https://creativecommons.org/licenses/by/4.0/; license copy LICENSES/CC-BY-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit 40728c2fbabd5facf6dae3028cb9aca0ed37e211 (2020-12-31T16:33:51+00:00) predates 2021; https://github.com/kubernetes/website/commit/40728c2fbabd5facf6dae3028cb9aca0ed37e211",
+      "text": "Kubernetes is not a traditional, all-inclusive PaaS (Platform as a Service) system. Since Kubernetes operates at the container level rather than at the hardware level, it provides some generally applicable features common to PaaS offerings, such as deployment, scaling, load balancing, and lets users integrate their logging, monitoring, and alerting solutions. However, Kubernetes is not monolithic, and these default solutions are optional and pluggable. Kubernetes provides the building blocks for building developer platforms, but preserves user choice and flexibility where it is important.\n\nKubernetes:\n\n* Does not limit the types of applications supported. Kubernetes aims to support an extremely diverse variety of workloads, including stateless, stateful, and data-processing workloads. If an application can run in a container, it should run great on Kubernetes.\n* Does not deploy source code and does not build your application. Continuous Integration, Delivery, and Deployment (CI/CD) workflows are determined by organization cultures and preferences as well as technical requirements.\n* Does not provide application-level services, such as middleware (for example, message buses), data-processing frameworks (for example, Spark), databases (for example, MySQL), caches, nor cluster storage systems (for example, Ceph) as built-in services. Such components can run on Kubernetes, and/or can be accessed by applications running on Kubernetes through portable mechanisms, such as the [Open Service Broker](https://openservicebrokerapi.org/).\n* Does not dictate logging, monitoring, or alerting solutions. It provides some integrations as proof of concept, and mechanisms to collect and export metrics.\n* Does not provide nor mandate a configuration language/system (for example, Jsonnet). It provides a declarative API that may be targeted by arbitrary forms of declarative specifications.\n* Does not provide nor adopt any comprehensive machine configuration, maintenance, management, or self-healing systems.\n* Additionally, Kubernetes is not a mere orchestration system. In fact, it eliminates the need for orchestration. The technical definition of orchestration is execution of a defined workflow: first do A, then B, then C. In contrast, Kubernetes comprises a set of independent, composable control processes that continuously drive the current state towards the provided desired state. It shouldn't matter how you get from A to C. Centralized control is also not required. This results in a system that is easier to use and more powerful, robust, resilient, and extensible.\n"
+    },
+    {
+      "id": "en-miranda-debugging-framework-2020",
+      "file": "human/en/en-miranda-debugging-framework-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "wordCount": 205,
+      "provenance": "Lester James Miranda, Code R.E.D.: My Mental Framework for Debugging; commit 4a93da1f1fc6ab7c40429e349cc0ad02e0ad7ad3 (2020-12-17T01:56:23Z); https://github.com/ljvmiranda921/ljvmiranda921.github.io/blob/4a93da1f1fc6ab7c40429e349cc0ad02e0ad7ad3/notebook/_posts/2020-05-30-how-to-debug.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/ljvmiranda921/ljvmiranda921.github.io/4a93da1f1fc6ab7c40429e349cc0ad02e0ad7ad3/LICENSE",
+      "license": "CC BY 4.0; https://creativecommons.org/licenses/by/4.0/; license copy LICENSES/CC-BY-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit 4a93da1f1fc6ab7c40429e349cc0ad02e0ad7ad3 (2020-12-17T01:56:23Z) predates 2021; https://api.github.com/repos/ljvmiranda921/ljvmiranda921.github.io/commits/4a93da1f1fc6ab7c40429e349cc0ad02e0ad7ad3",
+      "text": "## Introduction\n\nThere was a time when I was tasked to maintain a system, and fix it iteratively\nwhenever users report bugs. I was **not** on building-mode: the priority\nisn't the next killer feature or the next phase in the roadmap&mdash;it's\nsimply to ensure that the software is working as expected. During those weeks\nof squashing bugs and triaging errors, I realized that debugging isn't as\nstraightforward as I thought it was!\n\n**Debugging seems to be a skill expected from anyone entering into tech, but\nthe knowledge on how to effectively do so is siloed-out.** It makes sense\nbecause as you learn how to code, you've certainly hit errors and\ndebugged your way out of it. Then, as we went through our own tech journeys, we\ndeveloped a tacit knowledge[^1] on how to debug.\n\n> I realized that I don't have a \"mental framework\" on how to debug\n> effectively. Usually, I just rely on my tacit knowledge and\n> practical experience.\n\nI realized that I don't have a \"mental framework\" on how to debug effectively.\nUsually, I just rely on my tacit knowledge and practical\nexperience. Hence, I devised a short three-part framework for myself, and I'm sharing\nit to you through Pixel Art[^2]!\n"
+    },
+    {
+      "id": "en-nodejs-error-callbacks-2020",
+      "file": "human/en/en-nodejs-error-callbacks-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 238,
+      "provenance": "Node.js Documentation Contributors, Node.js API Documentation: Error-First Callbacks; commit 51b43675067fafaad0abd7d4f62a6a5097db5044 (2020-12-31T20:44:33Z); https://github.com/nodejs/node/blob/51b43675067fafaad0abd7d4f62a6a5097db5044/doc/api/errors.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/nodejs/node/51b43675067fafaad0abd7d4f62a6a5097db5044/LICENSE",
+      "license": "MIT; https://opensource.org/license/mit; license copy LICENSES/en-nodejs-error-callbacks-2020-MIT.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit 51b43675067fafaad0abd7d4f62a6a5097db5044 (2020-12-31T20:44:33Z) predates 2021; https://api.github.com/repos/nodejs/node/commits/51b43675067fafaad0abd7d4f62a6a5097db5044",
+      "text": "### Error-first callbacks\n\n<!--type=misc-->\n\nMost asynchronous methods exposed by the Node.js core API follow an idiomatic\npattern referred to as an _error-first callback_. With this pattern, a callback\nfunction is passed to the method as an argument. When the operation either\ncompletes or an error is raised, the callback function is called with the\n`Error` object (if any) passed as the first argument. If no error was raised,\nthe first argument will be passed as `null`.\n\n```js\nconst fs = require('fs');\n\nfunction errorFirstCallback(err, data) {\n  if (err) {\n    console.error('There was an error', err);\n    return;\n  }\n  console.log(data);\n}\n\nfs.readFile('/some/file/that/does-not-exist', errorFirstCallback);\nfs.readFile('/some/file/that/does-exist', errorFirstCallback);\n```\n\nThe JavaScript `try…catch` mechanism **cannot** be used to intercept errors\ngenerated by asynchronous APIs. A common mistake for beginners is to try to\nuse `throw` inside an error-first callback:\n\n```js\n// THIS WILL NOT WORK:\nconst fs = require('fs');\n\ntry {\n  fs.readFile('/some/file/that/does-not-exist', (err, data) => {\n    // Mistaken assumption: throwing here...\n    if (err) {\n      throw err;\n    }\n  });\n} catch (err) {\n  // This will not catch the throw!\n  console.error(err);\n}\n```\n\nThis will not work because the callback function passed to `fs.readFile()` is\ncalled asynchronously. By the time the callback has been called, the\nsurrounding code, including the `try…catch` block, will have already exited.\nThrowing an error inside the callback **can crash the Node.js process** in most\ncases. If [domains][] are enabled, or a handler has been registered with\n`process.on('uncaughtException')`, such errors can be intercepted.\n"
+    },
+    {
+      "id": "en-opensource-guide-legal-2020",
+      "file": "human/en/en-opensource-guide-legal-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "blog-opinion",
+      "split": "dev",
+      "wordCount": 379,
+      "provenance": "Open Source Guides contributors, The Legal Side of Open Source; commit f7bb97940c9c387a3bdfa65c186330e932aeba7f (2020-07-09T15:19:56Z); https://github.com/github/opensource.guide/blob/f7bb97940c9c387a3bdfa65c186330e932aeba7f/_articles/legal.md; contiguous source Markdown, terminal blank lines trimmed; source license https://raw.githubusercontent.com/github/opensource.guide/f7bb97940c9c387a3bdfa65c186330e932aeba7f/LICENSE",
+      "license": "CC BY 4.0; https://creativecommons.org/licenses/by/4.0/; license copy LICENSES/CC-BY-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Commit f7bb97940c9c387a3bdfa65c186330e932aeba7f authored 2020-07-09T15:19:56Z predates 2021; https://github.com/github/opensource.guide/commit/f7bb97940c9c387a3bdfa65c186330e932aeba7f",
+      "text": "## Understanding the legal implications of open source\n\nSharing your creative work with the world can be an exciting and rewarding experience. It can also mean a bunch of legal things you didn't know you had to worry about. Thankfully, you don't have to start from scratch. We've got your legal needs covered. (Before you dig in, be sure to read our [disclaimer](/notices/).)\n\n## Why do people care so much about the legal side of open source?\n\nGlad you asked! When you make a creative work (such as writing, graphics, or code), that work is under exclusive copyright by default. That is, the law assumes that as the author of your work, you have a say in what others can do with it.\n\nIn general, that means nobody else can use, copy, distribute, or modify your work without being at risk of take-downs, shake-downs, or litigation.\n\nOpen source is an unusual circumstance, however, because the author expects that others will use, modify, and share the work. But because the legal default is still exclusive copyright, you need a license that explicitly states these permissions.\n\nIf you don't apply an open source license, everybody who contributes to your project also becomes an exclusive copyright holder of their work. That means nobody can use, copy, distribute, or modify their contributions -- and that \"nobody\" includes you.\n\nFinally, your project may have dependencies with license requirements that you weren't aware of. Your project's community, or your employer's policies, may also require your project to use specific open source licenses. We'll cover these situations below.\n\n## Are public GitHub projects open source?\n\nWhen you [create a new project](https://help.github.com/articles/creating-a-new-repository/) on GitHub, you have the option to make the repository **private** or **public**.\n\n![Create repository](/assets/images/legal/repo-create-name.png)\n\n**Making your GitHub project public is not the same as licensing your project.** Public projects are covered by [GitHub's Terms of Service](https://help.github.com/en/github/site-policy/github-terms-of-service#3-ownership-of-content-right-to-post-and-license-grants), which allows others to view and fork your project, but your work otherwise comes with no permissions.\n\nIf you want others to use, distribute, modify, or contribute back to your project, you need to include an open source license. For example, someone cannot legally use any part of your GitHub project in their code, even if it's public, unless you explicitly give them the right to do so.\n"
+    },
+    {
+      "id": "en-opentelemetry-overview-2020",
+      "file": "human/en/en-opentelemetry-overview-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 313,
+      "provenance": "OpenTelemetry contributors, What is OpenTelemetry?; commit b0bb3096648c7ef45f00649064cee72a8b2899bf (2020-11-10T14:32:51Z); https://github.com/open-telemetry/opentelemetry.io/blob/b0bb3096648c7ef45f00649064cee72a8b2899bf/content/en/docs/concepts/what-is-opentelemetry.md; contiguous source Markdown, terminal blank lines trimmed; source license https://raw.githubusercontent.com/open-telemetry/opentelemetry.io/b0bb3096648c7ef45f00649064cee72a8b2899bf/LICENSE",
+      "license": "Apache-2.0; full source license in LICENSES/en-opentelemetry-overview-2020-APACHE-2.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Commit b0bb3096648c7ef45f00649064cee72a8b2899bf authored 2020-11-10T14:32:51Z predates 2021; https://github.com/open-telemetry/opentelemetry.io/commit/b0bb3096648c7ef45f00649064cee72a8b2899bf",
+      "text": "OpenTelemetry is a set of APIs, SDKs, tooling and integrations that are\ndesigned for the creation and management of _telemetry data_ such as traces,\nmetrics, and logs.\n\n## Why you need OpenTelemetry and what it can do\n\nIn cloud-native technology stacks, distributed and polyglot architectures are\nthe norm. Distributed architectures introduce a variety of operational\nchallenges including how to solve availability and performance issues quickly.\nThese challenges have led to the rise of observability.\n\nTelemetry data is needed to power observability products. Traditionally,\ntelemetry data has been provided by either open-source projects or commercial\nvendors. With a lack of standardization, the net result is the lack of data\nportability and the burden on the user to maintain the instrumentation.\n\nThe OpenTelemetry project solves these problems by providing a single,\nvendor-agnostic solution. The project has broad industry support and adoption\nfrom cloud providers, vendors and end users.\n\nOpenTelemetry provides you with:\n\n- A single, vendor-agnostic instrumentation library per language with support\n  for both automatic and manual instrumentation.\n- An end-to-end implementation to generate, emit, collect, process and export\n  telemetry data.\n- Full control of your data with the ability to send data to multiple\n  destinations in parallel through configuration.\n- Open-standard semantic conventions to ensure vendor-agnostic data collection\n- The ability to support multiple context propagation formats in parallel to\n  assist with migrating as standards evolve.\n- A path forward no matter where you are on your observability journey. With\n  support for a variety of open-source and commercial protocols, format and\n  context propagation mechanisms as well as providing shims to the OpenTracing\n  and OpenCensus projects, it is easy to adopt OpenTelemetry.\n\n## What OpenTelemetry is not\n\nOpenTelemetry is not an observability back-end like Jaeger or Prometheus.\nInstead, it supports exporting data to a variety of open-source and commerical\nback-ends. It provides a pluggable architecture so additional technology\nprotocols and formats can be easily added.\n"
+    },
+    {
+      "id": "en-react-thinking-state-2020",
+      "file": "human/en/en-react-thinking-state-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 160,
+      "provenance": "Pete Hunt and React Documentation Contributors, Thinking in React: Step 3 Identify Minimal Representation of UI State; commit 7a11d71b384d41c21dd5d475b96d45b5497ade76 (2020-12-22T10:14:37Z); https://github.com/reactjs/reactjs.org/blob/7a11d71b384d41c21dd5d475b96d45b5497ade76/content/docs/thinking-in-react.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/reactjs/reactjs.org/7a11d71b384d41c21dd5d475b96d45b5497ade76/LICENSE-DOCS.md",
+      "license": "CC BY 4.0; https://creativecommons.org/licenses/by/4.0/; license copy LICENSES/CC-BY-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit 7a11d71b384d41c21dd5d475b96d45b5497ade76 (2020-12-22T10:14:37Z) predates 2021; https://api.github.com/repos/reactjs/reactjs.org/commits/7a11d71b384d41c21dd5d475b96d45b5497ade76",
+      "text": "## Step 3: Identify The Minimal (but complete) Representation Of UI State {#step-3-identify-the-minimal-but-complete-representation-of-ui-state}\n\nTo make your UI interactive, you need to be able to trigger changes to your underlying data model. React achieves this with **state**.\n\nTo build your app correctly, you first need to think of the minimal set of mutable state that your app needs. The key here is [DRY: *Don't Repeat Yourself*](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself). Figure out the absolute minimal representation of the state your application needs and compute everything else you need on-demand. For example, if you're building a TODO list, keep an array of the TODO items around; don't keep a separate state variable for the count. Instead, when you want to render the TODO count, take the length of the TODO items array.\n\nThink of all of the pieces of data in our example application. We have:\n\n  * The original list of products\n  * The search text the user has entered\n  * The value of the checkbox\n"
+    },
+    {
+      "id": "en-redux-core-concepts-2020",
+      "file": "human/en/en-redux-core-concepts-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 404,
+      "provenance": "Dan Abramov and Redux Contributors, Redux Introduction: Core Concepts; commit 5c8b5e3b1b6341d3b328dfcfb6536adb73d40890 (2020-12-23T20:15:36Z); https://github.com/reduxjs/redux/blob/5c8b5e3b1b6341d3b328dfcfb6536adb73d40890/docs/introduction/CoreConcepts.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/reduxjs/redux/5c8b5e3b1b6341d3b328dfcfb6536adb73d40890/LICENSE.md",
+      "license": "MIT; https://opensource.org/license/mit; license copy LICENSES/en-redux-core-concepts-2020-MIT.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit 5c8b5e3b1b6341d3b328dfcfb6536adb73d40890 (2020-12-23T20:15:36Z) predates 2021; https://api.github.com/repos/reduxjs/redux/commits/5c8b5e3b1b6341d3b328dfcfb6536adb73d40890",
+      "text": "# Core Concepts\n\nImagine your app’s state is described as a plain object. For example, the state of a todo app might look like this:\n\n```js\n{\n  todos: [{\n    text: 'Eat food',\n    completed: true\n  }, {\n    text: 'Exercise',\n    completed: false\n  }],\n  visibilityFilter: 'SHOW_COMPLETED'\n}\n```\n\nThis object is like a “model” except that there are no setters. This is so that different parts of the code can’t change the state arbitrarily, causing hard-to-reproduce bugs.\n\nTo change something in the state, you need to dispatch an action. An action is a plain JavaScript object (notice how we don’t introduce any magic?) that describes what happened. Here are a few example actions:\n\n```js\n{ type: 'ADD_TODO', text: 'Go to swimming pool' }\n{ type: 'TOGGLE_TODO', index: 1 }\n{ type: 'SET_VISIBILITY_FILTER', filter: 'SHOW_ALL' }\n```\n\nEnforcing that every change is described as an action lets us have a clear understanding of what’s going on in the app. If something changed, we know why it changed. Actions are like breadcrumbs of what has happened.\nFinally, to tie state and actions together, we write a function called a reducer. Again, nothing magical about it—it’s just a function that takes state and action as arguments, and returns the next state of the app.\nIt would be hard to write such a function for a big app, so we write smaller functions managing parts of the state:\n\n```js\nfunction visibilityFilter(state = 'SHOW_ALL', action) {\n  if (action.type === 'SET_VISIBILITY_FILTER') {\n    return action.filter\n  } else {\n    return state\n  }\n}\n\nfunction todos(state = [], action) {\n  switch (action.type) {\n    case 'ADD_TODO':\n      return state.concat([{ text: action.text, completed: false }])\n    case 'TOGGLE_TODO':\n      return state.map((todo, index) =>\n        action.index === index\n          ? { text: todo.text, completed: !todo.completed }\n          : todo\n      )\n    default:\n      return state\n  }\n}\n```\n\nAnd we write another reducer that manages the complete state of our app by calling those two reducers for the corresponding state keys:\n\n```js\nfunction todoApp(state = {}, action) {\n  return {\n    todos: todos(state.todos, action),\n    visibilityFilter: visibilityFilter(state.visibilityFilter, action)\n  }\n}\n```\n\nThis is basically the whole idea of Redux. Note that we haven’t used any Redux APIs. It comes with a few utilities to facilitate this pattern, but the main idea is that you describe how your state is updated over time in response to action objects, and 90% of the code you write is just plain JavaScript, with no use of Redux itself, its APIs, or any magic.\n"
+    },
+    {
+      "id": "en-rust-blog-foundation-2020",
+      "file": "human/en/en-rust-blog-foundation-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 215,
+      "provenance": "The Rust Core Team, Laying the Foundation for Rust's Future; commit fc48a1b28d84a0b0db2b51853d3be17700df9a66 (2020-12-31T15:07:32+00:00); https://github.com/rust-lang/blog.rust-lang.org/blob/fc48a1b28d84a0b0db2b51853d3be17700df9a66/posts/2020-08-18-laying-the-foundation-for-rusts-future.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/rust-lang/blog.rust-lang.org/fc48a1b28d84a0b0db2b51853d3be17700df9a66/LICENSE-MIT",
+      "license": "MIT; https://opensource.org/license/mit; license copy LICENSES/en-rust-blog-foundation-2020-MIT.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit fc48a1b28d84a0b0db2b51853d3be17700df9a66 (2020-12-31T15:07:32+00:00) predates 2021; https://github.com/rust-lang/blog.rust-lang.org/commit/fc48a1b28d84a0b0db2b51853d3be17700df9a66",
+      "text": "The Rust project was originally [conceived in 2010][2010] (depending on how you count, you might even say [2006][2006]!) as a [Mozilla Research] project, but the long term goal has always been to establish Rust as a self-sustaining project. In 2015, [with the launch of Rust 1.0][onepointoh], Rust established its project direction and governance independent of the Mozilla organization. Since then, Rust has been operating as an autonomous organization, with Mozilla being a prominent and consistent financial and legal sponsor.\n\nMozilla was, and continues to be, excited by the opportunity for the Rust language to be widely used, *and supported*, by many companies throughout the industry. Today, many companies, both large and small, are using Rust in more diverse and more significant ways, from [Amazon’s Firecracker][firecracker], to [Fastly’s Lucet][lucet], to critical services that power [Discord], [Cloudflare], [Figma], [1Password], and many, many more.\n\nOn Tuesday, August 11th 2020, Mozilla [announced][layoffs] their decision to restructure the company and to lay off around 250 people, including folks who are active members of the Rust project and the Rust community. Understandably, these layoffs have generated a lot of uncertainty and confusion about the impact on the Rust project itself. Our goal in this post is to address those concerns. We’ve also got a big announcement to make, so read on!\n"
+    },
+    {
+      "id": "en-rust-book-ownership-2020",
+      "file": "human/en/en-rust-book-ownership-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 193,
+      "provenance": "Steve Klabnik, Carol Nichols, and Rust Community Contributors, The Rust Programming Language: What Is Ownership?; commit aa0213ebb5a7d0494fa5f2d22f357fbe234f985e (2020-12-29T00:16:58Z); https://github.com/rust-lang/book/blob/aa0213ebb5a7d0494fa5f2d22f357fbe234f985e/src/ch04-01-what-is-ownership.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/rust-lang/book/aa0213ebb5a7d0494fa5f2d22f357fbe234f985e/LICENSE-MIT",
+      "license": "MIT; https://opensource.org/license/mit; license copy LICENSES/en-rust-book-ownership-2020-MIT.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit aa0213ebb5a7d0494fa5f2d22f357fbe234f985e (2020-12-29T00:16:58Z) predates 2021; https://api.github.com/repos/rust-lang/book/commits/aa0213ebb5a7d0494fa5f2d22f357fbe234f985e",
+      "text": "Rust’s central feature is *ownership*. Although the feature is straightforward\nto explain, it has deep implications for the rest of the language.\n\nAll programs have to manage the way they use a computer’s memory while running.\nSome languages have garbage collection that constantly looks for no longer used\nmemory as the program runs; in other languages, the programmer must explicitly\nallocate and free the memory. Rust uses a third approach: memory is managed\nthrough a system of ownership with a set of rules that the compiler checks at\ncompile time. None of the ownership features slow down your program while it’s\nrunning.\n\nBecause ownership is a new concept for many programmers, it does take some time\nto get used to. The good news is that the more experienced you become with Rust\nand the rules of the ownership system, the more you’ll be able to naturally\ndevelop code that is safe and efficient. Keep at it!\n\nWhen you understand ownership, you’ll have a solid foundation for understanding\nthe features that make Rust unique. In this chapter, you’ll learn ownership by\nworking through some examples that focus on a very common data structure:\nstrings.\n"
+    },
+    {
+      "id": "en-rust-release-149-arm-2020",
+      "file": "human/en/en-rust-release-149-arm-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 319,
+      "provenance": "The Rust Release Team, Announcing Rust 1.49.0: 64-bit ARM Linux Reaches Tier 1 Support; commit fc48a1b28d84a0b0db2b51853d3be17700df9a66 (2020-12-31T15:07:32+00:00); https://github.com/rust-lang/blog.rust-lang.org/blob/fc48a1b28d84a0b0db2b51853d3be17700df9a66/posts/2020-12-31-Rust-1.49.0.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/rust-lang/blog.rust-lang.org/fc48a1b28d84a0b0db2b51853d3be17700df9a66/LICENSE-MIT",
+      "license": "MIT; https://opensource.org/license/mit; license copy LICENSES/en-rust-release-149-arm-2020-MIT.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit fc48a1b28d84a0b0db2b51853d3be17700df9a66 (2020-12-31T15:07:32+00:00) predates 2021; https://github.com/rust-lang/blog.rust-lang.org/commit/fc48a1b28d84a0b0db2b51853d3be17700df9a66",
+      "text": "### 64-bit ARM Linux reaches Tier 1\n\nThe Rust compiler supports [a wide variety of targets][platform-support], but\nthe Rust Team can't provide the same level of support for all of them. To\nclearly mark how supported each target is, we use a tiering system:\n\n* Tier 3 targets are technically supported by the compiler, but we don't check\n  whether their code build or passes the tests, and we don't provide any\n  prebuilt binaries as part of our releases.\n* Tier 2 targets are guaranteed to build and we provide prebuilt binaries, but\n  we don't execute the test suite on those platforms: the produced binaries\n  might not work or might have bugs.\n* Tier 1 targets provide the highest support guarantee, and we run the full\n  suite on those platforms for every change merged in the compiler. Prebuilt\n  binaries are also available.\n\nRust 1.49.0 promotes the `aarch64-unknown-linux-gnu` target to Tier 1 support,\nbringing our highest guarantees to users of 64-bit ARM systems running Linux!\nWe expect this change to benefit workloads spanning from embedded to desktops\nand servers.\n\nThis is an important milestone for the project, since it's the first time a\nnon-x86 target has reached Tier 1 support: we hope this will pave the way for\nmore targets to reach our highest tier in the future.\n\nNote that Android is not affected by this change as it uses a different Tier 2\ntarget.\n\n[platform-support]: https://doc.rust-lang.org/stable/rustc/platform-support.html\n\n### 64-bit ARM macOS and Windows reach Tier 2\n\nRust 1.49.0 also features two targets reaching Tier 2 support:\n\n* The `aarch64-apple-darwin` target brings support for Rust on Apple M1 systems.\n* The `aarch64-pc-windows-msvc` target brings support for Rust on 64-bit ARM\n  devices running Windows on ARM.\n\nDevelopers can expect both of those targets to have prebuilt binaries\ninstallable with `rustup` from now on! The Rust Team is not running the test\nsuite on those platforms though, so there might be bugs or instabilities.\n"
+    },
+    {
+      "id": "en-sastrawi-readme",
+      "file": "human/en/sastrawi-readme.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 500,
+      "provenance": "https://github.com/sastrawi/sastrawi/blob/09db1bda7756fae740767ed7eb8de1b01ae859d5/README.en.md; first 500 whitespace-delimited words",
+      "license": "MIT; see LICENSES/SASTRAWI-LICENSE.txt",
+      "retrievedDate": "2026-11-04",
+      "firstPublishedYear": 2017,
+      "text": "Sastrawi ========= Sastrawi is a simple PHP library which provides stemming of words in Indonesian Language (Bahasa). Despite its simplicity, this library is designed to be high quality and well documented. For more information in english, see [README](https://github.com/andylib/sastrawi/blob/master/README.en.md). | Development | Master | Releases | Statistics | | ----------- | ------ | -------- | ---------- | | [![Build Status](https://travis-ci.org/sastrawi/sastrawi.svg?branch=development)](https://travis-ci.org/sastrawi/sastrawi) [![Code Coverage](https://scrutinizer-ci.com/g/sastrawi/sastrawi/badges/coverage.png?s=942cb014be9bbbf41e62c15389663f4253f5efac)](https://scrutinizer-ci.com/g/sastrawi/sastrawi/) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/sastrawi/sastrawi/badges/quality-score.png?s=152027ad0516653ff4eb5b05bff7266aeb600bfd)](https://scrutinizer-ci.com/g/sastrawi/sastrawi/) | [![Build Status](https://travis-ci.org/sastrawi/sastrawi.svg?branch=master)](https://travis-ci.org/sastrawi/sastrawi) | [![Latest Unstable Version](https://poser.pugx.org/sastrawi/sastrawi/v/unstable.png)](https://packagist.org/packages/sastrawi/sastrawi) [![Latest Stable Version](https://poser.pugx.org/sastrawi/sastrawi/v/stable.png)](https://packagist.org/packages/sastrawi/sastrawi) | [![Total Downloads](https://poser.pugx.org/sastrawi/sastrawi/downloads.png)](https://packagist.org/packages/sastrawi/sastrawi) | Why? ----- Indonesia is the fourth most populous country in the world. Indonesian internet users use indonesian language as their primary language. So, developers need a tool to improve text searching in Indonesian language. One of the most important tool is a stemmer. Stemming is the process of reducing morphological variants of a word to a common stem form. Some researches has shown that stemming is language-dependent. Problems with common search approach ------------------------------------- Let's say we have a blog content: Rakyat memenuhi halaman gedung untuk menyuarakan isi hatinya. The query below will result none. ```sql SELECT * FROM posts WHERE content LIKE '%suara%' ``` Even fuzzy full-text-search tool needs a stemmer to improve the result. A possible improvement would be to index the reduced version of the sentence as follow: rakyat penuh halaman gedung suara isi hati We would also reduce the search keyword: Bersuara => suara Our Goals ---------- - Have a high quality PHP library to ease stemming Indonesian words. - Integrate well with other packages / frameworks. - Have a simple and easy to use API Demo ---- [http://sastrawi.github.io](http://sastrawi.github.io) Installation ------------- Sastrawi can be installed with [Composer](https://getcomposer.org). Add sastrawi into your `composer.json`: ```json { \"require\": { \"sastrawi/sastrawi\": \"*\" } } ``` Then run `composer install` or `composer update` from `command line`. Usage ------ Copy the following code into a php file in your project directory. Then call it from command line. ```php <?php // demo.php // include composer autoloader require_once __DIR__ . '/vendor/autoload.php'; // create stemmer $stemmerFactory = new \\Sastrawi\\Stemmer\\StemmerFactory(); $stemmer = $stemmerFactory->createStemmer(); // stem $sentence = 'Perekonomian Indonesia sedang dalam pertumbuhan yang membanggakan'; $output = $stemmer->stem($sentence); echo $output . \"\\n\"; // will print: // ekonomi indonesia sedang dalam tumbuh yang bangga ``` License -------- The MIT License (MIT). Please see [License File](https://github.com/sastrawi/sastrawi/blob/master/LICENSE) for more information. Credits -------- #### Algorithms #### Algorithms and trademarks used in this library are the property of their respective owners. - Algoritma Nazief dan Adriani - Asian J. 2007. ___Effective Techniques for Indonesian Text Retrieval___. PhD thesis School of Computer Science and Information Technology RMIT University Australia - Arifin, A.Z., I.P.A.K. Mahendra dan H.T. Ciptaningtyas. 2009. ___Enhanced Confix Stripping Stemmer and Ants Algorithm for Classifying News Document in Indonesian Language___, Proceeding of International Conference on Information & Communication Technology and Systems (ICTS) - A. D. Tahitoe, D. Purwitasari. 2010. ___Implementasi Modifikasi Enhanced Confix Stripping Stemmer Untuk Bahasa Indonesia dengan Metode Corpus Based Stemming___, Institut Teknologi Sepuluh Nopember (ITS) – Surabaya, 60111, Indonesia #### Root word dictionary #### Sastrawi rely heavily on a root word\n"
+    },
+    {
+      "id": "en-wikinews-chilean-miners-2010",
+      "file": "human/en/en-wikinews-chilean-miners-2010.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 182,
+      "provenance": "Wikinews contributors, Chilean miners rescue to begin on Tuesday, Minister Mañalich announces; revision 1638499, 2012-09-27T00:34:11Z; https://en.wikinews.org/w/index.php?title=Chilean_miners_rescue_to_begin_on_Tuesday,_Minister_Ma%C3%B1alich_announces&oldid=1638499; contiguous rendered paragraphs, whitespace normalized; contributor history https://en.wikinews.org/w/index.php?title=Chilean_miners_rescue_to_begin_on_Tuesday,_Minister_Ma%C3%B1alich_announces&action=history",
+      "license": "CC BY 2.5; https://creativecommons.org/licenses/by/2.5/; license copy LICENSES/CC-BY-2.5.txt; historical license policy https://en.wikinews.org/wiki/Wikinews:Copyright",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 1638499 is dated 2012-09-27T00:34:11Z, prior to 2021; https://en.wikinews.org/w/api.php?action=query&prop=revisions&revids=1638499&rvprop=timestamp%7Cids&format=json",
+      "text": "Health Minister of Chile, Jaime Mañalich, announced on Friday the rescue of the 33 Chilean miners trapped in San José Mine, Copiapó is to begin this Tuesday, October 12.\n\nMining Minister Laurence Golborne announced that the tunnel the miners will ascend \"will be ready in the next 24 hours. [The tunnel] could be done by this night or tomorrow's early morning.\" However, he couldn't \"assure an hour because it is not exact.\"\n\n\"The rescue will take place between three and eight days (after finishing the perforation), depending on the decisions that are taken about the encamisado (process of coating the tunnel with a metal pipe),\" Golborne added. He also said the miners \"have no anxiety,\" saying that \"they've waited a few months now for their rescue and are aware that they will have to wait some more days.\"\n\nThe thirty-three miners have been trapped at the bottom of San José Mine, Copiapó, Atacama Region, Chile since August 5. It was discovered they were alive on August 22, when they sent the note \"We are fine in the shelter the 33 [of us].\"\n"
+    },
+    {
+      "id": "en-wikinews-japan-earthquake-2011",
+      "file": "human/en/wikinews-japan-earthquake-2011.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 196,
+      "provenance": "Wikinews contributors, 8.9 magnitude earthquake hits Japan, causes tsunami; archived revision 1197070, 2011-03-18; https://en.wikinews.org/w/index.php?title=8.9_magnitude_earthquake_hits_Japan,_causes_tsunami&oldid=1197070; contiguous paragraphs, whitespace normalized; revision contribution history https://en.wikinews.org/w/index.php?title=8.9_magnitude_earthquake_hits_Japan,_causes_tsunami&action=history",
+      "license": "CC BY 2.5; https://creativecommons.org/licenses/by/2.5/; license copy LICENSES/CC-BY-2.5.txt; historical license policy https://en.wikinews.org/wiki/Wikinews:Copyright",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Revision 1197070 published 2011-03-18, prior to 2021; https://en.wikinews.org/w/api.php?action=query&prop=revisions&revids=1197070&rvprop=timestamp%7Cids&format=json",
+      "text": "The National Weather Service said that earthquakes \"of this size\" often \"generate tsunamis potentially dangerous to coasts outside the source region.\" \"Based on all available data a tsunami may have been generated by this earthquake that could be destructive on coastal areas even far from the epicenter,\" it added.\n\nAbout 20 people were reportedly injured in Tokyo following the collapse of a roof of a hall. 4 million people are estimated to be without power in the capital. In Sendai, several people are feared to be buried under the remains of a collapsed hotel.\n\nPrime Minister Naoto Kan said there had been no nuclear plant radiation leaks caused by the disaster. He expressed sympathy to all victims in his address, promising help, and stating that an emergency response headquarters had been set up. 288 people have been confirmed dead so far.\n\nHowever, a 2-3 km area around the Fukushima Nuclear Power plant has been evacuated as a precaution as the temperature inside on of the nuclear reactor has \"remain[ed] at a high temperature\" despite the plant being shut down. Trade Minister Banri Kaieda advised that there is a possibility of a radiation leak at the plant.\n"
+    },
+    {
+      "id": "en-wikinews-mars-gale-crater-2017",
+      "file": "human/en/en-wikinews-mars-gale-crater-2017.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 275,
+      "provenance": "Wikinews contributors, Curiosity Rover analysis suggests chemically complex lake once graced Mars's Gale crater; revision 4322690, 2017-06-13T21:02:03Z; https://en.wikinews.org/w/index.php?title=Curiosity_Rover_analysis_suggests_chemically_complex_lake_once_graced_Mars%27s_Gale_crater&oldid=4322690; contiguous rendered paragraphs, whitespace normalized; contributor history https://en.wikinews.org/w/index.php?title=Curiosity_Rover_analysis_suggests_chemically_complex_lake_once_graced_Mars%27s_Gale_crater&action=history",
+      "license": "CC BY 2.5; https://creativecommons.org/licenses/by/2.5/; license copy LICENSES/CC-BY-2.5.txt; historical license policy https://en.wikinews.org/wiki/Wikinews:Copyright",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 4322690 is dated 2017-06-13T21:02:03Z, prior to 2021; https://en.wikinews.org/w/api.php?action=query&prop=revisions&revids=4322690&rvprop=timestamp%7Cids&format=json",
+      "text": "Analysis shows the chemical index of alteration fluctuated over time in a way that suggested the lake varied between hot, wet periods and colder, drier periods. The shallow water would have been rich in oxidants brought in from the atmosphere and groundwater, and the deeper water would have been oxidant poor. Phosphates, carbon, nitrogen, iron and sulfur, indicating chemistry suitable for life, have also been found there in a variety of compounds.\n\nLead author Joel Hurowitz of Stony Brook University explained, \"These were very different, co-existing environments in the same lake[...] This type of oxidant stratification is a common feature of lakes on Earth, and now we've found it on Mars. The diversity of environments in this Martian lake would have provided multiple opportunities for different types of microbes to survive.\"\n\nThe scientists also evaluated the fineness of the sediment, meaning the sizes of individual particles of dirt, dust and sand. Curiosity found larger grains near the edges of the lake where sediments from incoming rivers and streams would have fed it, and smaller ones in what would have been the deep lakebed, which is consistent with particles dropping out of the water as the current slows down. \"We could tell something was going on,\" Hurowitz said in a statement. \"What was causing iron minerals to be one flavor in one part of the lake and another flavor in another part of the lake? We had an 'Aha!' moment when we realized that the mineral information and the bedding-thickness information mapped perfectly onto each other in a way you would expect from a stratified lake with a chemical boundary between shallow water and deeper water.\"\n"
+    },
+    {
+      "id": "en-wikinews-nelson-mandela-2013",
+      "file": "human/en/en-wikinews-nelson-mandela-2013.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 220,
+      "provenance": "Wikinews contributors, Nelson Mandela dies aged 95; revision 2236442, 2013-12-14T01:26:20Z; https://en.wikinews.org/w/index.php?title=Nelson_Mandela_dies_aged_95&oldid=2236442; contiguous rendered paragraphs, whitespace normalized; contributor history https://en.wikinews.org/w/index.php?title=Nelson_Mandela_dies_aged_95&action=history",
+      "license": "CC BY 2.5; https://creativecommons.org/licenses/by/2.5/; license copy LICENSES/CC-BY-2.5.txt; historical license policy https://en.wikinews.org/wiki/Wikinews:Copyright",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 2236442 is dated 2013-12-14T01:26:20Z, prior to 2021; https://en.wikinews.org/w/api.php?action=query&prop=revisions&revids=2236442&rvprop=timestamp%7Cids&format=json",
+      "text": "The former president of South Africa, Nelson Mandela, died today at 95. He had been receiving intensive care at home following a lung infection.\n\nEarlier in the day, a large group of friends and family arrived at Mandela's home, which fuelled speculation that Mandela's health had taken a turn for the worse.\n\nJacob Zuma, the current president of the country, said in a televised address following Mandela's death: \"Our nation has lost its greatest son.\"\n\nMandela spent 27 years doing hard labour in prison, much of it on Robben Island, during the era of apartheid before becoming the first black president of South Africa in 1994. He spent five years as president but has become recognised the world over as a visionary and moral leader. He received the Nobel Peace Prize in 1993.\n\nUS President Barack Obama said of Mandela: \"To so many of us, he was more than just a man — he was a symbol of the struggle for justice, equality, and dignity in South Africa and around the globe. His sacrifice was so great that it called upon people everywhere to do what they could on behalf of human progress.\"\n\nDavid Cameron, the British prime minister, paid tribute to Mandela: \"A great light has gone out in the world. Nelson Mandela was a hero of our time.\"\n"
+    },
+    {
+      "id": "en-wikinews-rosetta-comet-2016",
+      "file": "human/en/en-wikinews-rosetta-comet-2016.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 165,
+      "provenance": "Wikinews contributors, Twelve-year journey of Rosetta ends; spacecraft crashes into comet; revision 4257385, 2016-10-21T20:19:23Z; https://en.wikinews.org/w/index.php?title=Twelve-year_journey_of_Rosetta_ends;_spacecraft_crashes_into_comet&oldid=4257385; contiguous rendered paragraphs, whitespace normalized; contributor history https://en.wikinews.org/w/index.php?title=Twelve-year_journey_of_Rosetta_ends;_spacecraft_crashes_into_comet&action=history",
+      "license": "CC BY 2.5; https://creativecommons.org/licenses/by/2.5/; license copy LICENSES/CC-BY-2.5.txt; historical license policy https://en.wikinews.org/wiki/Wikinews:Copyright",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 4257385 is dated 2016-10-21T20:19:23Z, prior to 2021; https://en.wikinews.org/w/api.php?action=query&prop=revisions&revids=4257385&rvprop=timestamp%7Cids&format=json",
+      "text": "The ESA's Darmstadt, Germany control centre ceased to receive signals from the spacecraft, confirming the Rosetta mission's end, at 11:19 UTC. Mission controllers said it was traveling about 90 centimeters per second on impact (two miles per hour), about a walking pace.\n\nAlmost two years ago, in November 2014, Rosetta successfully landed a probe called Philae onto 67P/Churyumov–Gerasimenko, with amongst its goals better understanding how the Solar System was formed. Philae's discoveries included the presence of molecular oxygen and nitrogen on the comet. It also discovered water on the comet which, according to the scientists, had a different distribution of hydrogen isotopes from the water on earth.\n\nThe spacecraft studied the gas, dust, and plasma immediately surrounding the comet during its final approach.\n\nESA's director general Johann-Dietrich Wörner said, \"Rosetta has entered the history books once again[...] Today we celebrate the success of a game-changing mission, one that has surpassed all our dreams and expectations, and one that continues ESA's legacy of 'firsts' at comets.\"\n"
+    },
+    {
+      "id": "en-wikinews-slug-glue-medicine-2019",
+      "file": "human/en/en-wikinews-slug-glue-medicine-2019.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 339,
+      "provenance": "Wikinews contributors, New studies may bring slug-made glues closer to use in medicine; revision 4480688, 2019-05-16T23:54:52Z; https://en.wikinews.org/w/index.php?title=New_studies_may_bring_slug-made_glues_closer_to_use_in_medicine&oldid=4480688; contiguous rendered paragraphs, whitespace normalized; contributor history https://en.wikinews.org/w/index.php?title=New_studies_may_bring_slug-made_glues_closer_to_use_in_medicine&action=history",
+      "license": "CC BY 2.5; https://creativecommons.org/licenses/by/2.5/; license copy LICENSES/CC-BY-2.5.txt; historical license policy https://en.wikinews.org/wiki/Wikinews:Copyright",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 4480688 is dated 2019-05-16T23:54:52Z, prior to 2021; https://en.wikinews.org/w/api.php?action=query&prop=revisions&revids=4480688&rvprop=timestamp%7Cids&format=json",
+      "text": "When threatened, the dusky Arion slug secretes an unusual glue, making itself a difficult target for predators. This glue remains both sticky and flexible and works even when the surface the slug is on is wet. Previous studies have shown that, unlike many artificial adhesives, Arion slug glue is non-toxic to mammalian tissue.\n\nScientist Rebecca Falconer, an Ithaca College undergraduate who led one of the two studies, said \"Typical sutures like staples and stitches often lead to scarring and create holes in the skin that could increase the chance of infection after surgery [...] Understanding the roles of adhesive proteins in the slug glue would aid in the creation of a medical adhesive that can move and stretch yet still retain its strength and adhesiveness.\"\n\nIn her set of experiments, Falconer observed eleven proteins found only in slug glue and used DNA recombination to produce usable amounts of each of these proteins. Specifically, she produced complementary DNA sequences (cDNA) for each protein, which are stretches of DNA with all the pieces not necessary for producing the protein removed. She then spliced these into circular DNA sequences called plasmids, which she inserted into bacteria, whose natural cellular machinery began to produce the proteins in quantity. She then analyzed the three-dimensional structures that the protein molecules form with each other and with other substances that make them work.\n\nChristopher Gallego-Lazo, also an Ithaca undergrad, evaluated glue from the dusky Arion slug by focusing on the chemical bonds within the glue and the way they affect the glue's deformability. Gallego-Lazo found that slight changes in these chemical bonds could alter the strength of the slug glue.\n\nGallego-Lazo said, \"Few studies on biological adhesives have identified the exact nature of the bonds holding the glue together [...] This knowledge can guide the development of an organic synthetic adhesive that would reduce the risk of infection and scarring compared to stitches and staples and could be applied rapidly and simply.\"\n\nFalconer and Gallego-Lazo both performed their research in the laboratory of Dr. Andrew Smith.\n"
+    },
+    {
+      "id": "en-wikinews-spacex-crewed-launch-2020",
+      "file": "human/en/en-wikinews-spacex-crewed-launch-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 217,
+      "provenance": "Wikinews contributors, SpaceX successfully launches its first crewed spaceflight; revision 4571280, 2020-06-21T22:53:31Z; https://en.wikinews.org/w/index.php?title=SpaceX_successfully_launches_its_first_crewed_spaceflight&oldid=4571280; contiguous rendered paragraphs, whitespace normalized; contributor history https://en.wikinews.org/w/index.php?title=SpaceX_successfully_launches_its_first_crewed_spaceflight&action=history",
+      "license": "CC BY 2.5; https://creativecommons.org/licenses/by/2.5/; license copy LICENSES/CC-BY-2.5.txt; historical license policy https://en.wikinews.org/wiki/Wikinews:Copyright",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 4571280 is dated 2020-06-21T22:53:31Z, prior to 2021; https://en.wikinews.org/w/api.php?action=query&prop=revisions&revids=4571280&rvprop=timestamp%7Cids&format=json",
+      "text": "SpaceX, backed by entrepreneur Elon Musk, is the first private company to send astronauts into space. The company has engineered and operated reusable rockets, potentially reducing the overall cost of future space missions. Shortly after the launch, the Falcon 9 rocket's first stage disengaged and returned to an autonomous spaceport drone ship off the coast, to be refurbished and reused on a future mission. Behnken and Hurley are slated to catch up to the International Space Station (ISS) for a stay of one to four months, docking today at 1429 UTC.\n\nThe originally planned launch on Wednesday afternoon, local time, was scrubbed due to inclement weather conditions less than 20 minutes before scheduled launch time, with the schedule pushed back to yesterday. Unlike Wednesday's scrub, however, yesterday's launch proceeded without issue. Hurley, on radio following the minutes-long ride to low Earth orbit, said, \"It was incredible\".\n\nSpaceX's launch is the latest development in a program initiated in earnest by NASA's 2014 selection of SpaceX, along with Boeing, to be an initial commercial contractor providing transportation for NASA astronauts to the ISS. Boeing's first crewed mission is reportedly expected to launch next year. Since the retirement of the Space Shuttles in 2011, NASA has relied on Russian Soyuz spacecraft to transport its astronauts to the orbiting space station.\n"
+    },
+    {
+      "id": "en-wikinews-sundarbans-oil-spill-2015",
+      "file": "human/en/en-wikinews-sundarbans-oil-spill-2015.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 179,
+      "provenance": "Wikinews contributors, United Nations analyzes oil spill in Sundarbans, Bangladesh; revision 3133595, 2015-01-01T13:53:28Z; https://en.wikinews.org/w/index.php?title=United_Nations_analyzes_oil_spill_in_Sundarbans,_Bangladesh&oldid=3133595; contiguous rendered paragraphs, whitespace normalized; contributor history https://en.wikinews.org/w/index.php?title=United_Nations_analyzes_oil_spill_in_Sundarbans,_Bangladesh&action=history",
+      "license": "CC BY 2.5; https://creativecommons.org/licenses/by/2.5/; license copy LICENSES/CC-BY-2.5.txt; historical license policy https://en.wikinews.org/wiki/Wikinews:Copyright",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 3133595 is dated 2015-01-01T13:53:28Z, prior to 2021; https://en.wikinews.org/w/api.php?action=query&prop=revisions&revids=3133595&rvprop=timestamp%7Cids&format=json",
+      "text": "The 25-member UN team arrived in Bangladesh on December 18 and visited the Sundarbans from December 22 to December 27.\n\nAt the press conference, Wahlstrom said the pollution was spread 40 kilometers up and downstream, but no impact on the mangrove forest floor was observed. She said the Pashur and Shela rivers contributed by washing some of the oil. She also suggested a ban on water traffic in the area, saying \"regular monitoring and stopping traffic through the Sundarbans are needed to tackle the long-term impact.\"\n\nAnwar Hossain Manju, Minister for Forest and Environmental Affairs of Bangladesh, acknowledged that vessel traffic in Sundarbans was suspended. He also said \"alternative options\" were \"being explored\".\n\nWahlstrom also commented cleanup by local villagers removed about a fifth of the oil spill.\n\nOn December 9, the OT Southern Star 7 tanker sank in an accident with another vessel. Reportedly visibility was poor due to thick fog. Southern Star 7 was carrying about 350,000L of fuel oil.\n\nSundarbans is a World Heritage Site. The UN plans to release a final report in two weeks.\n"
+    },
+    {
+      "id": "en-wordpress-privacy-retention-2020",
+      "file": "human/en/en-wordpress-privacy-retention-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "legal-formal",
+      "split": "dev",
+      "wordCount": 175,
+      "provenance": "Automattic Inc. Legal Team, Automattic Privacy Policy: How Long We Keep Information; commit 79e4b19887c6166a22d265ad4211df3fd10a92ad (2020-10-13T02:05:20Z); https://github.com/Automattic/legalmattic/blob/79e4b19887c6166a22d265ad4211df3fd10a92ad/Privacy-Policy.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/Automattic/legalmattic/79e4b19887c6166a22d265ad4211df3fd10a92ad/README.md",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit 79e4b19887c6166a22d265ad4211df3fd10a92ad (2020-10-13T02:05:20Z) predates 2021; https://api.github.com/repos/Automattic/legalmattic/commits/79e4b19887c6166a22d265ad4211df3fd10a92ad",
+      "text": "How Long We Keep Information\n\nWe generally discard information about you when it’s no longer needed for the purposes for which we collect and use it — described in the section above on How and Why We Use Information — and we’re not legally required to keep it. For example, we keep the web server logs that record information about a visitor to one of Automattic’s websites, like the visitor’s IP address, browser type, and operating system, for approximately 30 days. We retain the logs for this period of time in order to, among other things, analyze traffic to Automattic’s websites and investigate issues if something goes wrong on one of our websites. As another example, when you delete a post, page, or comment from your WordPress.com site, it stays in your Trash folder for thirty days in case you change your mind and would like to restore that content, because starting from scratch is no fun. After the thirty days are up, the deleted content may remain on our backups and caches until purged.\n"
+    },
+    {
+      "id": "en-wordpress-tos-account-2020",
+      "file": "human/en/en-wordpress-tos-account-2020.txt",
+      "lang": "en",
+      "label": "human",
+      "genre": "legal-formal",
+      "split": "dev",
+      "wordCount": 268,
+      "provenance": "Automattic Inc. Legal Team, WordPress.com Terms of Service: Section 2 Your Account; commit c4f7f4e7f800d285b78537043a92b3f00b02763d (2020-10-29T22:29:20Z); https://github.com/Automattic/legalmattic/blob/c4f7f4e7f800d285b78537043a92b3f00b02763d/Terms%20of%20Service/WordPress.com/EN-Terms-of-Service.md; contiguous raw Markdown excerpt; source license at https://raw.githubusercontent.com/Automattic/legalmattic/c4f7f4e7f800d285b78537043a92b3f00b02763d/README.md",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit c4f7f4e7f800d285b78537043a92b3f00b02763d (2020-10-29T22:29:20Z) predates 2021; https://api.github.com/repos/Automattic/legalmattic/commits/c4f7f4e7f800d285b78537043a92b3f00b02763d",
+      "text": "2\\. Your Account\n\nWhere use of our Services requires an account, you agree to provide us with complete and accurate information when you register for an account and keep the information current. This is important because sometimes we may need to send you notable updates (for example, about changes to our Terms of Service or Privacy Policy), or we may want to let you know about and make informed choices in response to legal inquiries or complaints.\n\nYou will be solely responsible and liable for any activity that occurs under your account. You are responsible for keeping your account information up-to-date and for keeping your password secure.\n\nYou are responsible for maintaining the security of your account and any Service-related website, store, or other content, and you are fully responsible for all activities that occur under your account and any other actions taken in connection with our Services. You shall not share or misuse your access credentials. You must immediately notify us of any unauthorized uses of your account, store, or website, or of any other breach of security. We will not be liable for any acts or omissions by you, including any damages of any kind incurred as a result of such acts or omissions.\n\nWhen you create a WordPress.com account, we consider that to be an inquiry about our products and services, which means that we may contact you to share more details about what we have to offer. Don't worry -- if you aren't interested in learning more, you can opt out of the marketing communication, whether it's an email, phone call, or text message.\n"
+    },
+    {
+      "id": "id-art-command-line-2020",
+      "file": "human/id/art-command-line-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 269,
+      "provenance": "Joshua Levy, authors and translators; The Art of Command Line, README-id.md at 725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75, 2020-03-25; https://github.com/jlevy/the-art-of-command-line/blob/725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75/README-id.md; https://github.com/jlevy/the-art-of-command-line/blob/725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75/AUTHORS.md ; contiguous raw Markdown excerpt; EN and ID are translations of the same source and are correlated",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/ ; license copy LICENSES/CC-BY-SA-4.0.txt; source license in https://raw.githubusercontent.com/jlevy/the-art-of-command-line/725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75/README-id.md",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical commit published 2020-03-25, prior to 2021: https://api.github.com/repos/jlevy/the-art-of-command-line/commits/725fddb2fc0fa8b49362e676e6c7d71dfb9b8b75",
+      "text": "Mahir dalam baris perintah merupakan keahlian yang sering diabaikan atau masih dianggap misteri, tapi hal tersebut dapat meningkatkan fleksibilitas dan produktivitas sebagai seorang teknisi secara jelas. Halaman ini merupakan kumpulan catatan dan tips dalam menggunakan baris perintah sebagaimana yang kita ketahui sangat berguna ketika bekerja pada sistem Linux. Beberapa merupakan tips dasar, dan beberapa cukup spesifik, terkini, atau yang jarang digunakan. Halaman ini tidak panjang, tetapi jika anda dapat menggunakan dan mengingat semua perintah yang ada pada halaman ini, berarti anda memiliki pengetahuan yang cukup luas.\n\nProyek ini merupakan hasil dari banyak [penulis dan penerjemah](AUTHORS.md).\nBeberapa diantaranya [pertama kali](http://www.quora.com/What-are-some-lesser-known-but-useful-Unix-commands)\n[muncul](http://www.quora.com/What-are-the-most-useful-Swiss-army-knife-one-liners-on-Unix)\ndi [Quora](http://www.quora.com/What-are-some-time-saving-tips-that-every-Linux-user-should-know),\nnamun kemudian dialihkan ke GitHub, dimana banyak orang-orang yang lebih berbakat dari penulis awal telah membuat banyak penyempurnaan.\n[**Silakan ajukan pertanyaan**](https://airtable.com/shrzMhx00YiIVAWJg) jika anda memiliki pertanyaan seputar perintah baris. [**Silakan berkontribusi**](/CONTRIBUTING.md) jika anda melihat ada kesalahan atau memiliki suatu ide yang lebih baik!\n\n## Meta\n\nBatasan masalah:\n\n- Panduan ini ditujukan bagi pemula dan yang telah berpengalaman. Tujuan utamanya cukup *luas* (segala hal adalah penting), *spesifik* (memberikan contoh kongkrit dari kasus yang umum terjadi), dan *ringkas* (hindari hal yang tidak penting atau menyimpang yang dapat ditemukan). Setiap tip adalah penting dalam beberapa kondisi atau dapat menjadi pilihan alternatif.\n- Ditulis untuk Linux, dengan pengecualian dari bagian \"[Khusus OS X](#os-x-only)\" and \"[Khusus Windows](#windows-only)\". Banyak yang menggunakan atau memasangnya dalam varian UNIX atau OS X lainnya (bahkan menggunakan Cygwin).\n- Berfokus pada Bash interaktif, meskipun banyak tip yang dapat digunakan pada terminal lainnya dan skrip Bash secara umum.\n- Mengandung perintah UNIX \"standar\" sebagaimana yang telah diketahui bahwa membutuhkan instalasi paket spesial -- selama dirasa cukup penting untuk diikut sertakan.\n"
+    },
+    {
+      "id": "id-bahasa-indonesia-2019",
+      "file": "human/id/bahasa-indonesia.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 232,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Bahasa Indonesia, revision 15701160 (2019-09-30); https://id.wikipedia.org/w/index.php?title=Bahasa_Indonesia&oldid=15701160 ; contributor history https://id.wikipedia.org/w/index.php?title=Bahasa_Indonesia&action=history ; contiguous excerpt from the lead section, line wrapping changed",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/ ; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "The retrieved revision was published on 2019-09-30, before the 2021 cutoff; see https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=15701160&rvprop=timestamp&format=json",
+      "text": "Dari sudut pandang linguistik, bahasa Indonesia adalah salah satu dari banyak varietas bahasa Melayu. Dasar yang dipakai sebagai fondasi bahasa Indonesia baku adalah bahasa Melayu Tinggi (\"Riau\"). Dalam perkembangannya ia mengalami perubahan akibat penggunaannya sebagai bahasa kerja di lingkungan administrasi kolonial dan berbagai proses pembakuan sejak awal abad ke-20. Penamaan \"bahasa Indonesia\" diawali sejak dicanangkannya Sumpah Pemuda, 28 Oktober 1928, untuk menghindari kesan \"imperialisme bahasa\" apabila nama bahasa Melayu tetap digunakan. Proses ini menyebabkan berbedanya bahasa Indonesia saat ini dari varian bahasa Melayu yang digunakan di Riau maupun Semenanjung Malaya. Hingga saat ini, bahasa Indonesia merupakan bahasa yang hidup, yang terus menghasilkan kata-kata baru, baik melalui penciptaan maupun penyerapan dari bahasa daerah dan bahasa asing.\n\nMeskipun dipahami dan dituturkan oleh lebih dari 90% warga Indonesia, bahasa Indonesia bukanlah bahasa ibu bagi kebanyakan penuturnya. Sebagian besar warga Indonesia menggunakan salah satu dari 748 bahasa yang ada di Indonesia sebagai bahasa ibu. Istilah \"bahasa Indonesia\" paling umum dikaitkan dengan bahasa baku yang digunakan dalam situasi formal. Varietas baku tersebut berhubungan diglosik dengan bentuk-bentuk bahasa Melayu vernakular yang digunakan sebagai peranti komunikasi sehari-hari. Artinya, penutur bahasa Indonesia kerap kali menggunakan versi sehari-hari (kolokial) dan/atau mencampuradukkan dengan dialek Melayu lainnya atau bahasa ibunya. Meskipun demikian, bahasa Indonesia digunakan sangat luas di perguruan-perguruan, di media massa, sastra, perangkat lunak, surat-menyurat resmi, dan berbagai forum publik lainnya, sehingga dapatlah dikatakan bahwa bahasa Indonesia digunakan oleh semua warga Indonesia.\n"
+    },
+    {
+      "id": "id-bediding-2019",
+      "file": "human/id/bediding-2019.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 154,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Bediding, revision 16204775 (2019-11-22); https://id.wikipedia.org/w/index.php?title=Bediding&oldid=16204775 ; contributor history https://id.wikipedia.org/w/index.php?title=Bediding&action=history ; contiguous excerpt from the first two paragraphs of the section describing the seasonal period, line wrapping changed",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/ ; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "The retrieved revision was published on 2019-11-22, before the 2021 cutoff; see https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=16204775&rvprop=timestamp&format=json",
+      "text": "Periode bediding terjadi sekitar bulan Juli hingga Agustus. Musim Bediding terjadi karena pada bulan-bulan tersebut, posisi matahari berada pada posisi terjauh di sebelah utara garis khatulistiwa sehingga menyebabkan belahan bumi sebelah utara menjadi panas dan belahan bumi selatan menjadi dingin. Letak pulau Jawa yang berada di sebelah selatan garis khatulistiwa menyebabkan pulau Jawa menjadi lebih dingin daripada biasanya. Angin musim dingin dari Australia juga menjadi andil dalam menjadikan pulau Jawa menjadi lebih dingin.\n\nPraktisi Cuaca dan Kelautan Badan Meteorologi dan Geofisika (BMG) Maritim Tanjung Perak Surabaya, Eko Prasetyo, menjelaskan saat posisi pergerakan semu matahari tepat di 23,5° Lintang Utara (LU), belahan bumi selatan khususnya Australia memasuki musim dingin. Angin yang bertiup dari Benua Australia atau angin dari Timur dan Tenggara juga mempengaruhi suhu udara sebagian besar wilayah di Indonesia. Berdasarkan catatan data base BMG Maritim, suhu minimum yang pernah dicapai tujuh tahun terakhir (sebelum tahun 2007) adalah 19 °C pada tanggal 1 Juni 2004.\n"
+    },
+    {
+      "id": "id-coding-interview-2020",
+      "file": "human/id/coding-interview-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 244,
+      "provenance": "John Washam and coding-interview-university contributors, Indonesian translation, commit 042bdbfc1f212e89284a92cd6d51792cedc040d2 (2020-10-24); https://github.com/jwasham/coding-interview-university/blob/042bdbfc1f212e89284a92cd6d51792cedc040d2/translations/README-id.md ; contributor history https://github.com/jwasham/coding-interview-university/commits/042bdbfc1f212e89284a92cd6d51792cedc040d2/translations/README-id.md ; contiguous excerpt, line endings normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/ ; license copy LICENSES/CC-BY-SA-4.0.txt; source license https://github.com/jwasham/coding-interview-university/blob/042bdbfc1f212e89284a92cd6d51792cedc040d2/LICENSE.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "The exact repository commit dates from 2020-10-24, before the 2021 cutoff: https://api.github.com/repos/jwasham/coding-interview-university/commits/042bdbfc1f212e89284a92cd6d51792cedc040d2",
+      "text": "Saya mengikuti rencana ini untuk mempersiapkan saya dalam menghadapi wawancara kerja Google. Sejak 1997, saya telah menciptakan berbagai situs, servis, dan mendirikan startup. Saya memiliki gelar ekonomi, bukan gelar ilmu komputer. Saya telah meraih kesuksesan dalam karir saya, tapi saya ingin bekerja di Google. Saya ingin masuk ke sistem yang lebih besar dan mempunyai pemahaman mendalam tentang sistem komputer, efesiensi algoritma, performa struktur data, bahasa tingkat rendah, dan bagaimana semuanya bekerja. Jika anda tidak mengetahui satu pun, Google tidak akan mempekerjakan anda.\n\nKetika saya memulai proyek ini, saya tidak tahu tentang stack dari sebuah heap, tidak tahu tentang notasi Big-O apapun, begitupula dengan struktur data trees, atau bagaimana menyusuri sebuah graph. Jika saya harus menulis algoritma penyortiran, saya bisa katakan pada anda bahwa hasilnya tidak akan memuaskan.\nSetiap struktur data yang saya pernah pakai sudah tertanam dalam bahasa yang saya gunakan, dan saya tidak tahu bagaimana mereka bekerja secara riil. Saya tidak pernah diharuskan untuk mengatur penggunaan memori kecuali proses yang saya jalankan akan memberikan error 'memori tidak cukup', sehingga saya harus mencari jalan keluarnya. Saya pernah menggunakan beberapa array multidimensi dalam hidup saya dan ribuan array asosiatif, tapi saya tidak pernah menciptakan struktur data dari nol.\n\nTetapi setelah menjalani rencana studi ini saya memiliki kepercayaan diri yang tinggi bahwa saya akan diterima. Ini adalah rencana yang panjang. Ini akan menyita waktu saya selama berbulan-bulan. Tetapi jika anda sudah tidak asing lagi dengan materi yang dibutuhkan, hal ini akan membutuhkan waktu jauh lebih sedikit."
+    },
+    {
+      "id": "id-constitution-1945",
+      "file": "human/id/constitution-1945.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "legal-formal",
+      "split": "dev",
+      "wordCount": 178,
+      "provenance": "https://id.wikisource.org/w/index.php?title=Undang-Undang_Dasar_Negara_Republik_Indonesia_Tahun_1945/Naskah_asli&oldid=138525",
+      "license": "Underlying legal text: public domain in Indonesia (Copyright Act No. 28 of 2014, Article 42); Wikisource transcription and attribution: https://foundation.wikimedia.org/wiki/Policy:Terms_of_Use; rights elsewhere not assessed",
+      "retrievedDate": "2026-11-04",
+      "firstPublishedYear": 1945,
+      "text": "Bahwa sesungguhnya kemerdekaan itu ialah hak segala bangsa dan oleh sebab itu, maka penjajahan di atas dunia harus dihapuskan, karena tidak sesuai dengan peri­kemanusiaan dan peri­keadilan.\n\nDan perjuangan pergerakan kemerdekaan Indonesia telah sampailah kepada saat yang berbahagia dengan selamat sentosa mengantarkan rakyat Indonesia ke depan pintu gerbang kemerdekaan Negara Indonesia, yang merdeka, bersatu, berdaulat, adil dan makmur.\n\nAtas berkat rahmat Allah Yang Maha Kuasa dan dengan didorongkan oleh keinginan luhur, supaya berkehidupan kebangsaan yang bebas, maka rakyat Indonesia menyatakan dengan ini kemerdekaannya.\n\nKemudian daripada itu untuk membentuk suatu Pemerintah Negara Indonesia yang melindungi segenap bangsa Indonesia dan seluruh tumpah darah Indonesia dan untuk memajukan kesejahteraan umum, mencerdaskan kehidupan bangsa, dan ikut melaksanakan ketertiban dunia yang berdasarkan kemerdekaan, perdamaian abadi dan keadilan sosial, maka disusunlah Kemerdekaan Kebangsaan Indonesia itu dalam suatu Undang­-Undang Dasar Negara Indonesia, yang terbentuk dalam suatu susunan Negara Republik Indonesia yang berkedaulatan rakyat dengan berdasarkan kepada Ketuhanan Yang Maha Esa, Kemanusiaan Yang Adil dan Beradab, Persatuan Indonesia, dan ​Kerakyatan yang dipimpin oleh hikmat kebijaksanaan dalam Permusyawaratan/Perwakilan, serta dengan mewujudkan suatu Keadilan sosial bagi seluruh rakyat Indonesia.\n"
+    },
+    {
+      "id": "id-gv-beijing-twitter-2019",
+      "file": "human/id/id-gv-beijing-twitter-2019.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "news",
+      "split": "dev",
+      "wordCount": 202,
+      "provenance": "Oiwan Lam, translated by Vinna Florencia; Global Voices, publication 2019-01-29 and last modified 2019-05-27 according to live page metadata; https://id.globalvoices.org/2019/01/29/pemberantasan-twit-di-beijing-menggunakan-twitter-lebih-berbahaya-daripada-demonstrasi-jalanan/ ; original https://advox.globalvoices.org/2018/12/11/crackdown-in-beijing-using-twitter-is-more-dangerous-than-street-demonstrations/ ; author, links and license in frontmatter; contiguous excerpt with whitespace normalized; metadata is mutable, not an immutable revision",
+      "license": "CC BY 3.0; https://creativecommons.org/licenses/by/3.0/; license copy LICENSES/CC-BY-3.0.txt; attribution policy https://globalvoices.org/about/global-voices-attribution-policy/",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Author and translator identified by source; live page published/modified metadata predates 2021 but is mutable and not cryptographic evidence.",
+      "text": "---\nsource: Global Voices\nauthor: Oiwan Lam\ntranslator: Vinna Florencia\noriginal: https://advox.globalvoices.org/2018/12/11/crackdown-in-beijing-using-twitter-is-more-dangerous-than-street-demonstrations/\ntranslation: https://id.globalvoices.org/2019/01/29/pemberantasan-twit-di-beijing-menggunakan-twitter-lebih-berbahaya-daripada-demonstrasi-jalanan/\nlicense: https://creativecommons.org/licenses/by/3.0/\nchanges: excerpt; whitespace normalized\n---\n\nPihak berwajib Beijing mengeluarkan larangan keras bagi semua pengguna Twitter di Tiongkok daratan.\n\n42 kesaksian yang rilis tanggal 5 Desember yang dikumpulkan oleh China Change, sebuah situs advokasi hak asasi manusia di Tiongkok, merinci pengalaman buruk ratusan pengguna Twitter yang ditahan dan diinterogasi oleh aparat keamanan nasional sejak September 2018. Dalam kebanyakan kasus, polisi bertanya — jika tidak, memaksa — para pengguna ini untuk menghapus postingan atau akun mereka.\n\nMeskipun Twitter diblokir di Tiongkok, banyak netizen menggunakan alat pengalih, seperti VPNs (jaringan privat virtual) untuk mengunjungi situs sosial media, berhubungan dengan teman-teman atau mengakses informasi dan berita tanpa sensor.\n\nPada 2016, diperkirakan ada 10 juta pengguna Twitter di Tiongkok daratan. Mayoritas pengguna menggunakan situs ini sebagai sarana pengumpulan berita, dan menahan diri untuk berkomentar, tetapi beberapa secara terang-terangan, aktif berkomentar kritis ketika me-retweet berita kepada teman-temannya.\n\nOtoritas di Tiongkok daratan pernah menangkap para pengguna Twitter, tetapi tidak ada pola atau bukti yang jelas dari pembatasan keras tersebut. Insiden itu bersifat sporadis dan acak, seperti penangkapan seorang pengguna Twitter di Tiongkok pada tahun 2012 karena membuat lelucon tentang runtuhnya Aula Besar Rakyat.\n"
+    },
+    {
+      "id": "id-koding-php-tutorial-2018",
+      "file": "human/id/id-koding-php-tutorial-2018.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "technical-doc",
+      "split": "dev",
+      "wordCount": 188,
+      "provenance": "Risan Bagja Pradana (repository author: risan), Koding blog: Tutorial PHP untuk Pemula; commit f15036df0091e7848ad599bd5ebdd0f9fff43e9f (2018-04-27T08:18:59Z); https://github.com/risan/koding/blob/f15036df0091e7848ad599bd5ebdd0f9fff43e9f/_posts/2018-04-27-tutorial-php-untuk-pemula.md; contiguous source Markdown, terminal blank lines trimmed; source license https://raw.githubusercontent.com/risan/koding/f15036df0091e7848ad599bd5ebdd0f9fff43e9f/LICENSE.md",
+      "license": "MIT; full source license and copyright notice in LICENSES/id-koding-php-tutorial-2018-MIT.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Commit f15036df0091e7848ad599bd5ebdd0f9fff43e9f authored 2018-04-27T08:18:59Z predates 2021; https://github.com/risan/koding/commit/f15036df0091e7848ad599bd5ebdd0f9fff43e9f",
+      "text": "PHP—akronim rekursif dari *PHP: Hypertext Preprocessor*)—merupakan bahasa pemrograman untuk web yang mulanya dikembangkan oleh Rasmus Lerdorf pada tahun 1994. PHP berjalan di sisi server (peladen) dan umumnya digunakan untuk membuat aplikasi berbasis web yang dinamis.\n\nMeski sintaksis dan fiturnya kadang dikritik oleh programmer lain, PHP tetap populer dan mendominasi jagad internet. Perusahaan-perusahaan berbasis teknologi ternama mulai dari [Facebook](https://hhvm.com/), [Automattic](https://github.com/WordPress/WordPress) (Wordpress), [Slack](https://slack.engineering/taking-php-seriously-cf7a60065329), hingga [Wikipedia](https://en.wikipedia.org/wiki/Wikipedia:FAQ/Technical#What_software_is_used_to_run_Wikipedia?) masih setia dengan PHP yang sudah berumur lebih dari dua dekade ini. PHP pun kerap menjadi pilihan pertama untuk para pemula yang ingin belajar pemrograman.\n\nTutorial kali ini diperuntukan untuk pemula yang ingin belajar PHP serta dasar-dasar pemrograman. Apakah kamu siap menjadi pengembang PHP yang handal?\n\n![I'm Ready](https://media.giphy.com/media/l1Aswx03WbLDf9kYw/giphy.gif)\n\nSepanjang tutorial ini kita akan menemui sejumlah kotak dengan emoji seperti berikut:\n\n* ⚠️ **Peringatan**: Berisi peringatan penting seputar keamanan, performa, dan potensi *bug*.\n* 💡 **Informasi**: Berisi informasi tambahan seputar topik yang tengah dibahas.\n* 👍🏻 **Tips & Trick**: Berisi tips dan trik yang berguna dalam membantu pekerjaan *programming* sehari-hari.\n* 🎨 **Clean Code**: Berisi panduan penulisan kode yang baik.\n* 📘 **Dokumentasi**: Berisi tautan ke dokumentasi atau artikel lain yang membahas lebih dalam suatu topik.\n"
+    },
+    {
+      "id": "id-wiki-asam-deoksiribonukleat-2020",
+      "file": "human/id/id-wiki-asam-deoksiribonukleat-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 231,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Asam deoksiribonukleat, revision 17718359 (2020-12-16T07:38:29Z); https://id.wikipedia.org/w/index.php?title=Asam_deoksiribonukleat&oldid=17718359; contributor history https://id.wikipedia.org/w/index.php?title=Asam_deoksiribonukleat&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17718359 at 2020-12-16T07:38:29Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17718359&rvprop=timestamp%7Cids&format=json",
+      "text": "Asam deoksiribonukleat, lebih dikenal dengan singkatan DNA (bahasa Inggris: deoxyribonucleic acid), adalah sejenis biomolekul yang menyimpan dan menyandi instruksi-instruksi genetika setiap organisme dan banyak jenis virus. Instruksi-instruksi genetika ini berperan penting dalam pertumbuhan, perkembangan, dan fungsi organisme dan virus. DNA merupakan asam nukleat; bersamaan dengan protein dan karbohidrat, asam nukleat adalah makromolekul esensial bagi seluruh makhluk hidup yang diketahui. Kebanyakan molekul DNA terdiri dari dua unting biopolimer yang berpilin satu sama lainnya membentuk heliks ganda. Dua unting DNA ini dikenal sebagai polinukleotida karena keduanya terdiri dari satuan-satuan molekul yang disebut nukleotida. Tiap-tiap nukleotida terdiri atas salah satu jenis basa nitrogen (guanina (G), adenina (A), timina (T), atau sitosina (C)), gula monosakarida yang disebut deoksiribosa, dan gugus fosfat. Nukleotida-nukelotida ini kemudian tersambung dalam satu rantai ikatan kovalen antara gula satu nukleotida dengan fosfat nukelotida lainnya. Hasilnya adalah rantai punggung gula-fosfat yang berselang-seling. Menurut kaidah pasangan basa (A dengan T dan C dengan G), ikatan hidrogen mengikat basa-basa dari kedua unting polinukleotida membentuk DNA unting ganda\n\nDua unting DNA bersifat anti-paralel, yang berarti bahwa keduanya berpasangan secara berlawanan. Pada setiap gugus gula, terikat salah satu dari empat jenis nukleobasa. Urutan asam nukleat empat nukleobasa di sepanjang rantai punggung DNA inilah yang menyimpan kode informasi biologis. Melalui proses biokimia yang disebut transkripsi, unting DNA digunakan sebagai templat untuk membuat unting RNA. Unting RNA ini kemudian ditranslasikan untuk menentukan urutan asam amino protein yang dibangun.\n"
+    },
+    {
+      "id": "id-wiki-borobudur-2020",
+      "file": "human/id/id-wiki-borobudur-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 190,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Borobudur, revision 17690520 (2020-12-08T12:27:21Z); https://id.wikipedia.org/w/index.php?title=Borobudur&oldid=17690520; contributor history https://id.wikipedia.org/w/index.php?title=Borobudur&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17690520 at 2020-12-08T12:27:21Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17690520&rvprop=timestamp%7Cids&format=json",
+      "text": "Monumen ini terdiri atas enam teras berbentuk bujur sangkar yang di atasnya terdapat tiga pelataran melingkar, pada dindingnya dihiasi dengan 2.672 panel relief dan aslinya terdapat 504 arca Buddha. Borobudur memiliki koleksi relief Buddha terlengkap dan terbanyak di dunia. Stupa utama terbesar teletak di tengah sekaligus memahkotai bangunan ini, dikelilingi oleh tiga barisan melingkar 72 stupa berlubang yang di dalamnya terdapat arca Buddha tengah duduk bersila dalam posisi teratai sempurna dengan mudra (sikap tangan) Dharmachakra mudra (memutar roda dharma).\n\nMonumen ini merupakan model alam semesta dan dibangun sebagai tempat suci untuk memuliakan Buddha sekaligus berfungsi sebagai tempat ziarah untuk menuntun umat manusia beralih dari alam nafsu duniawi menuju pencerahan dan kebijaksanaan sesuai ajaran Buddha. Para peziarah masuk melalui sisi timur dan memulai ritual di dasar candi dengan berjalan melingkari bangunan suci ini searah jarum jam, sambil terus naik ke undakan berikutnya melalui tiga tingkatan ranah dalam kosmologi Buddha. Ketiga tingkatan itu adalah Kāmadhātu (ranah hawa nafsu), Rupadhatu (ranah berwujud), dan Arupadhatu (ranah tak berwujud). Dalam perjalanannya para peziarah berjalan melalui serangkaian lorong dan tangga dengan menyaksikan tak kurang dari 1.460 panel relief indah yang terukir pada dinding dan pagar langkan.\n"
+    },
+    {
+      "id": "id-wiki-candi-prambanan-2020",
+      "file": "human/id/id-wiki-candi-prambanan-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 233,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Candi Prambanan, revision 17755210 (2020-12-26T03:09:39Z); https://id.wikipedia.org/w/index.php?title=Candi_Prambanan&oldid=17755210; contributor history https://id.wikipedia.org/w/index.php?title=Candi_Prambanan&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17755210 at 2020-12-26T03:09:39Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17755210&rvprop=timestamp%7Cids&format=json",
+      "text": "Candi Prambanan atau Candi Roro Jonggrang (bahasa Jawa: ꦕꦤ꧀ꦝꦶ​ꦥꦿꦩ꧀ꦧꦤꦤ꧀, translit. Candhi Prambanan) adalah kompleks candi Hindu terbesar di Indonesia yang dibangun pada abad ke-9 masehi. Candi ini dipersembahkan untuk Trimurti, tiga dewa utama Hindu yaitu Brahma sebagai dewa pencipta, Wisnu sebagai dewa pemelihara, dan Siwa sebagai dewa pemusnah. Berdasarkan prasasti Siwagrha nama asli kompleks candi ini adalah Siwagrha (bahasa Sanskerta yang bermakna 'Rumah Siwa'), dan memang di garbagriha (ruang utama) candi ini bersemayam arca Siwa Mahadewa setinggi tiga meter yang menujukkan bahwa di candi ini dewa Siwa lebih diutamakan.\n\nKompleks candi ini terletak di kecamatan Prambanan, Sleman, DI Yogyakarta dan kecamatan Prambanan, Kabupaten Klaten, Jawa Tengah kurang lebih 17 kilometer timur laut Yogyakarta, 50 kilometer barat daya Surakarta dan 120 kilometer selatan Semarang, persis di perbatasan antara provinsi Jawa Tengah dan Daerah Istimewa Yogyakarta. Letaknya sangat unik, Candi Prambanan terletak di wilayah administrasi desa Bokoharjo, Prambanan, Sleman, sedangkan pintu masuk kompleks Candi Prambanan terletak di wilayah adminstrasi desa Tlogo, Prambanan, Klaten.\n\nCandi ini adalah termasuk Situs Warisan Dunia UNESCO, candi Hindu terbesar di Indonesia, sekaligus salah satu candi terindah di Asia Tenggara. Arsitektur bangunan ini berbentuk tinggi dan ramping sesuai dengan arsitektur Hindu pada umumnya dengan candi Siwa sebagai candi utama memiliki ketinggian mencapai 47 meter menjulang di tengah kompleks gugusan candi-candi yang lebih kecil. Sebagai salah satu candi termegah di Asia Tenggara, candi Prambanan menjadi daya tarik kunjungan wisatawan dari seluruh dunia.\n"
+    },
+    {
+      "id": "id-wiki-danau-toba-2020",
+      "file": "human/id/id-wiki-danau-toba-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 253,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Danau Toba, revision 17552210 (2020-10-28T07:23:18Z); https://id.wikipedia.org/w/index.php?title=Danau_Toba&oldid=17552210; contributor history https://id.wikipedia.org/w/index.php?title=Danau_Toba&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17552210 at 2020-10-28T07:23:18Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17552210&rvprop=timestamp%7Cids&format=json",
+      "text": "Danau Toba adalah danau alami berukuran besar di Indonesia yang berada di kaldera Gunung Supervulkan. Danau ini memiliki panjang 100 kilometer (62 mil), lebar 30 kilometer (19 mi), dan kedalaman 505 meter (1.657 ft). Danau ini terletak di tengah pulau Sumatra bagian utara dengan ketinggian permukaan sekitar 900 meter (2.953 ft). Danau ini membentang dari 2°53′N 98°31′E﻿ / ﻿2.88°N 98.52°E﻿ / 2.88; 98.52 sampai 2°21′N 99°06′E﻿ / ﻿2.35°N 99.1°E﻿ / 2.35; 99.1. Ini adalah danau terbesar di Indonesia dan danau vulkanik terbesar di dunia.\n\nDanau Toba adalah lokasi letusan gunung berapi super masif berkekuatan VEI 8 sekitar 69.000 sampai 77.000 tahun yang lalu yang memicu perubahan iklim global. Metode penanggalan terkini menetapkan bahwa 74.000 tahun yang lalu lebih akurat. Letusan ini merupakan letusan eksplosif terbesar di Bumi dalam kurun 25 juta tahun terakhir. Menurut teori bencana Toba, letusan ini berdampak besar bagi populasi manusia di seluruh dunia; dampak letusan menewaskan sebagian besar manusia yang hidup waktu itu dan diyakini menyebabkan penyusutan populasi di Afrika timur tengah dan India sehingga memengaruhi genetika populasi manusia di seluruh dunia sampai sekarang.\n\nPara ilmuwan sepakat bahwa letusan Toba memicu musim dingin vulkanik yang menyebabkan jatuhnya suhu dunia antara 3 hingga 5 °C (5,4 hingga 9,0 °F), dan hingga 15 °C (27 °F) di daerah lintang atas. Penelitian lanjutan di Danau Malawi, Afrika Tengah, menemukan endapan debu letusan Toba, tetapi tidak menemukan bukti perubahan iklim besar di Afrika Timur. Pada tanggal 18 Juni 2018, musibah tenggelamnya kapal feri terjadi di Danau Toba dan menenggelamkan lebih dari 190 orang.\n"
+    },
+    {
+      "id": "id-wiki-fotosintesis-2020",
+      "file": "human/id/id-wiki-fotosintesis-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 339,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Fotosintesis, revision 17367633 (2020-09-04T17:19:34Z); https://id.wikipedia.org/w/index.php?title=Fotosintesis&oldid=17367633; contributor history https://id.wikipedia.org/w/index.php?title=Fotosintesis&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17367633 at 2020-09-04T17:19:34Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17367633&rvprop=timestamp%7Cids&format=json",
+      "text": "Meskipun masih ada langkah-langkah dalam fotosintesis yang belum dipahami, persamaan umum fotosintesis telah diketahui sejak tahun 1800-an. Pada awal tahun 1600-an, seorang dokter dan ahli kimia, Jan van Helmont, seorang Flandria (sekarang bagian dari Belgia), melakukan percobaan untuk mengetahui faktor apa yang menyebabkan massa tumbuhan bertambah dari waktu ke waktu. Dari penelitiannya, Helmont menyimpulkan bahwa massa tumbuhan bertambah hanya karena pemberian air. Namun, pada tahun 1727, ahli botani Inggris, Stephen Hales berhipotesis bahwa pasti ada faktor lain selain air yang berperan. Ia mengemukakan bahwa sebagian makanan tumbuhan berasal dari atmosfer dan cahaya yang terlibat dalam proses tertentu. Pada saat itu belum diketahui bahwa udara mengandung unsur gas yang berlainan.\n\nPada tahun 1771, Joseph Priestley, seorang ahli kimia dan pendeta berkebangsaan Inggris, menemukan bahwa ketika ia menutupi sebuah lilin menyala dengan sebuah toples terbalik, nyalanya akan mati sebelum lilinnya habis terbakar. Ia kemudian menemukan bila ia meletakkan tikus dalam toples terbalik bersama lilin, tikus itu akan mati lemas. Dari kedua percobaan itu, Priestley menyimpulkan bahwa nyala lilin telah \"merusak\" udara dalam toples itu dan menyebabkan matinya tikus. Ia kemudian menunjukkan bahwa udara yang telah “dirusak” oleh lilin tersebut dapat “dipulihkan” oleh tumbuhan. Ia juga menunjukkan bahwa tikus dapat tetap hidup dalam toples tertutup asalkan di dalamnya juga terdapat tumbuhan.\n\nPada tahun 1778, Jan Ingenhousz, dokter kerajaan Austria, mengulangi eksperimen Priestley. Ia memperlihatkan bahwa cahaya Matahari berpengaruh pada tumbuhan sehingga dapat \"memulihkan\" udara yang \"rusak\". Ia juga menemukan bahwa tumbuhan juga 'mengotori udara' pada keadaan gelap sehingga ia lalu menyarankan agar tumbuhan dikeluarkan dari rumah pada malam hari untuk mencegah kemungkinan meracuni penghuninya.\n\nAkhirnya pada tahun 1782, Jean Senebier, seorang pastor Prancis, menunjukkan bahwa udara yang \"dipulihkan\" dan \"merusak\" itu adalah karbon dioksida yang diserap oleh tumbuhan dalam fotosintesis. Tidak lama kemudian, Theodore de Saussure berhasil menunjukkan hubungan antara hipotesis Stephen Hale dengan percobaan-percobaan \"pemulihan\" udara. Ia menemukan bahwa peningkatan massa tumbuhan bukan hanya karena penyerapan karbon dioksida, tetapi juga oleh pemberian air. Melalui serangkaian eksperimen inilah akhirnya para ahli berhasil menggambarkan persamaan umum dari fotosintesis yang menghasilkan makanan (seperti glukosa).\n"
+    },
+    {
+      "id": "id-wiki-gamelan-2020",
+      "file": "human/id/id-wiki-gamelan-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 355,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Gamelan, revision 17741540 (2020-12-21T19:32:41Z); https://id.wikipedia.org/w/index.php?title=Gamelan&oldid=17741540; contributor history https://id.wikipedia.org/w/index.php?title=Gamelan&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17741540 at 2020-12-21T19:32:41Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17741540&rvprop=timestamp%7Cids&format=json",
+      "text": "Keberadaan gamelan mendahului proses transisi budaya Hindu-Buddha yang mendominasi Nusantara, dalam catatan-catatan awalnya dan dengan demikian mewakili bentuk kesenian asli Indonesia.\n\nDalam mitologi Jawa, gamelan diciptakan oleh Batara Guru pada 167 Saka (atau 230 M), dewa yang memerintah sebagai raja seluruh Jawa dari sebuah istana di Wukir Mahendra Giri di Medang Kamulan (sekarang Gunung Lawu). Batara Guru menciptakan gong sebagai sinyal untuk memanggil para dewa. Untuk pesan yang lebih kompleks, kemudian ia menciptakan dua gong lainnya, sehingga membentuk set gamelan utuh.\n\nGambar paling awal dari himpunan alat musik (musik ansambel) gamelan ditemukan di relief dinding candi Borobudur dibangun abad ke-8 oleh Gunadharma pada masa wangsa Sailendra di Kabupaten Magelang, Jawa Tengah. Relief tersebut menampilkan sejumlah alat musik termasuk suling, lonceng, kendhang dalam berbagai ukuran, kecapi, alat musik dawai yang digesek dan dipetik, ditemukan dalam relief tersebut. Bagaimanapun, relief tentang himpunan alat musik tersebut dikatakan sebagai asal mula gamelan.\n\nInstrumen gamelan diperkenalkan menjadi bentuk seperangkat peranti musik lengkap dan berkembang di zaman Kerajaan Majapahit, dan menyebar keberbagai daerah seperti Bali, Sunda, dan Lombok. Menurut prasasti dan manuskrip yang bertanggal dari periode Majapahit, kerajaan bahkan memiliki balai seni yang bertugas mengawasi seni pertunjukan, termasuk gamelan. Balai seni mengawasi konstruksi alat musik, serta menjadwalkan pentas pertunjukan.\n\nPada proses penetrasi Islam, Sunan Bonang menggubah gamelan yang waktu itu sangat kental dengan estetika Hindu, juga memberi nuansa baru. Gubahannya waktu itu memberi nuansa transendental atau wirid yang mendorong kecintaan pada kehidupan, dan menambahkan instrumen bonang pada satu set gamelan.\n\nDalam lingkup kraton di Jawa gamelan tertua yang diketahui adalah Gamelan Munggang dan Gamelan Kodok Ngorek, berasal dari abad ke-12. Ini membentuk dasar tempo cepat atau \"gaya keras\" pada gamelan. Sebaliknya, tempo pelan atau \"gaya lembut\" berkembang dari tradisi kemanak juga berkaitan dengan tradisi melantunkan geguritan (puisi Jawa), dengan cara yang sering diyakini mirip dengan paduan suara yang menyertai tarian modern bedaya. Pada abad ke-17, gaya keras dan lembut bercampur, dan sebagian besar menjadi variasi pada gaya gamelan modern Bali, Jawa, dan Sunda, dihasilkan dari berbagai cara pencampuran unsur-unsur tersebut. Dengan demikian, terlepas dari keragaman gaya yang tampak, banyak konsep, instrumen, dan teknik teoretis yang sama dibagikan di antara gaya-gaya tersebut.\n"
+    },
+    {
+      "id": "id-wiki-gunung-berapi-2020",
+      "file": "human/id/id-wiki-gunung-berapi-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 166,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Gunung berapi, revision 17732627 (2020-12-19T16:43:49Z); https://id.wikipedia.org/w/index.php?title=Gunung%20berapi&oldid=17732627; contributor history https://id.wikipedia.org/w/index.php?title=Gunung_berapi&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17732627 at 2020-12-19T16:43:49Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17732627&rvprop=timestamp%7Cids&format=json",
+      "text": "Gunung berapi atau gunung api atau vulkan secara umum adalah istilah yang dapat didefinisikan sebagai suatu sistem saluran fluida panas (batuan dalam wujud cair atau lava) yang memanjang dari kedalaman sekitar 10 km di bawah permukaan bumi sampai ke permukaan bumi, termasuk endapan hasil akumulasi material yang dikeluarkan pada saat meletus.\n\nGunung berapi di Bumi terbentuk dikarenakan keraknya terpecah menjadi 17 lempeng tektonik utama yang kaku yang mengambang di atas lapisan mantel yang lebih panas dan lunak. Oleh karena itu, gunung berapi di Bumi sering ditemukan di batas divergen dan konvergen dari lempeng tektonik. Gunung berapi biasanya tidak terbentuk di wilayah dua lempeng tektonik bergeser satu sama lain.\n\nBahaya dari debu vulkanik adalah terhadap penerbangan khususnya pesawat jet karena debu tersebut dapat merusak turbin dari mesin jet. Letusan besar dapat mempengaruhi suhu dikarenakan asap dan butiran asam sulfat yang dimuntahkan letusan dapat menghalangi matahari dan mendinginkan bagian bawah atmosfer bumi seperti troposfer, tetapi material tersebut juga dapat menyerap panas yang dipancarkan dari bumi sehingga memanaskan stratosfer.\n"
+    },
+    {
+      "id": "id-wiki-hak-asasi-manusia-2020",
+      "file": "human/id/id-wiki-hak-asasi-manusia-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 318,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Hak asasi manusia, revision 17582151 (2020-11-06T12:12:36Z); https://id.wikipedia.org/w/index.php?title=Hak%20asasi%20manusia&oldid=17582151; contributor history https://id.wikipedia.org/w/index.php?title=Hak_asasi_manusia&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17582151 at 2020-11-06T12:12:36Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17582151&rvprop=timestamp%7Cids&format=json",
+      "text": "Hak asasi manusia (disingkat HAM, bahasa Inggris: human rights, bahasa Prancis: droits de l'homme) adalah sebuah konsep hukum dan normatif yang menyatakan bahwa manusia memiliki hak yang melekat pada dirinya karena ia adalah seorang manusia. Hak asasi manusia berlaku kapanpun, di manapun, dan kepada siapapun, sehingga sifatnya universal. HAM pada prinsipnya tidak dapat dicabut. Hak asasi manusia juga tidak dapat dibagi-bagi, saling berhubungan, dan saling bergantung. Hak asasi manusia biasanya dialamatkan kepada negara, atau dalam kata lain, negaralah yang mengemban kewajiban untuk menghormati, melindungi, dan memenuhi hak asasi manusia, termasuk dengan mencegah dan menindaklanjuti pelanggaran yang dilakukan oleh swasta. Dalam terminologi modern, hak asasi manusia dapat digolongkan menjadi hak sipil dan politik yang berkenaan dengan kebebasan sipil (misalnya hak untuk hidup, hak untuk tidak disiksa, dan kebebasan berpendapat), serta hak ekonomi, sosial, dan budaya yang berkaitan dengan akses ke barang publik (seperti hak untuk memperoleh pendidikan yang layak, hak atas kesehatan, atau hak atas perumahan).\n\nSecara konseptual, hak asasi manusia dapat dilandaskan pada keyakinan bahwa hak tersebut \"dianugerahkan secara alamiah\" oleh alam semesta, Tuhan, atau nalar. Sementara itu, mereka yang menolak penggunaan unsur alamiah meyakini bahwa hak asasi manusia merupakan pengejawantahan nilai-nilai yang disepakati oleh masyarakat. Ada pula yang menganggap HAM sebagai perwakilan dari klaim-klaim kaum yang tertindas, dan pada saat yang sama juga terdapat kelompok yang meragukan keberadaan HAM sama sekali dan menyatakan bahwa hak asasi manusia hanya ada karena manusia mencetuskan dan membicarakan konsep tersebut. Dari sudut pandang hukum internasional, hak asasi manusia sendiri dapat dibatasi atau dikurangi dengan syarat-syarat tertentu. Pembatasan biasanya harus ditentukan oleh hukum, memiliki tujuan yang sah, dan diperlukan dalam suatu masyarakat demokratis. Sementara itu, pengurangan hanya dapat dilakukan dalam keadaan darurat yang mengancam \"kehidupan bangsa\", dan pecahnya perang pun belum mencukupi syarat ini. Selama perang, hukum kemanusiaan internasional berlaku sebagai lex specialis. Walaupun begitu, sejumlah hak tetap tidak boleh dikesampingkan dalam keadaan apapun, seperti hak untuk bebas dari perbudakan maupun penyiksaan.\n"
+    },
+    {
+      "id": "id-wiki-jantung-2020",
+      "file": "human/id/id-wiki-jantung-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 267,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Jantung, revision 17614878 (2020-11-17T03:01:02Z); https://id.wikipedia.org/w/index.php?title=Jantung&oldid=17614878; contributor history https://id.wikipedia.org/w/index.php?title=Jantung&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17614878 at 2020-11-17T03:01:02Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17614878&rvprop=timestamp%7Cids&format=json",
+      "text": "Pada manusia, mamalia, dan burung, jantung dibagi menjadi empat ruas: atrium atas kanan dan kiri; dan ventrikel bawah kanan dan kiri. Pada umumnya atrium dan ventrikel kanan disebut jantung kanan, dan sisanya disebut jantung kiri. Ikan hanya memiliki dua ruas, sebuah atrium dan sebuah ventrikel, sementara reptil memiliki tiga ruas. Pada jantung yang sehat darah mengalir satu arah melalui pembuluh darah. Terdapat sebuah kantung pembungkus yang melindungi jantung, perikardium, yang juga mengandung sedikit cairan. Dinding jantung tersusun atas tiga lapisan: epikardium, miokardium, dan endokardium.\n\nJantung memompa darah melewati dua sistem sirkulasi. Darah yang berasal dari sistem peredaran darah besar mengandung sedikit oksigen dan memasuki atrium kanan melalui vena kava superior dan inferior menuju ventrikel kanan. Dari sini darah dipompa menuju paru-paru, tempat darah memperoleh oksigen dan meninggalkan karbon dioksida. Darah yang sudah mengandung oksigen kembali menuju atrium kiri, melewati ventrikel kiri dan dipompa menuju seluruh tubuh melalui aorta—di mana oksigen dipakai dan melalui metabolisme menjadi karbon dioksida. Ditambah lagi, darah juga membawa nutrisi dari hati menuju berbagai organ tubuh, sementara membawa zat sisa menuju hati dan ginjal. Normalnya, jumlah darah yang terpompa menuju paru-paru sama dengan jumlah darah yang terpompa ke seluruh tubuh. Pembuluh vena memompa darah menuju jantung dan membawa darah yang kaya karbon dioksida - kecuali vena pulmonaris dan vena pada sistem pencernaan. Arteri membawa darah keluar jantung, membawa oksigen selain pada arteri pulmonaris. Jarak yang jauh dari jantung membuat pembuluh vena memiliki tekanan yang lebih kecil dari pembuluh arteri. Ketika beristirahat, jantung berdetak kurang lebih 72 kali per menit. Latihan fisik biasanya mengangkat jumlahnya, tetapi jumlah melambat selama beberapa waktu, yang baik untuk jantung.\n"
+    },
+    {
+      "id": "id-wiki-jaringan-komputer-2020",
+      "file": "human/id/id-wiki-jaringan-komputer-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 300,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Jaringan komputer, revision 17583863 (2020-11-07T02:27:45Z); https://id.wikipedia.org/w/index.php?title=Jaringan%20komputer&oldid=17583863; contributor history https://id.wikipedia.org/w/index.php?title=Jaringan_komputer&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17583863 at 2020-11-07T02:27:45Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17583863&rvprop=timestamp%7Cids&format=json",
+      "text": "Sejarah jaringan komputer bermula dari lahirnya konsep jaringan komputer pada tahun 1940-an di Amerika yang digagas oleh sebuah proyek pengembangan komputer MODEL I di laboratorium Bell dan group riset Universitas Harvard yang dipimpin profesor Howard Aiken. Pada mulanya proyek tersebut hanyalah ingin memanfaatkan sebuah perangkat komputer yang harus dipakai bersama. Untuk mengerjakan beberapa proses tanpa banyak membuang waktu kosong dibuatlah proses beruntun (Batch Processing), sehingga beberapa program bisa dijalankan dalam sebuah komputer dengan kaidah antrian.\n\nKemudian pada tahun 1950-an ketika jenis komputer mulai berkembang sampai terciptanya super komputer, maka sebuah komputer harus melayani beberapa tempat yang tersedia (terminal), untuk itu ditemukan konsep distribusi proses berdasarkan waktu yang dikenal dengan nama TSS (Time Sharing System). Maka untuk pertama kalinya bentuk jaringan (network) komputer diaplikasikan. Pada sistem TSS beberapa terminal terhubung secara seri ke sebuah komputer atau perangkat lainnya yang terhubung dalam suatu jaringan (host) komputer. Dalam proses TSS mulai terlihat perpaduan teknologi komputer dan teknologi telekomunikasi yang pada awalnya berkembang sendiri-sendiri. Departemen Pertahanan Amerika, U.S. Defense Advanced Research Projects Agency (DARPA) memutuskan untuk mengadakan riset yang bertujuan untuk menghubungkan sejumlah komputer sehingga membentuk jaringan organik pada tahun 1969. Program riset ini dikenal dengan nama ARPANET. Pada tahun 1970, sudah lebih dari 10 komputer yang berhasil dihubungkan satu sama lain sehingga mereka bisa saling berkomunikasi dan membentuk sebuah jaringan. Dan pada tahun 1970 itu juga setelah beban pekerjaan bertambah banyak dan harga perangkat komputer besar mulai terasa sangat mahal, maka mulailah digunakan konsep proses distribusi (Distributed Processing). Dalam proses ini beberapa host komputer mengerjakan sebuah pekerjaan besar secara paralel untuk melayani beberapa terminal yang tersambung secara seri disetiap host komputer. Dalam proses distribusi sudah mutlak diperlukan perpaduan yang mendalam antara teknologi komputer dan telekomunikasi, karena selain proses yang harus didistribusikan, semua host komputer wajib melayani terminal-terminalnya dalam satu perintah dari komputer pusat.\n"
+    },
+    {
+      "id": "id-wiki-konferensi-asia-afrika-2020",
+      "file": "human/id/id-wiki-konferensi-asia-afrika-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 181,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Konferensi Asia–Afrika, revision 17478541 (2020-10-06T01:28:40Z); https://id.wikipedia.org/w/index.php?title=Konferensi%20Asia%E2%80%93Afrika&oldid=17478541; contributor history https://id.wikipedia.org/w/index.php?title=Konferensi_Asia%E2%80%93Afrika&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17478541 at 2020-10-06T01:28:40Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17478541&rvprop=timestamp%7Cids&format=json",
+      "text": "Konferensi Tingkat Tinggi Asia–Afrika (disingkat KTT Asia Afrika atau KAA; kadang juga disebut Konferensi Bandung) adalah sebuah konferensi antara negara-negara Asia dan Afrika, yang kebanyakan baru saja memperoleh kemerdekaan. KAA diselenggarakan oleh Indonesia, Myanmar (dahulu Burma), Sri Lanka (dahulu Ceylon), India dan Pakistan dan dikoordinasi oleh Menteri Luar Negeri Indonesia Sunario. Pertemuan ini berlangsung antara 18 April-24 April 1955, di Gedung Merdeka, Bandung, Indonesia dengan tujuan mempromosikan kerjasama ekonomi dan kebudayaan Asia-Afrika dan melawan kolonialisme atau neokolonialisme Amerika Serikat, Uni Soviet, atau negara imperialis lainnya.\n\nSebanyak 29 negara yang mewakili lebih dari setengah total penduduk dunia pada saat itu mengirimkan wakilnya. Konferensi ini merefleksikan apa yang mereka pandang sebagai ketidakinginan kekuatan-kekuatan Barat untuk mengonsultasikan dengan mereka tentang keputusan-keputusan yang memengaruhi Asia pada masa Perang Dingin; kekhawatiran mereka mengenai ketegangan antara Uni Soviet dan Amerika Serikat; keinginan mereka untuk membentangkan fondasi bagi hubungan yang damai antara Tiongkok dengan mereka dan pihak Barat; penentangan mereka terhadap kolonialisme, khususnya pengaruh Prancis di Afrika Utara dan kekuasaan kolonial Prancis di Aljazair; dan keinginan Indonesia untuk mempromosikan hak mereka dalam pertentangan dengan Belanda mengenai Irian Barat.\n"
+    },
+    {
+      "id": "id-wiki-konstitusi-2020",
+      "file": "human/id/id-wiki-konstitusi-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 198,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Konstitusi, revision 17626624 (2020-11-20T06:45:29Z); https://id.wikipedia.org/w/index.php?title=Konstitusi&oldid=17626624; contributor history https://id.wikipedia.org/w/index.php?title=Konstitusi&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17626624 at 2020-11-20T06:45:29Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17626624&rvprop=timestamp%7Cids&format=json",
+      "text": "Konstitusi pada umumnya bersifat kodifikasi yaitu sebuah dokumen yang berisi aturan-aturan untuk menjalankan suatu organisasi pemerintahan negara. Namun dalam pengertian ini, konstitusi harus diartikan dalam artian tidak semuanya berupa dokumen tertulis (formal). Menurut para ahli ilmu hukum maupun ilmu politik konstitusi harus diterjemahkan termasuk kesepakatan politik, negara, kekuasaan, pengambilan keputusan, kebijakan dan distribusi maupun alokasi . Konstitusi bagi organisasi pemerintahan negara yang dimaksud terdapat beragam bentuk dan kompleksitas strukturnya, terdapat pula konstitusi politik atau hukum akan tetapi mengandung pula arti konstitusi ekonomi\n\nDewasa ini, istilah konstitusi sering di identikkan dengan suatu kodifikasi atas dokumen yang tertulis. Sama halnya dengan Inggris juga memiliki konstitusi, namun tidak dalam bentuk kodifikasi melainkan berdasarkan pada yurisprudensi dalam ketatanegaraan negara Inggris.\n\nIstilah konstitusi berasal dari bahasa Inggris yaitu “Constitution”, dan berasal dari bahasa Belanda “constitutie”. Dalam bahasa latin (contitutio,constituere), sedangkan dalam bahasa Prancis yaitu “constiture”. Dalam bahasa Jerman yaitu “vertassung, konstitution”, sedangkan dalam ketatanegaraan RI diartikan sama dengan Undang – undang dasar. Konstitusi / UUD dapat diartikan peraturan dasar yang memuat ketentuan – ketentuan pokok dan menjadi satu sumber perundang- undangan. Konstitusi adalah keseluruhan peraturan baik yang tertulis maupun tidak tertulis yang mengatur secara mengikat cara suatu pemerintahan diselenggarakan dalam suatu masyarakat negara\n"
+    },
+    {
+      "id": "id-wiki-kriptografi-2020",
+      "file": "human/id/id-wiki-kriptografi-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 161,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Kriptografi, revision 17580708 (2020-11-06T03:32:43Z); https://id.wikipedia.org/w/index.php?title=Kriptografi&oldid=17580708; contributor history https://id.wikipedia.org/w/index.php?title=Kriptografi&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17580708 at 2020-11-06T03:32:43Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17580708&rvprop=timestamp%7Cids&format=json",
+      "text": "Kriptografi (atau kriptologi; dari bahasa Yunani κρυπτός kryptós, \"tersembunyi, rahasia\"; dan γράφειν graphein, \"menulis\", atau -λογία logi, \"ilmu\") atau sandisastra merupakan keahlian dan ilmu dari cara-cara untuk komunikasi aman pada kehadirannya di pihak ketiga. Secara umum, kriptografi ialah mengenai mengkonstruksi dan menganalisis protokol komunikasi yang dapat memblokir lawan; berbagai aspek dalam keamanan informasi seperti data rahasia, integritas data, autentikasi, dan non-repudansi merupakan pusat dari kriptografi modern. Kriptografi modern terjadi karena terdapat titik temu antara disiplin ilmu matematika, ilmu komputer, dan teknik elektro. Aplikasi dari kriptografi termasuk ATM, password komputer, dan E-commerce.\n\nKriptografi sebelum merupakan sinonim dari \"enkripsi\", konversi dari kalimat-kalimat yang dapat dibaca menjadi kelihatan tidak masuk akal. Pembuat dari pesan enkripsi membagi teknik pemecahan sandi yang dibutuhkan untuk mengembalikan informasi asli jika hanya dengan penerima yang diinginkan, sehingga dapat mencegah orang yang tidak diinginkan melakukan hal yang sama. Sejak Perang Dunia I dan kedatangan komputer, metode yang digunakan untuk mengelola kriptologi telah meningkat secara komplek dan pengaplikasiannya telah tersebar luar.\n"
+    },
+    {
+      "id": "id-wiki-krisis-moneter-2020",
+      "file": "human/id/id-wiki-krisis-moneter-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 161,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Krisis finansial Asia 1997, revision 17674837 (2020-12-04T19:03:57Z); https://id.wikipedia.org/w/index.php?title=Krisis%20finansial%20Asia%201997&oldid=17674837; contributor history https://id.wikipedia.org/w/index.php?title=Krisis_finansial_Asia_1997&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17674837 at 2020-12-04T19:03:57Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17674837&rvprop=timestamp%7Cids&format=json",
+      "text": "Krisis keuangan Asia adalah periode krisis keuangan yang menerpa hampir seluruh Asia Timur pada Juli 1997 dan menimbulkan kepanikan bahkan ekonomi dunia akan runtuh akibat penularan keuangan.\n\nKrisis ini bermula di Thailand (dikenal dengan nama krisis tom yum kung di Thailand; Thai: วิกฤตต้มยำกุ้ง) seiring jatuhnya nilai mata uang baht setelah pemerintah Thailand terpaksa mengambangkan baht karena sedikitnya valuta asing yang dapat mempertahankan jangkarnya ke dolar Amerika Serikat. Waktu itu, Thailand menanggung beban utang luar negeri yang besar sampai-sampai negara ini dapat dinyatakan bangkrut sebelum nilai mata uangnya jatuh. Saat krisis ini menyebar, nilai mata uang di sebagian besar Asia Tenggara dan Jepang ikut turun, bursa saham dan nilai aset lainnya jatuh, dan utang swastanya naik drastis.\n\nIndonesia, Korea Selatan, dan Thailand adalah negara-negara yang terkena dampak krisis terparah. Hong Kong, Laos, Malaysia, dan Filipina juga terdampak oleh turunnya nilai mata uang. Brunei, Cina, Singapura, Taiwan, dan Vietnam tidak kentara dampaknya, namun sama-sama merasakan turunnya permintaan dan kepercayaan investor di seluruh Asia.\n"
+    },
+    {
+      "id": "id-wiki-mahkamah-konstitusi-2020",
+      "file": "human/id/id-wiki-mahkamah-konstitusi-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 205,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Mahkamah Konstitusi Republik Indonesia, revision 17737390 (2020-12-21T00:13:58Z); https://id.wikipedia.org/w/index.php?title=Mahkamah%20Konstitusi%20Republik%20Indonesia&oldid=17737390; contributor history https://id.wikipedia.org/w/index.php?title=Mahkamah_Konstitusi_Republik_Indonesia&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17737390 at 2020-12-21T00:13:58Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17737390&rvprop=timestamp%7Cids&format=json",
+      "text": "Lembaran awal sejarah praktik pengujian Undang-undang (judicial review) bermula di Mahkamah Agung (MA) (Supreme Court) Amerika Serikat saat dipimpin William Paterson dalam kasus Danil Lawrence Hylton lawan Pemerintah Amerika Serikat tahun 1796. Dalam kasus ini, MA menolak permohonan pengujian UU Pajak atas Gerbong Kertera Api 1794 yang diajukan oleh Hylton dan menyatakan bahwa UU a quo tidak bertentangan dengan konstitusi atau tindakan kongres dipandang konstitusional. Dalam kasus ini, MA menguji UU a quo, namun tidak membatalkan UU tersebut. Selanjutnya pada saat MA di pimpin John Marshall dalam kasus Marbury lawan Madison tahun 1803. Kendati saat itu Konstitusi Amerika Serikat tidak mengatur pemberian kewenangan untuk melakukan judicial review kepada MA, tetapi dengan menafsirkan sumpah jabatan yang mengharuskan untuk senantiasa menegakkan konstitusi, John Marshall menganggap MA berwenang untuk menyatakan suatu Undang-undang bertentangan dengan konstitusi.\n\nAdapun secara teoretis, keberadaan Mahkamah Konstitusi baru diintrodusir pertama kali pada tahun 1919 oleh pakar hukum asal Austria, Hans Kelsen (1881-1973). Hans Kelsen menyatakan bahwa pelaksanaan konstitusional tentang legislasi dapat secara efektif dijamin hanya jika suatu organ selain badan legislatif diberikan tugas untuk menguji apakah suatu produk hukum itu konstitusional atau tidak, dan tidak memberlakukannya jika menurut organ ini tidak konstitusional. Untuk itu perlu diadakan organ khusus yang disebut Mahkamah Konstitusi (constitutional court).\n"
+    },
+    {
+      "id": "id-wiki-perangkat-lunak-2020",
+      "file": "human/id/id-wiki-perangkat-lunak-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 168,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Perangkat lunak, revision 17513904 (2020-10-16T03:46:34Z); https://id.wikipedia.org/w/index.php?title=Perangkat%20lunak&oldid=17513904; contributor history https://id.wikipedia.org/w/index.php?title=Perangkat_lunak&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17513904 at 2020-10-16T03:46:34Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17513904&rvprop=timestamp%7Cids&format=json",
+      "text": "Perangkat lunak atau peranti lunak (bahasa Inggris: software) adalah istilah khusus untuk data yang diformat dan disimpan secara digital, termasuk program komputer, dokumentasinya, dan berbagai informasi yang bisa dibaca, dan ditulis oleh komputer. Dengan kata lain, bagian sistem komputer yang tidak berwujud. Istilah ini menonjolkan perbedaan dengan perangkat keras komputer.\n\nPembuatan perangkat lunak itu sendiri memerlukan \"bahasa pemrograman\" yang ditulis oleh seorang pemrogram untuk selanjutnya dikompilasi dengan aplikasi kompiler sehingga menjadi kode yang bisa dikenali oleh mesin hardware. Perangkat lunak seperti Windows atau Linux bisa disebut sebagai nyawa dari komputer, di mana tanpa diinstal sistem operasi tersebut maka komputer tidak dapat dijalankan. Perangkat lunak sistem operasi biasanya tersimpan di Partisi C sehingga saat komputer mengalami masalah, Partisi C yang terkena imbas. Perangkat lunak lain juga tersimpan di Partisi C yang apabila komponen tidak lagi berjalan maksimal dapat diuninstal dan diinstal ulang. Data-data lain lebih baik disimpan di partisi D sehingga saat software terkena virus atau tidak berjalan normal kembali maka dapat diinstal ulang dan data penting dapat diselamatkan.\n"
+    },
+    {
+      "id": "id-wiki-sistem-operasi-2020",
+      "file": "human/id/id-wiki-sistem-operasi-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 232,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Sistem operasi, revision 17384538 (2020-09-08T21:22:34Z); https://id.wikipedia.org/w/index.php?title=Sistem%20operasi&oldid=17384538; contributor history https://id.wikipedia.org/w/index.php?title=Sistem_operasi&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17384538 at 2020-09-08T21:22:34Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17384538&rvprop=timestamp%7Cids&format=json",
+      "text": "Biasanya, istilah sistem operasi sering ditujukan kepada semua perangkat lunak yang masuk dalam satu paket dengan sistem komputer sebelum aplikasi-aplikasi perangkat lunak terinstal. Sistem operasi adalah perangkat lunak sistem yang bertugas untuk melakukan kontrol dan manajemen perangkat keras serta operasi-operasi dasar sistem, termasuk menjalankan perangkat lunak aplikasi seperti program-program pengolah kata dan peramban web.\n\nSecara umum, sistem operasi adalah perangkat lunak pada lapisan pertama yang ditempatkan pada memori komputer pada saat komputer dinyalakan booting. Sedangkan software-software lainnya dijalankan setelah sistem operasi berjalan, dan sistem operasi akan melakukan layanan inti untuk software-software itu. Layanan inti tersebut seperti akses ke disk, manajemen memori, penjadwalan tugas schedule task, dan antar-muka user GUI/CLI. Sehingga masing-masing software tidak perlu lagi melakukan tugas-tugas inti umum tersebut, karena dapat dilayani dan dilakukan oleh sistem operasi. Bagian kode yang melakukan tugas-tugas inti dan umum tersebut dinamakan dengan \"kernel\" suatu sistem operasi.\n\nKalau sistem komputer terbagi dalam lapisan-lapisan, maka sistem operasi adalah penghubung antara lapisan hardware dengan lapisan software. Sistem operasi melakukan semua tugas-tugas penting dalam komputer, dan menjamin aplikasi-aplikasi yang berbeda dapat berjalan secara bersamaan dengan lancar. Sistem operasi menjamin aplikasi lainnya dapat menggunakan memori, melakukan input dan output terhadap peralatan lain, dan memiliki akses kepada sistem berkas. Apabila beberapa aplikasi berjalan secara bersamaan, maka Sistem operasi mengatur schedule yang tepat, sehingga sedapat mungkin semua proses yang berjalan mendapatkan waktu yang cukup untuk menggunakan prosesor (CPU) serta tidak saling mengganggu.\n"
+    },
+    {
+      "id": "id-wiki-tata-surya-2020",
+      "file": "human/id/id-wiki-tata-surya-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 167,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Tata Surya, revision 17511822 (2020-10-15T09:36:21Z); https://id.wikipedia.org/w/index.php?title=Tata%20Surya&oldid=17511822; contributor history https://id.wikipedia.org/w/index.php?title=Tata_Surya&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17511822 at 2020-10-15T09:36:21Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17511822&rvprop=timestamp%7Cids&format=json",
+      "text": "Tata Surya terbagi menjadi Matahari, empat planet bagian dalam, sabuk asteroid, empat planet bagian luar, dan di bagian terluar adalah Sabuk Kuiper dan piringan tersebar. Awan Oort diperkirakan terletak di daerah terjauh yang berjarak sekitar seribu kali di luar bagian yang terluar.\n\nBerdasarkan jaraknya dari Matahari, kedelapan planet Tata Surya ialah Merkurius (57,9 juta km), Venus (108 juta km), Bumi (150 juta km), Mars (228 juta km), Jupiter (779 juta km), Saturnus (1.430 juta km), Uranus (2.880 juta km), dan Neptunus (4.500 juta km). Keempat planet terdalam, yaitu Merkurius, Venus, Bumi, dan Mars adalah planet kebumian yang terdiri atas batuan dan logam. Sementara itu, keempat planet terluar adalah planet raksasa yang jauh lebih besar dari planet kebumian. Dua planet terbesar, yaitu Jupiter dan Saturnus adalah planet raksasa gas yang sebagian bersar terdiri atas hidrogen dan helium. Dua planet lainnya, Uranus dan Neptunus, adalah planet raksasa es yang terdiri atas senyawa dengan titik leleh lebih tinggi dari hidrogen dan helium, disebut senyawa volatil seperti air, amonia, dan metana.\n"
+    },
+    {
+      "id": "id-wiki-tsunami-aceh-2020",
+      "file": "human/id/id-wiki-tsunami-aceh-2020.txt",
+      "lang": "id",
+      "label": "human",
+      "genre": "academic-formal",
+      "split": "dev",
+      "wordCount": 225,
+      "provenance": "Wikipedia bahasa Indonesia contributors, Gempa bumi dan tsunami Samudra Hindia 2004, revision 17569404 (2020-11-02T14:19:49Z); https://id.wikipedia.org/w/index.php?title=Gempa%20bumi%20dan%20tsunami%20Samudra%20Hindia%202004&oldid=17569404; contributor history https://id.wikipedia.org/w/index.php?title=Gempa_bumi_dan_tsunami_Samudra_Hindia_2004&action=history; contiguous rendered paragraphs; reference markers removed and whitespace normalized",
+      "license": "CC BY-SA 4.0; https://creativecommons.org/licenses/by-sa/4.0/; license copy LICENSES/CC-BY-SA-4.0.txt",
+      "retrievedDate": "2026-11-05",
+      "verifiedHumanNote": "Historical revision 17569404 at 2020-11-02T14:19:49Z predates 2021; https://id.wikipedia.org/w/api.php?action=query&prop=revisions&revids=17569404&rvprop=timestamp%7Cids&format=json",
+      "text": "Gempa bumi Samudra Hindia 2004 terjadi pada pukul 08:58:53 WIB tanggal 26 Desember 2004 episentrumnya terletak di lepas pantai barat Sumatra, Indonesia. Guncangan gempa tersebut berskala 9,1–9,3 dalam skala kekuatan Momen dan IX (Violent) dalam skala intensitas Mercalli. Gempa bumi megathrust bawah laut terjadi ketika Lempeng Hindia didorong ke bawah oleh Lempeng Burma dan memicu serangkaian tsunami mematikan di sepanjang pesisir daratan yang berbatasan dengan Samudra Hindia. Gelombang tsunami yang tingginya mencapai 30 meter (100 ft) menewaskan 230.000 – 280.000 jiwa di 14 negara dan menenggelamkan sejumlah permukiman pesisir. Gempa dan tsunami ini merupakan salah satu bencana alam paling mematikan sepanjang sejarah. Indonesia adalah negara yang dampaknya paling parah selain Sri Lanka, India, dan Thailand.\n\nIni adalah gempa bumi terbesar ketiga yang pernah tercatat di seismograf dan durasi patahan terpanjang sepanjang sejarah (antara 8,3 dan 10 menit). Gempa ini menyebabkan seluruh planet Bumi bergetar 1 sentimeter (0,4 inci) dan memicu aktivitas gempa di berbagai wilayah, termasuk Alaska. Episentrumnya terletak antara Pulau Simeulue dan Sumatra. Penderitaan masyarakat dan negara terdampak mendorong berbagai negara untuk memberi bantuan kemanusiaan. Masyarakat internasional secara keseluruhan menyumbangkan lebih dari US$14 miliar (2004) dalam bentuk bantuan kemanusiaan. Peristiwa ini dikenal di kalangan peneliti sebagai gempa bumi Sumatra–Andaman. Tsunami yang terjadi sesudahnya mendapat berbagai julukan, termasuk tsunami Samudra Hindia 2004, tsunami Asia Selatan, tsunami Aceh, tsunami Indonesia, tsunami Natal, dan tsunami Boxing Day.\n"
+    },
+    {
+      "id": "t1-ai-seed-01",
+      "file": "ai/en/t1-ai-seed-01.txt",
+      "lang": "en",
+      "label": "ai",
+      "genre": "email-chat",
+      "split": "dev",
+      "wordCount": 197,
+      "provenance": "author-written: assistant-generated synthetic example, 2026-11-04",
+      "license": "MIT (project contribution)",
+      "retrievedDate": "2026-11-04",
+      "generator": "gpt-6.1-terra (assistant-authored; prompt is a post-hoc task description)",
+      "promptId": "t1-ai-seed-01",
+      "adversarial": "none",
+      "text": "Subject: A four-week trial for meeting agendas\n\nHi team,\n\nI would like to try a shared agenda for our weekly meetings for four weeks. The aim is simple: make it easier to see what needs a decision and give everyone a chance to prepare. This is a proposal, not a response to any measured problem.\n\nBefore each meeting, the host could post a short document with the topics, the person raising each topic, and the decision or discussion needed. Team members could add context or questions in advance. During the meeting, the host would keep notes next to each item and record who volunteered for any follow-up. Items that do not need live discussion can stay in the document instead.\n\nAt the end of the trial, we could ask whether the format helped people prepare, whether any decisions were easier to track, and whether maintaining the document took too much time. We should also check if anyone found it harder to participate. Based on that feedback, we can keep the practice, change it, or stop.\n\nWould you be willing to try this at our next meeting? I can create the first agenda and share it beforehand.\n\nThanks.\n"
+    },
+    {
+      "id": "t1-ai-seed-02",
+      "file": "ai/en/t1-ai-seed-02.txt",
+      "lang": "en",
+      "label": "ai",
+      "genre": "email-chat",
+      "split": "dev",
+      "wordCount": 211,
+      "provenance": "author-written: assistant-generated synthetic example, 2026-11-04",
+      "license": "MIT (project contribution)",
+      "retrievedDate": "2026-11-04",
+      "generator": "gpt-6.1-terra (assistant-authored; prompt is a post-hoc task description)",
+      "promptId": "t1-ai-seed-02",
+      "adversarial": "none",
+      "text": "Subject: Could we try a shared agenda?\n\nHi everyone,\n\nI have a small idea for our weekly meeting. What if we kept the agenda in one shared document for a month? I am not assuming the current meetings are broken; I just think a short trial would tell us whether a little preparation makes them easier to use.\n\nThe person hosting could add each topic before the call, along with the question we need to answer. Anyone else could add a note or flag something we have missed. During the meeting, we could write down decisions and follow-up owners in the same place, so nobody has to piece them together from chat afterward. If a topic can be settled in writing, we can leave it there and give the meeting time back.\n\nAfter four meetings, let's ask the team what worked and what felt like extra admin. Did people have enough context? Could they find the decisions afterward? Did writing the agenda take longer than it saved? We can make a call from those answers rather than committing to another permanent process now.\n\nI can set up the first document. Please reply if you are happy to try it or if there is a better way to run the experiment.\n\nThanks.\n"
+    },
+    {
+      "id": "t1-ai-seed-03",
+      "file": "ai/en/t1-ai-seed-03.txt",
+      "lang": "en",
+      "label": "ai",
+      "genre": "email-chat",
+      "split": "dev",
+      "wordCount": 209,
+      "provenance": "author-written: assistant-generated synthetic example, 2026-11-04",
+      "license": "MIT (project contribution)",
+      "retrievedDate": "2026-11-04",
+      "generator": "gpt-6.1-terra (assistant-authored; prompt is a post-hoc task description)",
+      "promptId": "t1-ai-seed-03",
+      "adversarial": "none",
+      "text": "Subject: Agenda experiment for the next month\n\nHello team,\n\nCould we test one change to our weekly call? For the next four meetings, I suggest putting discussion topics in a shared page before we join. The goal is to make the purpose of each conversation visible and leave a record of what we decide. We do not yet know whether the change will help, so I would like to treat it as an experiment.\n\nEach person could add a topic and say whether they need a decision, a quick update, or help from someone else. The host could order the items and leave space for notes. During the call, we would write the decision and any agreed next step beside the relevant topic. A question that can be resolved in the document would not need to take time on the call.\n\nAfter the fourth meeting, we can collect brief feedback. I suggest asking whether people felt prepared, whether notes were useful later, and whether maintaining the page was worth the effort. We should also invite suggestions from anyone who found the format awkward or less accessible.\n\nIf there is interest, I will make a first draft for the next call. If not, we can find another approach together.\n\nBest,\n"
+    },
+    {
+      "id": "t1-ai-seed-04",
+      "file": "ai/id/t1-ai-seed-04.txt",
+      "lang": "id",
+      "label": "ai",
+      "genre": "email-chat",
+      "split": "dev",
+      "wordCount": 177,
+      "provenance": "author-written: assistant-generated synthetic example, 2026-11-04",
+      "license": "MIT (project contribution)",
+      "retrievedDate": "2026-11-04",
+      "generator": "gpt-6.1-terra (assistant-authored; prompt is a post-hoc task description)",
+      "promptId": "t1-ai-seed-04",
+      "adversarial": "none",
+      "text": "Subjek: Usulan uji coba agenda rapat bersama\n\nHalo tim,\n\nSaya ingin mengusulkan uji coba agenda bersama untuk rapat mingguan selama empat minggu. Tujuannya agar setiap orang dapat melihat topik sebelum rapat dan memahami keputusan atau masukan yang dibutuhkan. Usulan ini bukan kesimpulan bahwa cara rapat kita sekarang bermasalah; kita perlu mencoba dan meminta pendapat bersama terlebih dahulu.\n\nSebelum rapat, penyelenggara dapat membuat dokumen yang berisi daftar topik, nama pengusul, serta pertanyaan yang ingin dibahas. Anggota tim bisa menambahkan konteks atau pertanyaan pada dokumen yang sama. Saat rapat berlangsung, keputusan dan tindak lanjut dicatat di dekat topik terkait, termasuk siapa yang bersedia mengerjakannya. Jika sebuah pertanyaan bisa diselesaikan lewat tulisan, kita tidak harus membahasnya lagi dalam panggilan.\n\nSetelah empat pertemuan, kita dapat menanyakan apakah dokumen membantu persiapan, apakah catatan keputusan mudah ditemukan, dan apakah waktu untuk menyusunnya sepadan. Kita juga perlu mendengar jika format ini menyulitkan partisipasi siapa pun. Berdasarkan jawaban tersebut, tim bisa melanjutkan, mengubah, atau menghentikan uji coba.\n\nApakah teman-teman bersedia mencobanya pada rapat berikutnya? Saya bisa menyiapkan dokumen pertama dan membagikannya sebelum pertemuan.\n\nTerima kasih.\n"
+    },
+    {
+      "id": "t1-ai-seed-05",
+      "file": "ai/id/t1-ai-seed-05.txt",
+      "lang": "id",
+      "label": "ai",
+      "genre": "email-chat",
+      "split": "dev",
+      "wordCount": 183,
+      "provenance": "author-written: assistant-generated synthetic example, 2026-11-04",
+      "license": "MIT (project contribution)",
+      "retrievedDate": "2026-11-04",
+      "generator": "gpt-6.1-terra (assistant-authored; prompt is a post-hoc task description)",
+      "promptId": "t1-ai-seed-05",
+      "adversarial": "none",
+      "text": "Subjek: Coba agenda bareng untuk empat rapat?\n\nHalo semua,\n\nAda ide kecil untuk rapat mingguan kita. Bagaimana kalau selama empat pertemuan ke depan kita pakai satu dokumen agenda bersama? Saya belum tahu apakah ini akan membantu, jadi anggap saja percobaan yang bisa kita hentikan kalau malah menambah pekerjaan.\n\nSebelum rapat, siapa pun yang punya topik bisa menulis satu atau dua kalimat tentang hal yang ingin dibahas. Kalau perlu keputusan, tulis juga keputusan apa yang dibutuhkan. Penyelenggara rapat lalu menyusun urutannya. Kita bisa menambahkan catatan dan pertanyaan di dokumen itu sebelum panggilan dimulai.\n\nSaat rapat, mari tulis keputusan dan tindak lanjut di samping topiknya. Dengan begitu, orang yang tidak hadir punya tempat untuk melihat konteks. Kalau ada urusan yang sudah selesai dibahas lewat tulisan, kita bisa melewatinya saat panggilan.\n\nSesudah empat rapat, saya akan meminta pendapat teman-teman: apakah lebih mudah bersiap, apakah catatannya berguna, dan apakah mengisi agenda terasa merepotkan. Bila ada yang merasa format ini justru membuatnya sulit ikut bicara, masukan itu juga penting. Kita putuskan bersama apakah perlu diteruskan atau diubah.\n\nKalau setuju, saya siapkan dokumen pertama untuk rapat berikutnya.\n\nTerima kasih!\n"
+    },
+    {
+      "id": "t1-ai-seed-06",
+      "file": "ai/id/t1-ai-seed-06.txt",
+      "lang": "id",
+      "label": "ai",
+      "genre": "email-chat",
+      "split": "dev",
+      "wordCount": 177,
+      "provenance": "author-written: assistant-generated synthetic example, 2026-11-04",
+      "license": "MIT (project contribution)",
+      "retrievedDate": "2026-11-04",
+      "generator": "gpt-6.1-terra (assistant-authored; prompt is a post-hoc task description)",
+      "promptId": "t1-ai-seed-06",
+      "adversarial": "none",
+      "text": "Subjek: Percobaan agenda sebelum rapat\n\nHalo rekan-rekan,\n\nUntuk bulan depan, saya ingin menguji cara sederhana menyiapkan rapat mingguan. Kita dapat memakai dokumen bersama untuk menampung topik sebelum pertemuan dimulai. Belum ada hasil yang bisa diklaim dari usulan ini; kita akan mengetahui manfaat dan bebannya setelah mencobanya.\n\nSetiap pengusul topik dapat menambahkan pertanyaan utama dan memberi tanda apakah ia membutuhkan keputusan, informasi, atau bantuan. Penyelenggara kemudian memilih urutan pembahasan dan menyediakan ruang untuk mencatat keputusan. Tindak lanjut dapat ditulis bersama nama orang yang menyanggupinya, supaya catatan tidak bergantung pada ingatan satu orang. Hal yang sudah selesai dalam diskusi tertulis tidak perlu diulang dalam panggilan.\n\nPercobaan berlangsung selama empat pertemuan. Setelah itu, kita minta masukan singkat dari seluruh tim tentang kesiapan sebelum rapat, kemudahan menemukan keputusan, dan waktu yang diperlukan untuk memelihara dokumen. Kita juga perlu memeriksa apakah format tersebut memberi kesempatan yang sama bagi orang yang lebih nyaman berbicara langsung.\n\nJawaban teman-teman akan menjadi dasar untuk meneruskan, menyesuaikan, atau menghentikan percobaan. Jika tidak ada keberatan, saya akan menyiapkan contoh pertama dan membagikannya untuk ditinjau sebelum rapat berikutnya.\n\nSalam.\n"
+    }
+  ],
+  "devPrompts": {
+    "t1-ai-seed-01": {
+      "text": "Write a professional email proposing a four-week trial of a shared meeting agenda for a small remote team. Explain how to assess the trial without inventing measured outcomes.",
+      "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+    },
+    "t1-ai-seed-02": {
+      "text": "Write an informal but respectful email to a remote team proposing a four-week shared agenda trial. Avoid stock transitions and make the wording sound human; do not invent results.",
+      "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+    },
+    "t1-ai-seed-03": {
+      "text": "Draft a concise team email proposing a month-long agenda experiment, using different wording from typical business templates. Include how to decide whether to keep it and avoid claiming any results.",
+      "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+    },
+    "t1-ai-seed-04": {
+      "text": "Tulis email profesional yang mengusulkan uji coba agenda rapat bersama selama empat minggu untuk tim jarak jauh, termasuk cara mengevaluasinya tanpa mengarang hasil.",
+      "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+    },
+    "t1-ai-seed-05": {
+      "text": "Tulis email santai dan sopan untuk mengajak tim jarak jauh mencoba agenda bersama selama empat rapat. Hindari kalimat klise dan buat bahasanya seperti manusia; jangan mengarang data.",
+      "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+    },
+    "t1-ai-seed-06": {
+      "text": "Buat ulang usulan email tentang eksperimen agenda rapat selama satu bulan dengan susunan dan pilihan kata berbeda. Jelaskan evaluasinya tanpa menyatakan hasil yang belum ada.",
+      "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+    }
+  }
 }

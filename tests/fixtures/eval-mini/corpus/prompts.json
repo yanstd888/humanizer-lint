@@ -1,0 +1,22 @@
+{
+  "mini-ai-01": {
+    "text": "Write a professional email proposing a four-week trial of a shared meeting agenda for a small remote team.",
+    "note": "Synthetic seed prompt specified by the assistant; not a captured external model request."
+  },
+  "mini-ai-02": {
+    "text": "Write an informal but respectful email proposing a shared agenda trial. Avoid stock transitions and make the wording sound human; do not invent results.",
+    "note": "Synthetic seed prompt specified by the assistant; adversarial humanize-prompt."
+  },
+  "mini-ai-03": {
+    "text": "Tulis paragraf opini tentang adopsi teknologi untuk usaha kecil dengan bahasa formal.",
+    "note": "Synthetic seed prompt specified by the assistant; adversarial synonym-swap."
+  },
+  "mini-ai-04": {
+    "text": "Tulis email singkat kepada tim tentang rapat mingguan yang terlalu panjang.",
+    "note": "Synthetic seed prompt specified by the assistant; adversarial paraphrase."
+  },
+  "mini-ai-05": {
+    "text": "Write a blog paragraph about digital transformation for organizations.",
+    "note": "Synthetic seed prompt specified by the assistant."
+  }
+}

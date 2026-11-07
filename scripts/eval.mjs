@@ -83,7 +83,7 @@ export function evaluate(input) {
 export async function validateCorpus(dir, manifest, prompts) {
   if (!Array.isArray(manifest)) throw new Error('Manifest must be an array');
   if (!prompts || typeof prompts !== 'object' || Array.isArray(prompts)) throw new Error('Prompts must be an object');
-  const ids = new Set(), files = new Set(), result = [], base = await fs.realpath(dir);
+  const ids = new Set(), files = new Set(), texts = new Map(), result = [], base = await fs.realpath(dir);
   for (const item of manifest) {
     for (const field of ['id', 'file', 'lang', 'label', 'genre', 'split', 'provenance', 'license', 'retrievedDate']) if (typeof item[field] !== 'string' || !item[field].trim()) throw new Error(`Missing ${field}`);
     if (ids.has(item.id)) throw new Error(`Duplicate id: ${item.id}`); ids.add(item.id);
@@ -103,15 +103,19 @@ export async function validateCorpus(dir, manifest, prompts) {
     const text = await fs.readFile(target, 'utf8');
     const count = text.trim() ? text.trim().split(/\s+/u).length : 0;
     if (count !== item.wordCount) throw new Error(`wordCount mismatch: ${item.id}`);
+    const normalized = text.trim().replace(/\s+/gu, ' ');
+    if (texts.has(normalized) && texts.get(normalized).split !== item.split) throw new Error(`Cross-split duplicate: ${texts.get(normalized).id} and ${item.id}`);
+    texts.set(normalized, { split: item.split, id: item.id });
     result.push({ ...item, text });
   }
   return result.sort((a, b) => compare(a.id, b.id));
 }
 async function loadCorpus() {
-  const directory = path.join(root, 'benchmark', 'corpus');
+  // HUMANIZER_EVAL_CORPUS lets the harness tests run the CLI against the synthetic mini corpus; production runs read benchmark/corpus.
+  const directory = process.env.HUMANIZER_EVAL_CORPUS ? path.resolve(process.env.HUMANIZER_EVAL_CORPUS) : path.join(root, 'benchmark', 'corpus');
   try {
     const [manifest, prompts] = await Promise.all(['manifest.json', 'prompts.json'].map(async (name) => JSON.parse(await fs.readFile(path.join(directory, name), 'utf8'))));
-    return { entries: await validateCorpus(directory, manifest, prompts), prompts };
+    return { entries: await validateCorpus(directory, manifest, prompts), prompts, directory };
   } catch (error) {
     if (error.code === 'ENOENT') throw new Error('Evaluation corpus missing: create benchmark/corpus/manifest.json and prompts.json');
     throw error;
@@ -137,7 +141,7 @@ export function checkRegression(report, baseline) {
 }
 async function main() {
   const options = parseOptions(process.argv.slice(2));
-  const { entries, prompts } = await loadCorpus();
+  const { entries, prompts, directory } = await loadCorpus();
   const corpus = entries.filter((r) => (options.split === 'all' || r.split === options.split) && (options.lang === 'all' || r.lang === options.lang) && (!options.genre || r.genre === options.genre));
   if (!corpus.length) throw new Error('No corpus entries match the requested filters');
   const defaultProfile = JSON.parse(await fs.readFile(path.join(root, 'profiles', 'default-human.json'), 'utf8'));
@@ -157,7 +161,7 @@ async function main() {
   }
   if (options.check) {
     if (options.split !== 'dev' || options.lang !== 'all' || options.genre || options.sweep) throw new Error('--check requires all languages, dev split and no genre or sweep');
-    report.regressions = checkRegression(report, JSON.parse(await fs.readFile(path.join(root, 'benchmark', 'eval-baseline.json'), 'utf8')));
+    report.regressions = checkRegression(report, JSON.parse(await fs.readFile(path.join(path.dirname(directory), 'eval-baseline.json'), 'utf8')));
   }
   if (options.table) {
     const display = (title, data) => {
