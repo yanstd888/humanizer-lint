@@ -7,6 +7,19 @@ import { fileURLToPath } from 'node:url';
 const parentDirectory = '..';
 const source = (...parts) => new URL([parentDirectory, ...parts].join('/'), import.meta.url);
 const { analyzeText } = await import(source('scripts', 'analyze.mjs'));
+const { markdownFormatting } = await import(source('scripts', 'core', 'markdown-findings.mjs'));
+
+test('long malformed ignore marker does not cause backtracking stall', () => {
+  const script = `import { applyIgnoreDirectives } from './scripts/core/ignore-directives.mjs'; applyIgnoreDirectives('!' + ' '.repeat(200000) + 'X');`;
+  const result = spawnSync(process.execPath, ['--input-type=module', '-e', script], { cwd: fileURLToPath(source()), timeout: 5000 });
+  assert.equal(result.status, 0, result.error?.message ?? result.stderr?.toString());
+});
+
+test('HTML alternate comment ending does not conceal later headings', () => {
+  const text = '<!-- hidden --!>\n# ✨ Visible\n';
+  const findings = markdownFormatting(text, [true, true], { sentences: [] });
+  assert.ok(findings.some((finding) => finding.type === 'DECORATIVE_HEADING'));
+});
 const read = async (name) => readFile(source('tests', 'fixtures', 'probes', `${name}.md`), 'utf8');
 
 test('short and long texts expose rhythm coverage without changing status', async () => {

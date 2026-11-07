@@ -87,7 +87,12 @@ export function markdownFormatting(source, active, tokenized) {
       const location = next && !interveningHeading ? `Paragraph ${next.paragraphIndex}` : 'Heading';
       const charOffset = { start: offset, end: offset + heading[0].length };
       if (/[\p{Extended_Pictographic}←-⇿]/u.test(heading[1])) findings.push({ type: 'DECORATIVE_HEADING', weakAlone: true, location, match: heading[0], charOffset, fixInstruction: 'Review whether the decorative symbol helps readers navigate.' });
-      const normalize = (value) => value.trim().replace(/[.!?]+$/u, '').trim().toLocaleLowerCase('und');
+      const normalize = (value) => {
+        let end = value.trim().length;
+        const trimmed = value.trim();
+        while (end && '.!?'.includes(trimmed[end - 1])) end -= 1;
+        return trimmed.slice(0, end).trim().toLocaleLowerCase('und');
+      };
       if (next && !interveningHeading && normalize(heading[1]) === normalize(next.text)) findings.push({ type: 'HEADING_REPEATED_IN_OPENING', weakAlone: true, location, match: heading[0], charOffset, fixInstruction: 'Review whether the opening adds information beyond the heading.' });
     }
     const listItem = active[index] && offset >= frontmatter && !comment && /^ {0,3}[-*+][ \t]+\*\*[^*\r\n]+:\*\*[ \t]+\S[^\r\n]*/u.exec(line);
@@ -99,9 +104,9 @@ export function markdownFormatting(source, active, tokenized) {
         findings.push({ type: 'DECORATIVE_BOLD_LIST', weakAlone: true, location: sentence ? `Paragraph ${sentence.paragraphIndex}` : 'List', match: source.slice(listStart, end), charOffset: { start: listStart, end }, fixInstruction: 'Review whether repeated bold labels help readers navigate.' });
       }
     } else listCount = 0;
-    if (active[index] && offset >= frontmatter) for (const marker of line.matchAll(/<!--|-->/gu)) {
+    if (active[index] && offset >= frontmatter) for (const marker of line.matchAll(/<!--|--!?>/gu)) {
       if (marker[0] === '<!--' && !comment) comment = true;
-      else if (marker[0] === '-->' && comment) comment = false;
+      else if (marker[0] !== '<!--' && comment) comment = false;
     }
     offset += line.length;
   }
