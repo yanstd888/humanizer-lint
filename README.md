@@ -107,7 +107,7 @@ For a closed-loop agent workflow, install the skill first, draft without changin
 The project includes:
 
 - Eight reviewable lexical and structural rule packs for EN, ID, ES, MS, FR, DE, PT, and ZH.
-- Sentence-length burstiness, adjacent rhythm delta, short/long sentence ratios, and adaptive MATTR. The long-sentence verdict gate is waived when every sentence has fewer than 18 words. This dev-selected cutoff was validated on a private corpus and cannot be reproduced publicly; it can still miss short-sentence AI text and is not calibrated on an independent holdout.
+- Sentence-length burstiness, adjacent rhythm delta, short/long sentence ratios, and adaptive MATTR. The long-sentence verdict gate is waived when every sentence has fewer than 18 words. This dev-selected cutoff was validated only on the earlier private development corpus and cannot be reproduced publicly; validation on a new short-text set has not been independently confirmed. An additional short-text evaluation was performed, but upstream model identity and the absence of fallback were not independently verified. In an indicative analysis of older private data, 21 of 49 short human excerpts were marked FAIL (42.86%; Wilson 95% 30.02–56.73%), highlighting a high false-positive risk. The cutoff can also miss short-sentence AI text and is not calibrated on an independent holdout.
 - Repetition checks based on paragraph symmetry, repeated sentence starters, and compression ratio.
 - Indonesian nominalization, passive-voice, loanword, and translation-style opening checks.
 - Optional voice profiles generated from one to five writing samples.
