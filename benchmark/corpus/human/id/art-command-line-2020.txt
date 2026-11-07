@@ -1,0 +1,17 @@
+Mahir dalam baris perintah merupakan keahlian yang sering diabaikan atau masih dianggap misteri, tapi hal tersebut dapat meningkatkan fleksibilitas dan produktivitas sebagai seorang teknisi secara jelas. Halaman ini merupakan kumpulan catatan dan tips dalam menggunakan baris perintah sebagaimana yang kita ketahui sangat berguna ketika bekerja pada sistem Linux. Beberapa merupakan tips dasar, dan beberapa cukup spesifik, terkini, atau yang jarang digunakan. Halaman ini tidak panjang, tetapi jika anda dapat menggunakan dan mengingat semua perintah yang ada pada halaman ini, berarti anda memiliki pengetahuan yang cukup luas.
+
+Proyek ini merupakan hasil dari banyak [penulis dan penerjemah](AUTHORS.md).
+Beberapa diantaranya [pertama kali](http://www.quora.com/What-are-some-lesser-known-but-useful-Unix-commands)
+[muncul](http://www.quora.com/What-are-the-most-useful-Swiss-army-knife-one-liners-on-Unix)
+di [Quora](http://www.quora.com/What-are-some-time-saving-tips-that-every-Linux-user-should-know),
+namun kemudian dialihkan ke GitHub, dimana banyak orang-orang yang lebih berbakat dari penulis awal telah membuat banyak penyempurnaan.
+[**Silakan ajukan pertanyaan**](https://airtable.com/shrzMhx00YiIVAWJg) jika anda memiliki pertanyaan seputar perintah baris. [**Silakan berkontribusi**](/CONTRIBUTING.md) jika anda melihat ada kesalahan atau memiliki suatu ide yang lebih baik!
+
+## Meta
+
+Batasan masalah:
+
+- Panduan ini ditujukan bagi pemula dan yang telah berpengalaman. Tujuan utamanya cukup *luas* (segala hal adalah penting), *spesifik* (memberikan contoh kongkrit dari kasus yang umum terjadi), dan *ringkas* (hindari hal yang tidak penting atau menyimpang yang dapat ditemukan). Setiap tip adalah penting dalam beberapa kondisi atau dapat menjadi pilihan alternatif.
+- Ditulis untuk Linux, dengan pengecualian dari bagian "[Khusus OS X](#os-x-only)" and "[Khusus Windows](#windows-only)". Banyak yang menggunakan atau memasangnya dalam varian UNIX atau OS X lainnya (bahkan menggunakan Cygwin).
+- Berfokus pada Bash interaktif, meskipun banyak tip yang dapat digunakan pada terminal lainnya dan skrip Bash secara umum.
+- Mengandung perintah UNIX "standar" sebagaimana yang telah diketahui bahwa membutuhkan instalasi paket spesial -- selama dirasa cukup penting untuk diikut sertakan.

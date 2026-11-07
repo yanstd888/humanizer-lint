@@ -1,0 +1,25 @@
+# State of the Haskell ecosystem
+
+In this post I will describe the current state of the Haskell ecosystem to the
+best of my knowledge and its suitability for various programming domains and
+tasks.  The purpose of this post is to discuss both the good and the bad by
+advertising where Haskell shines while highlighting where I believe there is
+room for improvement.
+
+This post is grouped into two sections: the first section covers Haskell's
+suitability for particular programming application domains (i.e. servers,
+games, or data science) and the second section covers Haskell's suitability
+for common general-purpose programming needs (such as testing, IDEs, or
+concurrency).
+
+The topics are roughly sorted from greatest strengths to greatest weaknesses.
+Each programming area will also be summarized by a single rating of either:
+
+* **Best in class**: the best experience in any language
+* **Mature**: suitable for most programmers
+* **Immature**: only acceptable for early-adopters
+* **Bad**: pretty unusable
+
+The more positive the rating the more I will support the rating with
+success stories in the wild.  The more negative the rating the more I will
+offer constructive advice for how to improve things.

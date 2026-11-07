@@ -2,7 +2,31 @@
   "name": "humanizer-lint",
   "version": "1.5.1",
   "description": "Local deterministic prose and copywriting style linter.",
-  "author": { "name": "Muhammad Dian (yanstd888)" },
+  "author": {
+    "name": "Muhammad Dian (yanstd888)"
+  },
   "skills": "./",
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://humanizer.aiclub.ai.id",
+  "repository": "https://github.com/yanstd888/humanizer-lint",
+  "keywords": [
+    "skills-sh",
+    "agent-skill",
+    "ai-humanizer",
+    "humanizer",
+    "anti-slop",
+    "prose-linter",
+    "stylometry",
+    "burstiness",
+    "mattr",
+    "multilingual-nlp",
+    "indonesian-nlp",
+    "copywriting",
+    "markdown-linter",
+    "claude-code",
+    "cursor-skill",
+    "windsurf",
+    "codex",
+    "gemini-cli"
+  ]
 }

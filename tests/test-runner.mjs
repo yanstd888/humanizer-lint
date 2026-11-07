@@ -25,6 +25,16 @@ const { lintCopywriting, lintCodeComments, lintUiAndAccessibility } = await impo
 const { runBenchmark } = await import(projectModule('scripts', 'benchmark.mjs'));
 await import(projectModule('tests', 'rhythm-gate-test.mjs'));
 await import(projectModule('tests', 'miner-test.mjs'));
+await import(projectModule('tests', 'probes-test.mjs'));
+await import(projectModule('tests', 'supply-chain-test.mjs'));
+await import(projectModule('tests', 'eval-test.mjs'));
+await import(projectModule('tests', 'rhythm-transparency-test.mjs'));
+await import(projectModule('tests', 'lexicon-data-test.mjs'));
+await import(projectModule('tests', 'compatibility-boundary-differential-test.mjs'));
+await import(projectModule('tests', 'cli-directory-test.mjs'));
+await import(projectModule('tests', 'cli-format-test.mjs'));
+await import(projectModule('tests', 'cli-config-test.mjs'));
+await import(projectModule('tests', 'preserve-check-test.mjs'));
 await import(projectModule('tests', 'deterministic-compression-test.mjs'));
 
 let rootPath = decodeURIComponent(projectModule().pathname);
@@ -48,7 +58,7 @@ async function sourceMjsFiles(directory = root) {
 test('documentation snapshot rejects stale and unknown generated blocks', async () => {
   const dir = await mkdtemp(path.join(tmpdir(), 'humanizer-docs-'));
   try {
-    for (const name of ['scripts', 'rules', 'profiles']) await cp(path.join(root, name), path.join(dir, name), { recursive: true });
+    for (const name of ['scripts', 'rules', 'profiles', 'package.json']) await cp(path.join(root, name), path.join(dir, name), { recursive: true });
     const readme = await sourceFile('README.md');
     const file = path.join(dir, 'README.md');
     const check = () => spawnSync(process.execPath, [path.join(dir, 'scripts', 'docs-snapshot.mjs'), '--check'], { encoding: 'utf8' });
@@ -120,6 +130,15 @@ test('sanitizer removes non-prose and preserves prose paragraphs', () => {
   assert.match(output, /TOKEN_ENTITY and TOKEN_ENTITY remain entities/);
   assert.doesNotMatch(output, /fragment only/);
   assert.match(output, /This list item contains a complete sentence/);
+});
+
+test('relative Markdown link destinations are not prose; link label offsets remain exact', () => {
+  const source = '🙂 A [game changer](#three-or-more-hyphens) is here. Another game changer follows.';
+  const output = sanitizeMarkdown(source);
+  assert.doesNotMatch(output, /three-or-more-hyphens/);
+  const findings = analyzeText(source, { language: 'en' }).violations.filter((v) => v.ruleId === 'EN015');
+  assert.equal(findings.length, 2);
+  for (const finding of findings) assert.equal(source.slice(finding.charOffset.start, finding.charOffset.end), 'game changer');
 });
 
 test('sanitizer preserves URL punctuation and complete wrapped list prose', () => {
@@ -574,7 +593,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.5.1
   assert.match(license, /MIT License/);
 
   const rootMarkdown = (await readdir(root)).filter((name) => name.toLowerCase().endsWith('.md')).sort();
-  assert.deepEqual(rootMarkdown, ['CHANGELOG.md', 'README.md', 'SKILL.md']);
+  assert.deepEqual(rootMarkdown, ['CHANGELOG.md', 'README.md', 'SECURITY.md', 'SKILL.md']);
 });
 
 test('production scripts use only approved built-ins and forbidden APIs are absent', async () => {

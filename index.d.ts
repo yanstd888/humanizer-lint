@@ -22,6 +22,9 @@ export interface AnalysisOptions {
 export interface AnalysisReport {
   schemaVersion: 1;
   status: 'PASS' | 'FAIL' | 'SKIP';
+  rhythmEvaluated: boolean;
+  failedGates: string[];
+  warning?: string;
   score: number;
   language: string;
   rulePack: string;

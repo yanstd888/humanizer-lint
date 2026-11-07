@@ -1,0 +1,26 @@
+{
+  "t1-ai-seed-01": {
+    "text": "Write a professional email proposing a four-week trial of a shared meeting agenda for a small remote team. Explain how to assess the trial without inventing measured outcomes.",
+    "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+  },
+  "t1-ai-seed-02": {
+    "text": "Write an informal but respectful email to a remote team proposing a four-week shared agenda trial. Avoid stock transitions and make the wording sound human; do not invent results.",
+    "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+  },
+  "t1-ai-seed-03": {
+    "text": "Draft a concise team email proposing a month-long agenda experiment, using different wording from typical business templates. Include how to decide whether to keep it and avoid claiming any results.",
+    "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+  },
+  "t1-ai-seed-04": {
+    "text": "Tulis email profesional yang mengusulkan uji coba agenda rapat bersama selama empat minggu untuk tim jarak jauh, termasuk cara mengevaluasinya tanpa mengarang hasil.",
+    "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+  },
+  "t1-ai-seed-05": {
+    "text": "Tulis email santai dan sopan untuk mengajak tim jarak jauh mencoba agenda bersama selama empat rapat. Hindari kalimat klise dan buat bahasanya seperti manusia; jangan mengarang data.",
+    "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+  },
+  "t1-ai-seed-06": {
+    "text": "Buat ulang usulan email tentang eksperimen agenda rapat selama satu bulan dengan susunan dan pilihan kata berbeda. Jelaskan evaluasinya tanpa menyatakan hasil yang belum ada.",
+    "note": "Prompt specified by the assistant for this synthetic seed; not a captured external model request."
+  }
+}

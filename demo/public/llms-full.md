@@ -15,13 +15,16 @@ Metrics such as document CV, paragraph CV, adjacent delta, sentence-length range
 ```sh
 npx humanizer-lint --file draft.md --lang auto --json
 npx humanizer-lint --file draft.md --lang auto --delivery-gate
+npx humanizer-lint --file draft.md --format sarif
+npx humanizer-lint --file draft.md --format github
+npx humanizer-lint --file draft.md --config .humanizerrc.json --json
 node scripts/fingerprint.mjs --dir samples --out profiles/custom-voice.json
 npm run benchmark
 ```
 
 ## Result shape
 
-Each result contains `status`, `score`, `language`, `rulePack`, `metrics`, `violations`, and `deliveryGate`.
+Each result contains `status`, `score`, `language`, `rulePack`, `rhythmEvaluated`, `failedGates`, `metrics`, `violations`, and `deliveryGate`. Fewer than eight sentences set `rhythmEvaluated` to false and emit a `warning`; `failedGates` identifies the conditions behind FAIL and is empty for PASS or SKIP. Short texts failing on an error finding report `errorFinding`; other gates include `forbiddenFinding`, `score`, `burstinessCV`, `adjacentDelta`, and `sentenceRange`.
 
 `deliveryGate` contains:
 

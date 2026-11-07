@@ -30,9 +30,11 @@ These files are evaluation inputs, not a representative population. A false-posi
 
 ## Exploratory review of current failures
 
-- `id-en-mixed-tech.md`: FAIL (81); findings include repeated n-grams, symmetric paragraphs and rhythm/range diagnostics. Technical terminology and document structure need editorial review before treating these as problems.
-- `en-pre-llm-essay.txt`: FAIL (86); monotony and sentence-range diagnostics only. The passage predates LLMs; these metrics do not establish poor writing or authorship.
-- `translated-docs.txt`: FAIL (68); low burstiness, sentence range, paragraph rhythm and symmetry. Formal technical documentation may legitimately use regular structure.
+- `id-en-mixed-tech.md`: FAIL (81); technical terminology and document structure require contextual review.
+- `en-pre-llm-essay.txt`: FAIL (86); the passage predates LLMs, and rhythm metrics do not establish writing quality or authorship.
+- `translated-docs.txt`: FAIL (68); formal technical documentation may legitimately use regular structure.
+
+A provisional one-sided sentence-range change was reverted after it reduced recall on the small development seed. The examples are related and cannot establish population performance.
 
 These are observations from the current implementation, not independent adjudication or a basis to tune the analyzer against this small set. Aggregate diagnostic excerpts identify context, not necessarily a phrase to replace.
 

@@ -1,5 +1,18 @@
 {
   "language": "en",
+  "editorial": {
+    "rhetoricalHooks": ["here['’]s the kicker:", "want to know the best part\\?", "let that sink in\\.?"],
+    "decisionOpeners": ["^we recommend\\b", "^our decision is\\b", "^we chose\\b"],
+    "pairedContrasts": [{ "first": "^this\\s+(?:doesn['’]t|does not)\\s+mean\\b", "second": "^it\\s+means\\b" }],
+    "replacements": [{ "pattern": "\\bdelve(?: into)?\\b", "replacement": "examine / explore" }],
+    "splitConnectives": ["however", "because", "while"],
+    "attributionBypass": "\\b(?:[Aa]ccording to)\\s+(?:(?:Dr|Prof)\\.\\s+)?(?!Dr\\b|Prof\\b)[A-Z][\\p{L}\\p{N}.-]+",
+    "fallbackReplacements": {
+      "EXCESSIVE_NOMINALIZATION": "Replace the listed noun forms with a concrete actor and active verb.",
+      "PASSIVE_BLOATING": "Name the actor, then use the active verb.",
+      "SLOP_PHRASE": "Replace the stock phrase with the specific fact or action."
+    }
+  },
   "stopwords": ["the", "and", "of", "to", "in", "is", "that", "for", "it", "with", "as", "on", "are", "this", "by", "be", "at", "or", "from", "an"],
   "patterns": [
     {"id":"EN058","type":"FORCED_TRIAD","pattern":"\\b[\\p{L}]{3,},\\s+[\\p{L}]{3,},\\s+and\\s+[\\p{L}]{3,}\\b","fixInstruction":"Review this pattern in context; revise only if it obscures meaning.","weakAlone":true},
@@ -11,14 +24,14 @@
     {"id":"EN057","type":"KNOWLEDGE_LIMIT_DISCLAIMER","pattern":"\\bwhile details are limited in available sources,?\\s+it appears\\b","fixInstruction":"Review this phrase in context and state supported facts directly."},
     {"id":"EN051","type":"DRAMATIC_ONE_LINE_CLOSER","pattern":"\\blet that sink in\\b|\\bthat is the real win\\b","fixInstruction":"Review the claim and context; keep only supported, relevant prose."},
     {"id":"EN052","type":"CHATBOT_RESIDUE","pattern":"\\b(?:great question|i hope this helps|here is the revised)\\b","fixInstruction":"Review the claim and context; keep only supported, relevant prose."},
-    {"id":"EN053","type":"BORROWED_AUTHORITY","pattern":"\\bexperts (?:believe|say|claim)\\b","fixInstruction":"Review the claim and context; keep only supported, relevant prose."},
+    {"id":"EN053","type":"BORROWED_AUTHORITY","pattern":"\\bexperts (?:believe|say|claim)\\b","fixInstruction":"Review the claim and context; keep only supported, relevant prose.","note":"Explicit attribution (According to X / Menurut X) is intentionally not flagged."},
     {"id":"EN048","type":"STACKED_QUALIFIERS","pattern":"\\bcould potentially possibly\\b","fixInstruction":"Review this phrase in context; revise only if it obscures meaning.","weakAlone":true},
     {"id":"EN049","type":"VAGUE_CONNECTION","pattern":"\\b(?:in connection with|associated with the leadership of)\\b","fixInstruction":"Review this phrase in context; revise only if it obscures meaning.","weakAlone":true},
     {"id":"EN050","type":"META_DOCUMENT_TALK","pattern":"\\bthe table below compares\\b","fixInstruction":"Review this phrase in context; revise only if it obscures meaning.","weakAlone":true},
     {"id":"EN045","type":"NOT_X_BUT_Y","pattern":"\\bit['’]s not just\\b[^.!?]{1,80},\\s*it['’]s\\b","fixInstruction":"State the positive claim directly."},
     {"id":"EN046","type":"STAGED_RUN_UP","pattern":"\\bhere(?:['’]s| is) the (?:thing|kicker):|\\blet['’]s dive in\\b|^honestly\\?","fixInstruction":"Start with the relevant fact."},
     {"id":"EN047","type":"DEEP_SOUNDING_SAYING","pattern":"\\bat its core,?\\s+what really matters is\\b","fixInstruction":"Name the specific point directly."},
-    {"id":"EN001","type":"SLOP_PHRASE","pattern":"\\bdelve\\b","fixInstruction":"Name the exact action or subject instead."},
+    {"id":"EN001","type":"SLOP_PHRASE","pattern":"\\bdelve\\b","fixInstruction":"Name the exact action or subject instead.","note":"Replacement hint for this phrase lives in editorial.replacements."},
     {"id":"EN002","type":"SLOP_PHRASE","pattern":"\\btapestry\\b","fixInstruction":"Replace the metaphor with a concrete description."},
     {"id":"EN003","type":"SLOP_PHRASE","pattern":"\\btestament\\b","fixInstruction":"State the evidence directly."},
     {"id":"EN004","type":"SLOP_PHRASE","pattern":"\\bunderscore(?:s|d|ing)?\\b","fixInstruction":"State what the evidence shows."},

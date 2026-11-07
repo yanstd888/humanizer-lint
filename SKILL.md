@@ -125,7 +125,7 @@ Mixed Indonesian–English technical prose is supported. Keep necessary terms su
 
 Use `--delivery-gate` for a human-readable four-block report or `--json` for the same structured data:
 
-1. `rhythmAndStylometry` — document CV, paragraph CV, adjacent delta, range, and clause symmetry.
-2. `lexicalAndMorphology` — active rule pack, repeated n-grams, stock phrases, nominalization, and passive bloat.
-3. `domainHygiene` — copy/CTA, code comments, and filename-aware UI/accessibility/responsive checks.
-4. `finalVerdict` — score, `PASS`/`FAIL`/`SKIP`, and prioritized one-pass fixes.
+1. `rhythmAndStylometry`: document and paragraph CV; adjacent delta, sentence range and clause symmetry.
+2. `lexicalAndMorphology`: active rule pack and repeated n-grams; stock phrases, nominalization and passive bloat.
+3. `domainHygiene`: copy/CTA, code comments and filename-aware UI/accessibility/responsive checks.
+4. `finalVerdict`: score and `PASS`/`FAIL`/`SKIP` status, with prioritized one-pass fixes.

@@ -834,10 +834,21 @@ test('scoped directives preserve paragraph context for sequence findings', () =>
   assert.ok(!analyzeText(separate, { language: 'en', noIgnore: true }).violations.some((v) => v.type === 'NOT_X_BUT_Y'));
 });
 
+test('structural paragraph closer detects repeated opening tokens only at the end', () => {
+  for (const text of ['No delay. No confusion.', 'Less noise. Less waste.']) {
+    const finding = analyzeText(text, { language: 'en' }).violations.find((v) => v.type === 'DRAMATIC_ONE_LINE_CLOSER');
+    assert.equal(finding?.severity, 'warn');
+    assert.equal(finding?.weakAlone, true);
+  }
+  for (const text of ['No delay. No confusion. The work continues.', 'No delay. Different outcome.']) {
+    assert.ok(!analyzeText(text, { language: 'en' }).violations.some((v) => v.type === 'DRAMATIC_ONE_LINE_CLOSER'));
+  }
+});
+
 test('paired contrast statements are detected across adjacent sentences only', () => {
   const close = 'No prior. No nostalgia.';
   const closeFinding = analyzeText(close, { language: 'en' }).violations.find((v) => v.type === 'DRAMATIC_ONE_LINE_CLOSER');
-  assert.equal(closeFinding?.severity, 'error');
+  assert.equal(closeFinding?.severity, 'warn');
   assert.equal(closeFinding?.sourceScope, 'sentence-range');
   assert.equal(close.slice(closeFinding.charOffset.start, closeFinding.charOffset.end), closeFinding.match);
   for (const safe of ['No prior. We have no nostalgia.', 'No prior.\n\nNo nostalgia.', '```text\nNo prior. No nostalgia.\n```']) assert.ok(!analyzeText(safe, { language: 'en' }).violations.some((v) => v.type === 'DRAMATIC_ONE_LINE_CLOSER'));

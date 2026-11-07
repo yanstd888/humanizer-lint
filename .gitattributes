@@ -1,0 +1,3 @@
+# Evaluation baselines embed exact corpus text across platforms.
+benchmark/corpus/**/*.txt text eol=lf
+tests/fixtures/eval-mini/corpus/**/*.txt text eol=lf

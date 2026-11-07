@@ -1,0 +1,11 @@
+When threatened, the dusky Arion slug secretes an unusual glue, making itself a difficult target for predators. This glue remains both sticky and flexible and works even when the surface the slug is on is wet. Previous studies have shown that, unlike many artificial adhesives, Arion slug glue is non-toxic to mammalian tissue.
+
+Scientist Rebecca Falconer, an Ithaca College undergraduate who led one of the two studies, said "Typical sutures like staples and stitches often lead to scarring and create holes in the skin that could increase the chance of infection after surgery [...] Understanding the roles of adhesive proteins in the slug glue would aid in the creation of a medical adhesive that can move and stretch yet still retain its strength and adhesiveness."
+
+In her set of experiments, Falconer observed eleven proteins found only in slug glue and used DNA recombination to produce usable amounts of each of these proteins. Specifically, she produced complementary DNA sequences (cDNA) for each protein, which are stretches of DNA with all the pieces not necessary for producing the protein removed. She then spliced these into circular DNA sequences called plasmids, which she inserted into bacteria, whose natural cellular machinery began to produce the proteins in quantity. She then analyzed the three-dimensional structures that the protein molecules form with each other and with other substances that make them work.
+
+Christopher Gallego-Lazo, also an Ithaca undergrad, evaluated glue from the dusky Arion slug by focusing on the chemical bonds within the glue and the way they affect the glue's deformability. Gallego-Lazo found that slight changes in these chemical bonds could alter the strength of the slug glue.
+
+Gallego-Lazo said, "Few studies on biological adhesives have identified the exact nature of the bonds holding the glue together [...] This knowledge can guide the development of an organic synthetic adhesive that would reduce the risk of infection and scarring compared to stitches and staples and could be applied rapidly and simply."
+
+Falconer and Gallego-Lazo both performed their research in the laboratory of Dr. Andrew Smith.

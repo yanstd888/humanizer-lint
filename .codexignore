@@ -1,0 +1,12 @@
+node_modules/
+.wrangler/
+.pages-dist/
+tasks/
+.verify-install/
+*.tmp.md
+*.tgz
+.env
+.env.*
+!.env.example
+*.pem
+.DS_Store

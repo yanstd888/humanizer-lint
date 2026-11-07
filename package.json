@@ -30,6 +30,7 @@
     "test": "npm run test:core && npm run test:demo && node scripts/docs-snapshot.mjs --check",
     "build:demo": "node demo/build.mjs",
     "benchmark": "node scripts/benchmark.mjs --table",
+    "eval": "node scripts/eval.mjs",
     "mine-patterns": "node scripts/mine-patterns.mjs"
   },
   "homepage": "https://humanizer.aiclub.ai.id",

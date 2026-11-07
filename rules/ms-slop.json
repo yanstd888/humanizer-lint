@@ -1,5 +1,8 @@
 {
   "language": "ms",
+  "editorial": {
+    "exclusiveWords": ["tak", "kerana", "boleh", "bagi", "daripada", "bahawa", "beliau"]
+  },
   "stopwords": [
     "yang",
     "dan",
