@@ -29,6 +29,9 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Run evaluation regression check
+        run: npm run eval -- --check
+
       - name: Run benchmark
         run: npm run benchmark
 

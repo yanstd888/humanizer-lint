@@ -17,6 +17,18 @@ test('workflow actions are pinned to full commit SHAs', async () => {
   }
 });
 
+test('CodeQL workflow uses least privilege and scans JavaScript without a build', async () => {
+  const source = (await read('.github', 'workflows', 'codeql.yml')).replace(/\r\n/g, '\n');
+  assert.match(source, /push:\s*\n\s*branches:\s*\[main\]/);
+  assert.match(source, /pull_request:\s*\n\s*branches:\s*\[main\]/);
+  assert.match(source, /security-events:\s*write/);
+  assert.doesNotMatch(source, /write-all|pull_request_target/);
+  assert.match(source, /github\/codeql-action\/init@[a-f0-9]{40}/);
+  assert.match(source, /github\/codeql-action\/analyze@[a-f0-9]{40}/);
+  assert.match(source, /languages:\s*javascript-typescript/);
+  assert.match(source, /build-mode:\s*none/);
+});
+
 test('npm exclusion is configured for the evaluation corpus', async () => {
   const ignore = await read('benchmark', '.npmignore');
   assert.match(ignore, /^corpus\/$/m);
