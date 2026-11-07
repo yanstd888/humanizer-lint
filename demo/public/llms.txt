@@ -1,6 +1,6 @@
 # humanizer-lint
 
-> Version 1.5.1 — deterministic, zero-dependency prose linter with 8 language-specific lexical packs and experimental `Intl.Segmenter` rhythm diagnostics for other languages.
+> Version 1.6.0 — deterministic, zero-dependency prose linter with 8 language-specific lexical packs and experimental `Intl.Segmenter` rhythm diagnostics for other languages.
 
 **Bahasa Indonesia:** Linter prosa lokal tanpa dependency yang menandai tulisan kaku ala AI (frasa klise, ritme kalimat datar, kata berulang) dan menunjukkan bagian yang perlu direvisi. Pemeriksa gaya, bukan detektor AI.
 

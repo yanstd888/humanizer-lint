@@ -469,7 +469,7 @@ test('benchmark is reproducible across multilingual and domain fixtures', () => 
   assert.ok(report.meanMsPerAnalysis >= 0);
 });
 
-test('package, skill, README, static demo, and skills.sh config match the v1.5.1 discovery contract', async () => {
+test('package, skill, README, static demo, and skills.sh config match the v1.6.0 discovery contract', async () => {
   const packageSource = await readFile(path.join(root, 'package.json'), 'utf8');
   const packageJson = JSON.parse(packageSource);
   const skillsConfig = JSON.parse(await sourceFile('skills.sh.json'));
@@ -492,7 +492,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.5.1
   assert.equal(packageJson.type, 'module');
   assert.equal(packageJson.engines.node, '>=18.3.0');
   assert.equal(packageJson.name, 'humanizer-lint');
-  assert.equal(packageJson.version, '1.5.1');
+  assert.equal(packageJson.version, '1.6.0');
   assert.ok(packageJson.files.includes('benchmark/'));
   assert.ok(!packageJson.files.includes('demo/samples.mjs'));
   assert.equal(skillsConfig.$schema, 'https://skills.sh/schemas/skills.sh.schema.json');
@@ -523,7 +523,7 @@ test('package, skill, README, static demo, and skills.sh config match the v1.5.1
   assert.ok(description && description.length <= 1024);
   for (const phrase of ['Use when', 'de-AI', 'bikin lebih natural']) assert.ok(description.includes(phrase), phrase);
   for (const phrase of ['humanize', 'robotic', 'blog post', 'perbaiki tulisan AI yang kaku', 'ritme kalimat', 'legal contracts', 'direct quotations', 'authorship']) assert.ok(description.includes(phrase), phrase);
-  assert.match(skill, /^metadata:\n  version: 1\.5\.1\n/m);
+  assert.match(skill, /^metadata:\n  version: 1\.6\.0\n/m);
   assert.match(skill, /^  tags: (?!\[)[^\n]+$/m);
   assert.match(skill, /  summary: Local deterministic prose/);
   assert.match(skill, /topic: agent-workflows/);
@@ -584,9 +584,9 @@ test('package, skill, README, static demo, and skills.sh config match the v1.5.1
   for (const asset of ['robots.txt', 'sitemap.xml', 'llms.txt', 'favicon.svg', 'og-image.svg', 'llms-full.md']) await readFile(path.join(root, 'demo', 'public', asset), 'utf8');
   assert.match(build, /ruleCodes = \['id', 'en', 'es', 'ms', 'fr', 'de', 'pt', 'zh'\]/);
   assert.match(build, /'llms-full\.txt'/);
-  assert.match(llms, /Version 1\.5\.1/);
+  assert.match(llms, /Version 1\.6\.0/);
   assert.match(llms, /## Verified benchmark/);
-  assert.match(fullReference, /Version 1\.5\.1/);
+  assert.match(fullReference, /Version 1\.6\.0/);
   assert.match(fullReference, /## v1\.4 detectors/);
   assert.match(llms, /Intl\.Segmenter/);
   assert.match(fullReference, /\{\{ruleCatalog\}\}/);

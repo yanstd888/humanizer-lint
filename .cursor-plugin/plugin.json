@@ -1,6 +1,6 @@
 {
   "name": "humanizer-lint",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Local deterministic prose and copywriting style linter.",
   "author": {
     "name": "Muhammad Dian (yanstd888)"

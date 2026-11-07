@@ -1,6 +1,6 @@
 # humanizer-lint — Full Technical Reference
 
-> Version 1.5.1. The static build renders this file as `/llms-full.txt` with the checked-in rule catalogs and default profile.
+> Version 1.6.0. The static build renders this file as `/llms-full.txt` with the checked-in rule catalogs and default profile.
 
 ## Purpose
 
