@@ -2,7 +2,7 @@
 
 The output schema is stable at `schemaVersion: 1`; new fields are additive and existing fields keep their meaning. Experimental behavior is not covered by this promise: rhythm statistics are skipped below eight sentences, and experimental rhythm diagnostics (uncalibrated thresholds) may change between releases.
 
-## Unreleased
+## [1.6.0] - 2026-11-07
 
 ### Added
 
@@ -12,7 +12,7 @@ The output schema is stable at `schemaVersion: 1`; new fields are additive and e
 - Add an OpenTelemetry documentation excerpt under Apache 2.0; the provisional dev baseline now covers 60 inputs. On identical new input the pre-T2 and current verdict and score match. This remains development data, not a holdout.
 - Add two attributed historical development excerpts: an Indonesian PHP tutorial under MIT and an English open-source guide under CC BY 4.0. The provisional baseline now covers 59 dev inputs; on identical new inputs, pre-T2/current verdicts match, while the English guide score changes from 86 to 87. There is no holdout.
 - Protect backtick-delimited text across blank lines in `preserve-check`; this conservative heuristic may also match unrelated backticks in separate paragraphs.
-- Add an owner-selected CodeQL workflow for JavaScript/TypeScript with SHA-pinned actions and job-scoped security permissions; hosted execution and effect on the HOL score remain unverified.
+- Add a CodeQL workflow for JavaScript/TypeScript with SHA-pinned actions and job-scoped security permissions; hosted CI and CodeQL passed on the PR and merge commits. The effect on the HOL score remains unverified.
 - Add 12 Indonesian Wikipedia excerpts and six English documents with revision-bound attribution and licenses. The provisional baseline now covers 57 dev inputs. On identical inputs pre-T2 and current verdicts match, but scores differ for the two earlier command-line excerpts and one Kubernetes excerpt. No holdout is available.
 - Add seven Indonesian Wikipedia excerpts and eight English documentation, legal and opinion excerpts with revision-bound attribution and licenses. Update the provisional baseline to 39 dev inputs: all newly added results match pre-T2 on identical inputs; two earlier command-line score differences remain. No holdout is available.
 - Add a Global Voices Indonesian news excerpt under CC BY 3.0 with attribution frontmatter. The source's pre-2021 timestamps are live CMS metadata, not an immutable revision. The baseline now covers 24 development inputs; pre-T2 and current results match for this new input. No holdout is available.

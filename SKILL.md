@@ -13,7 +13,7 @@ description: >-
   A local, zero-dependency prose linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording) and tells you what to revise. A style checker, not an AI detector.
 allowed-tools: Bash(node:*)
 metadata:
-  version: 1.5.1
+  version: 1.6.0
   topic: agent-workflows
   summary: Local deterministic prose, copywriting, and code-comment linter with 8 lexical anti-cliché packs and experimental universal rhythm diagnostics.
   tags: agent-workflows, marketing, copywriting, seo, writing, ai-humanizer, anti-slop, prose-linter, stylometry, burstiness, multilingual

@@ -1,6 +1,6 @@
 {
   "name": "humanizer-lint",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "A local, zero-dependency prose linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording) and tells you what to revise. A style checker, not an AI detector.",
   "type": "module",
   "engines": {
