@@ -15,6 +15,9 @@ Metrics such as document CV, paragraph CV, adjacent delta, sentence-length range
 ```sh
 npx humanizer-lint --file draft.md --lang auto --json
 npx humanizer-lint --file draft.md --lang auto --delivery-gate
+npx humanizer-lint --file draft.md --format sarif
+npx humanizer-lint --file draft.md --format github
+npx humanizer-lint --file draft.md --config .humanizerrc.json --json
 node scripts/fingerprint.mjs --dir samples --out profiles/custom-voice.json
 npm run benchmark
 ```

@@ -30,7 +30,7 @@ A local, zero-dependency prose linter that flags stiff, AI-sounding writing (sto
 - Flags repetitive AI stock phrases, flat sentence rhythm, and rigid translation patterns in blog posts, SEO articles, copy, and technical documentation.
 - Reports diagnostic CV, paragraph CV, adjacent rhythm delta, MATTR, n-gram repetition, and one-pass fix hints; these values are indicators, not mechanical style targets.
 - Ships **8 language-specific lexical packs** (`en`, `id`, `es`, `ms`, `fr`, `de`, `pt`, `zh`) and Indonesian morphology checks. Experimental rhythm diagnostics (uncalibrated thresholds) use `Intl.Segmenter` for other languages.
-- Supports local author voice profiling via `node <skill_dir>/scripts/fingerprint.mjs` and passes the listed skills.sh security audits with zero network text uploads.
+- Supports local author voice profiling via `node <skill_dir>/scripts/fingerprint.mjs`. Analysis runs locally with zero network requests and no text uploads; see [Security properties](#security-properties) for the dated skills.sh audit status.
 
 ```sh
 npx skills add yanstd888/humanizer-lint
@@ -38,13 +38,13 @@ npx skills add yanstd888/humanizer-lint
 
 **Bahasa Indonesia:** Linter prosa lokal tanpa dependency yang menandai tulisan kaku ala AI (frasa klise, ritme kalimat datar, kata berulang) dan menunjukkan bagian yang perlu direvisi. Pemeriksa gaya, bukan detektor AI.
 
-**8-language summary:** EN — AI humanizer and prose linter for stiff writing and sentence rhythm. ID — humanizer bahasa Indonesia: perbaiki tulisan AI yang kaku dan audit ritme kalimat. ES — humanizador de texto IA y corrector de estilo y ritmo. MS — humanizer teks bahasa Melayu untuk semak dan baiki gaya ayat AI. FR — humaniseur de texte IA et analyseur stylométrique de prose. DE — KI-Schreibstil verbessern und KI-Floskeln entfernen. PT — humanizador de texto IA e corretor de ritmo e estilo. ZH — AI文章润色与人性化，消除AI写作腔并提升句式节奏。
+**8-language summary:** EN · AI humanizer and prose linter for stiff writing and sentence rhythm. ID · humanizer bahasa Indonesia: perbaiki tulisan AI yang kaku dan audit ritme kalimat. ES · humanizador de texto IA y corrector de estilo y ritmo. MS · humanizer teks bahasa Melayu untuk semak dan baiki gaya ayat AI. FR · humaniseur de texte IA et analyseur stylométrique de prose. DE · KI-Schreibstil verbessern und KI-Floskeln entfernen. PT · humanizador de texto IA e corretor de ritmo e estilo. ZH · AI文章润色与人性化，消除AI写作腔并提升句式节奏。
 
 ## Verified benchmark
 
 Run `npm run benchmark` to reproduce the 20 synthetic fixtures (16 multilingual and 4 domain checks) and exploratory source corpus on the local machine.
 
-From a repository checkout, `npm run eval -- --json` runs a preliminary development seed of four historical human-source excerpts and six assistant-authored AI examples. The English subset has 2/3 human FAIL and 3/3 AI FAIL; Indonesian has 0/1 human FAIL and 3/3 AI FAIL. The Wilson 95% intervals are 20.8%–93.9% and 43.9%–100% for English FPR and TPR, and 0%–79.3% and 43.9%–100% for Indonesian FPR and TPR. These tiny, non-random samples are not population estimates; there is no held-out test split.
+From a repository checkout, `npm run eval -- --json` runs a **public preliminary development seed**, not a complete benchmark: 54 historical human-source excerpts and six assistant-authored AI examples. The English subset has 21/28 human FAIL and 3/3 AI FAIL; Indonesian has 22/26 human FAIL and 3/3 AI FAIL. The Wilson 95% intervals are 56.6%–87.3% and 43.9%–100% for English FPR and TPR, and 66.5%–93.8% and 43.9%–100% for Indonesian FPR and TPR. These non-random samples are not population estimates; there is no held-out test split. Separate private evaluations are not publicly reproducible, and their results are not included here.
 
 ## Known limitations
 
@@ -105,14 +105,15 @@ For a closed-loop agent workflow, install the skill first, draft without changin
 The project includes:
 
 - Eight reviewable lexical and structural rule packs for EN, ID, ES, MS, FR, DE, PT, and ZH.
-- Sentence-length burstiness, adjacent rhythm delta, short/long sentence ratios, and adaptive MATTR.
+- Sentence-length burstiness, adjacent rhythm delta, short/long sentence ratios, and adaptive MATTR. The long-sentence verdict gate is waived when every sentence has fewer than 18 words. This dev-selected cutoff was validated on a private corpus and cannot be reproduced publicly; it can still miss short-sentence AI text and is not calibrated on an independent holdout.
 - Repetition checks based on paragraph symmetry, repeated sentence starters, and compression ratio.
 - Indonesian nominalization, passive-voice, loanword, and translation-style opening checks.
 - Optional voice profiles generated from one to five writing samples.
-- Human-readable terminal output and pure JSON output.
+- Project configuration via `.humanizerrc.json` discovered upward from the current working directory.
+- Human-readable terminal output, pure JSON, SARIF 2.1.0, and GitHub Actions workflow annotations.
 - Standard exit codes for agents, scripts, and CI jobs.
 
-It does not estimate perplexity, classify who wrote the text, rewrite prose automatically, scan directories, or provide SARIF output.
+It does not estimate perplexity, classify who wrote the text, or rewrite prose automatically. A positional directory is scanned recursively for `.md`, `.mdx`, and `.txt` files; hidden directories and `node_modules` are skipped.
 
 ## Terminal demo
 
@@ -249,7 +250,7 @@ The analyzer runs synchronously with local rule packs. The fingerprinter reads o
 ### Analyzer
 
 ```text
-humanizer-lint (--file <path> | --stdin | <files...>) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--domain auto|prose|copywriting|code|ui] [--no-domain-lint] [--allow <phrases>] [--min-score <0-100>] [--json]
+humanizer-lint (--file <path> | --stdin | <files...>) [--lang auto|universal|<ISO-639-1>] [--profile <path>] [--domain auto|prose|copywriting|code|ui] [--no-domain-lint] [--allow <phrases>] [--min-score <0-100>] [--config <path>] [--no-config] [--format human|json|sarif|github] [--json]
 ```
 
 | Option | Required | Description |
@@ -262,8 +263,11 @@ humanizer-lint (--file <path> | --stdin | <files...>) [--lang auto|universal|<IS
 | `--domain <mode>` | No | Choose `auto`, `prose`, `copywriting`, `code`, or `ui`. Without a filename, `auto` runs prose checks only; select a domain explicitly for stdin. With a filename, auto routes code comments by code extension, copy by non-code extension, and UI checks by markup extension. |
 | `--no-domain-lint` | No | Disable domain checks; lexical and prose analysis still run. |
 | `--no-ignore` | No | Run a strict audit without applying ignore directives or allowlists. |
+| `--config <path>` | No | Read configuration from a specific JSON file instead of discovering `.humanizerrc.json`. |
+| `--no-config` | No | Disable configuration discovery and run with defaults only. |
 | `--allow <phrases>` | No | Comma-separated, case-insensitive exact matched phrases to exempt; profiles may also contain an `allowlist` array. |
 | `--min-score <0-100>` | No | Exit 1 if any analyzed file scores below this value or has status `FAIL`. |
+| `--format human|json|sarif|github` | No | Select output format (`human`, `json`, `sarif`, or `github`). Default: `human`. `--json` is an alias for `--format json`. |
 | `--json` | No | Print JSON only. Without it, print the terminal report. |
 | `--brief` | No | With `--json`, emit compact findings with complete matches, targets, and rhythm/final gate status. The size goal is ≤40% of full JSON in typical cases, not a hard cap; long matches can exceed it. Suppressed entries retain type, rule ID, location, offsets, directive, match and source scope; full JSON adds their severity, line/column and remediation fields, plus all four gate blocks. |
 | `--delivery-gate` | No | Print the four-block delivery report. |
@@ -398,7 +402,7 @@ After installation, an agent can use the skill as a closed verification loop:
 4. Re-run the analyzer, stopping after three iterations.
 5. Return only a `PASS`, or an honestly labeled short-text `SKIP` with no unresolved lexical violations.
 
-The skill is indexed on skills.sh and its current listing passes the platform's Snyk security audit.
+The skill is indexed on skills.sh; its security audit results are dated and bounded under [Security properties](#security-properties).
 
 ## Used by
 
@@ -414,17 +418,27 @@ Production scripts use only Node.js built-ins and have no runtime dependencies. 
 
 Text remains local unless the surrounding agent or workflow sends it elsewhere.
 
+The skills.sh security audits (pages read 2026-11-04) report:
+
+- Snyk: WARN, risk level medium, analyzed 2026-11-04. One finding, W011 third-party content exposure: the skill reviews user-authored drafts, which can carry indirect prompt injection. The page does not show which commit was analyzed.
+- Socket: PASS, analyzed 2026-11-02, package `pkg:socket/skills-sh/yanstd888%2Fhumanizer-lint%2Fhumanizer-lint%2F@9517b10bd49b89ee795181cfa38c365a990da664`.
+- Gen Agent Trust Hub: PASS, risk level safe, analyzed 2026-11-04, noting that the prompt-injection strings under `evals/` are test fixtures, not instructions.
+
+The Snyk badge above and the demo's status label still read `Pass`. The project owner kept those labels unchanged, so they do not match this dated WARN result; treat the dated result as the current audit outcome.
+
+Changes made after those analysis dates are not covered until the listings are re-audited. No audit result here is a safety guarantee.
+
 ## Frequently asked questions
 
-**Is this an AI content detector?** No. A pass or failure does not prove authorship.
+**Is this tool an AI content detector?** No. A pass or failure does not prove authorship.
 
-**Does it rewrite prose?** No. It reports findings and suggested corrections without modifying the source.
+**Does it rewrite the prose it reviews?** No. It reports findings and suggested corrections without modifying the source.
 
-**Can it help with robotic Markdown?** It identifies configured phrases and style signals; a person or agent revises the affected prose and reruns the analyzer.
+**Can it help with robotic Markdown output?** It identifies configured phrases and style signals; a person or agent revises the affected prose and reruns the analyzer.
 
-**Can I install it from npm?** Yes: `npx humanizer-lint --file draft.md --lang auto`, or `npm install -g humanizer-lint`. Install the agent skill separately with `npx skills add yanstd888/humanizer-lint`.
+**Can I install the CLI from npm?** Yes: `npx humanizer-lint --file draft.md --lang auto`, or `npm install -g humanizer-lint`. Install the agent skill separately with `npx skills add yanstd888/humanizer-lint`.
 
-**Which languages are supported?** Lexical packs cover English, Indonesian, Spanish, Malay, French, German, Portuguese, and Mandarin. Other ISO 639-1 languages use experimental `Intl.Segmenter` rhythm diagnostics with uncalibrated thresholds, not an invented lexical pack.
+**Which languages do the lexical packs support?** Lexical packs cover English, Indonesian, Spanish, Malay, French, German, Portuguese, and Mandarin. Other ISO 639-1 languages use experimental `Intl.Segmenter` rhythm diagnostics with uncalibrated thresholds, not an invented lexical pack.
 
 **Does it send text to an API?** No. Production code makes no network calls; installers and Git require a network to download the repository.
 
