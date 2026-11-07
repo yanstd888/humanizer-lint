@@ -32,12 +32,22 @@ test('failed gates identify actual causes including short lexical failures', asy
   assert.equal(short.status, 'FAIL');
   assert.ok(short.failedGates.includes('errorFinding'));
   const failed = analyzeText(await read('tech-readme'), { language: 'en' });
-  assert.equal(failed.status, 'FAIL');
-  assert.ok(failed.failedGates.includes('sentenceRange'));
+  assert.notEqual(failed.status, 'FAIL');
+  assert.ok(!failed.failedGates.includes('sentenceRange'));
   assert.ok(!failed.failedGates.includes('score'));
   const scored = analyzeText(await read('human-en'), { language: 'en', profile: { thresholds: { passScore: 101 } } });
   assert.equal(scored.status, 'FAIL');
   assert.ok(scored.failedGates.includes('score'));
+});
+
+test('long-sentence gate waiver stops at 18 words', async () => {
+  const text = await read('tech-readme');
+  const variant = (suffix) => text.replace('using sudo.', `using sudo ${suffix}.`).replace('be ignored.', `be ignored ${suffix}.`);
+  const under = analyzeText(variant('immediately'), { language: 'en' });
+  const boundary = analyzeText(variant('promptly now'), { language: 'en' });
+  assert.equal(under.status, 'PASS');
+  assert.equal(boundary.status, 'FAIL');
+  assert.ok(boundary.failedGates.includes('sentenceRange'));
 });
 
 test('human and brief CLI disclose rhythm coverage and failed gates', async () => {

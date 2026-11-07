@@ -1,6 +1,13 @@
 {
   "language": "id",
-  "editorial": { "decisionOpeners": ["^kami merekomendasikan\\b", "^keputusan kami adalah\\b", "^kami memilih\\b"] },
+  "editorial": {
+    "rhetoricalHooks": ["mengapa demikian\\?", "menarik, bukan\\?"],
+    "decisionOpeners": ["^kami merekomendasikan\\b", "^keputusan kami adalah\\b", "^kami memilih\\b"],
+    "replacements": [{ "pattern": "pengimplementasian", "replacement": "penerapan / menerapkan" }, { "pattern": "tidak dapat dipungkiri(?: bahwa)?", "replacement": "state the concrete claim directly" }],
+    "exclusiveWords": ["tidak", "karena", "bisa", "seperti", "dari", "bahwa"],
+    "splitConnectives": ["sehingga", "tetapi", "namun", "karena"],
+    "attributionBypass": "\\b(?:[Mm]enurut)\\s+(?:(?:Dr|Prof)\\.\\s+)?(?!Dr\\b|Prof\\b)[A-Z][\\p{L}\\p{N}.-]+"
+  },
   "stopwords": ["yang", "dan", "di", "ini", "untuk", "dengan", "dari", "pada", "dalam", "tidak", "akan", "atau", "juga", "oleh", "adalah", "sebagai", "bahwa", "dapat", "karena", "tersebut"],
   "patterns": [
     {"id":"ID057","type":"STACKED_QUALIFIERS","pattern":"\\bmungkin[ \\t]+cenderung[ \\t]+dapat[ \\t]+dikatakan\\b","fixInstruction":"Review this phrase in context; revise only if it obscures meaning.","weakAlone":true},
@@ -20,7 +27,7 @@
     {"id":"ID045","type":"DEEP_SOUNDING_SAYING","pattern":"\\bpada intinya,?\\s+yang terpenting adalah\\b","fixInstruction":"Name the specific point directly."},
     {"id":"ID001","type":"SLOP_PHRASE","pattern":"\\bdi era digital\\b","fixInstruction":"Mulai langsung dari subjek atau fakta konkret."},
     {"id":"ID002","type":"SLOP_PHRASE","pattern":"\\bdi tengah pesatnya\\b","fixInstruction":"Hapus pembuka umum dan sebutkan perubahan yang dimaksud."},
-    {"id":"ID003","type":"SLOP_PHRASE","pattern":"\\btidak dapat dipungkiri\\b","fixInstruction":"Nyatakan klaim secara langsung tanpa pembuka klise."},
+    {"id":"ID003","type":"SLOP_PHRASE","pattern":"\\btidak dapat dipungkiri\\b","fixInstruction":"Nyatakan klaim secara langsung tanpa pembuka klise.","note":"Replacement hint for this phrase lives in editorial.replacements."},
     {"id":"ID004","type":"SLOP_PHRASE","pattern":"\\btak dapat dipungkiri\\b","fixInstruction":"Nyatakan klaim secara langsung tanpa pembuka klise."},
     {"id":"ID005","type":"SLOP_PHRASE","pattern":"\\bpenting untuk diingat\\b","fixInstruction":"Hapus penanda kepentingan dan tulis fakta yang perlu diingat."},
     {"id":"ID006","type":"SLOP_PHRASE","pattern":"\\bperlu dicatat bahwa\\b","fixInstruction":"Hapus pengantar dan mulai dari informasi intinya."},

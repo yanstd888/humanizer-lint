@@ -45,7 +45,7 @@ export function sanitizeMarkdownWithMap(input) {
   value = replace(value, /\r\n?/g, (m, v) => ({ text: '\n', map: [v.map[m.index]] }));
   value = replace(value, /^---\s*\n[\s\S]*?\n---\s*(?:\n|$)/g, () => literal(''));
   value = removeFences(value);
-  value = replace(value, /\[([^\]]+)\]\(https?:\/\/[^\s)]+\)/gi, (m, v) => slice(v, m.index + 1, m.index + 1 + m[1].length));
+  value = replace(value, /\[([^\]]+)\]\([^\s)]+\)/gi, (m, v) => slice(v, m.index + 1, m.index + 1 + m[1].length));
   value = replace(value, /`[^`\n]+`/g, () => literal(ENTITY));
   value = replace(value, /https?:\/\/[^\s)]+/gi, (m, v) => {
     const trailing = m[0].match(/[.!?,;:]+$/u)?.[0] ?? '';
