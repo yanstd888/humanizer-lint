@@ -6,6 +6,10 @@
 
 [![HOL Guard](https://img.shields.io/endpoint?url=https%3A%2F%2Fhol.org%2Fapi%2Fregistry%2Fbadges%2Fplugin%3Fslug%3Dyanstd888%252Fhumanizer-lint%26metric%3Drelease)](https://hol.org/registry/plugins/yanstd888%2Fhumanizer-lint?utm_source=hol_marketplace&utm_medium=plugins_badge&utm_campaign=plugins&utm_content=yanstd888%2Fhumanizer-lint&ref=plugin-author-311c519a)
 
+<!-- yarkr:badges:start -->
+[![Indexed on Yarkr](https://api.yarkr.com/functions/v1/api/api/v1/badges/repos/yanstd888/humanizer-lint/version.svg)](https://yarkr.com/arks/yanstd888/humanizer-lint)
+<!-- yarkr:badges:end -->
+
 ### Edit stiff AI-shaped prose with a deterministic local prose and rhythm linter
 
 A local, zero-dependency prose linter that flags stiff, AI-sounding writing (stock phrases, flat sentence rhythm, repeated wording) and tells you what to revise. A style checker, not an AI detector.
@@ -183,6 +187,38 @@ humanizer-fingerprint --help
 ```
 
 No dependency installation or build step is required.
+
+<!-- yarkr:install:start -->
+## Install with Yarkr
+
+This repo is indexed on [Yarkr](https://yarkr.com/arks/yanstd888/humanizer-lint) as the ark [yanstd888/humanizer-lint](https://yarkr.com/arks/yanstd888/humanizer-lint), so its skills install into Claude Code, Codex, Cursor and other agent harnesses with one command.
+
+### CLI
+
+Install the whole ark, which Yarkr keeps equal to this repo:
+
+```bash
+npx yarkr-cli sync yanstd888/humanizer-lint
+```
+
+Or add individual skills:
+
+```bash
+npx yarkr-cli add skill:yanstd888/humanizer-lint/humanizer-lint
+```
+
+No Node.js? `curl -fsSL https://yarkr.com/install.sh | sh` (macOS, Linux) or `irm https://yarkr.com/install.ps1 | iex` (Windows PowerShell) installs `yarkr` as a standalone binary; then type `yarkr` in place of `npx yarkr-cli`.
+
+### MCP
+
+Connect your agent to the ark over MCP:
+
+```bash
+npx yarkr-cli mcp add yanstd888/humanizer-lint
+```
+
+Or point any MCP client at `https://api.yarkr.com/functions/v1/api/mcp/o/yanstd888/humanizer-lint`.
+<!-- yarkr:install:end -->
 
 ## Quick start
 
